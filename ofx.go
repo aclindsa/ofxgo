@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"errors"
-	"fmt"
 	"github.com/golang/go/src/encoding/xml"
 	"io"
 	"net/http"
@@ -368,11 +367,36 @@ func (or *Response) Unmarshal(reader io.Reader, xmlVersion bool) error {
 			return nil // found closing XML element, so we're done
 		} else if start, ok := tok.(xml.StartElement); ok {
 			// TODO decode other types
-			fmt.Println("Found starting element for: " + start.Name.Local)
+			switch start.Name.Local {
+			//			case "SIGNUPMSGSRSV1":
+			//				msgs, err := DecodeSignupMessageSet(decoder, start)
+			//				if err != nil {
+			//					return err
+			//				}
+			//				or.Signup = msgs
+			//case "BANKMSGSRSV1":
+			//case "CREDITCARDMSGSRSV1":
+			//case "LOANMSGSRSV1":
+			//case "INVSTMTMSGSRSV1":
+			//case "INTERXFERMSGSRSV1":
+			//case "WIREXFERMSGSRSV1":
+			//case "BILLPAYMSGSRSV1":
+			//case "EMAILMSGSRSV1":
+			//case "SECLISTMSGSRSV1":
+			//case "PRESDIRMSGSRSV1":
+			//case "PRESDLVMSGSRSV1":
+			case "PROFMSGSRSV1":
+				msgs, err := DecodeProfileMessageSet(decoder, start)
+				if err != nil {
+					return err
+				}
+				or.Profile = msgs
+				//case "IMAGEMSGSRSV1":
+			default:
+				return errors.New("Unsupported message set: " + start.Name.Local)
+			}
 		} else {
 			return errors.New("Found unexpected token")
 		}
-
-		decoder.Skip()
 	}
 }

@@ -27,6 +27,8 @@ func (oi *Int) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return nil
 }
 
+type Date time.Time
+
 var ofxDateFormats = []string{
 	"20060102150405.000",
 	"20060102150405",
@@ -34,23 +36,25 @@ var ofxDateFormats = []string{
 	"2006010215",
 	"20060102",
 }
-var ofxDateZoneFormat = "20060102150405.000 -0700"
-var ofxDateZoneRegex = regexp.MustCompile(`^\[([+-]?[0-9]+)(\.([0-9]{2}))?(:([A-Z]+))?\]$`)
-
-type Date time.Time
+var ofxDateZoneRegex = regexp.MustCompile(`^([+-]?[0-9]+)(\.([0-9]{2}))?(:([A-Z]+))?$`)
 
 func (od *Date) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-	var value string
+	var value, zone, zoneFormat string
 	err := d.DecodeElement(&value, &start)
 	if err != nil {
 		return err
 	}
-	value = strings.TrimSpace(value)
 
-	if len(value) > len(ofxDateFormats[0]) {
-		matches := ofxDateZoneRegex.FindStringSubmatch(value[len(ofxDateFormats[0]):])
+	// Split the time zone off, if any
+	split := strings.SplitN(value, "[", 2)
+	if len(split) == 2 {
+		value = split[0]
+		zoneFormat = " -0700"
+		zone = strings.TrimRight(split[1], "]")
+
+		matches := ofxDateZoneRegex.FindStringSubmatch(zone)
 		if matches == nil {
-			return errors.New("Invalid OFX Date Format")
+			return errors.New("Invalid OFX Date timezone format: " + zone)
 		}
 		var err error
 		var zonehours, zoneminutes int
@@ -65,17 +69,11 @@ func (od *Date) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 			}
 			zoneminutes = zoneminutes * 60 / 100
 		}
-		value = value[:len(ofxDateFormats[0])] + " " + fmt.Sprintf("%+d%02d", zonehours, zoneminutes)
-		t, err := time.Parse(ofxDateZoneFormat, value)
-		if err == nil {
-			tmpod := Date(t)
-			*od = tmpod
-			return nil
-		}
+		zone = fmt.Sprintf(" %+03d%02d", zonehours, zoneminutes)
 	}
 
 	for _, format := range ofxDateFormats {
-		t, err := time.Parse(format, value)
+		t, err := time.Parse(format+zoneFormat, value+zone)
 		if err == nil {
 			tmpod := Date(t)
 			*od = tmpod
@@ -85,8 +83,8 @@ func (od *Date) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return errors.New("OFX: Couldn't parse date:" + value)
 }
 
-func (od *Date) String() string {
-	t := time.Time(*od)
+func (od Date) String() string {
+	t := time.Time(od)
 	format := t.Format(ofxDateFormats[0])
 	zonename, zoneoffset := t.Zone()
 	format += "[" + fmt.Sprintf("%+d", zoneoffset/3600)
