@@ -12,16 +12,16 @@ import (
 	"time"
 )
 
-type OfxMessage interface {
+type Message interface {
 	Name() string
 	Valid() (bool, error)
 }
 
-type OfxRequest struct {
+type Request struct {
 	URL     string
-	Version string           // String for OFX header, defaults to 203
-	Signon  OfxSignonRequest //<SIGNONMSGSETV1>
-	Signup  []OfxMessage     //<SIGNUPMSGSETV1>
+	Version string        // String for OFX header, defaults to 203
+	Signon  SignonRequest //<SIGNONMSGSETV1>
+	Signup  []Message     //<SIGNUPMSGSETV1>
 	//<BANKMSGSETV1>
 	//<CREDITCARDMSGSETV1>
 	//<LOANMSGSETV1>
@@ -33,11 +33,11 @@ type OfxRequest struct {
 	//<SECLISTMSGSETV1>
 	//<PRESDIRMSGSETV1>
 	//<PRESDLVMSGSETV1>
-	Profile []OfxMessage //<PROFMSGSETV1>
+	Profile []Message //<PROFMSGSETV1>
 	//<IMAGEMSGSETV1>
 }
 
-func (oq *OfxRequest) marshalMessageSet(e *xml.Encoder, requests []OfxMessage, setname string) error {
+func (oq *Request) marshalMessageSet(e *xml.Encoder, requests []Message, setname string) error {
 	if len(requests) > 0 {
 		messageSetElement := xml.StartElement{Name: xml.Name{Local: setname}}
 		if err := e.EncodeToken(messageSetElement); err != nil {
@@ -60,7 +60,7 @@ func (oq *OfxRequest) marshalMessageSet(e *xml.Encoder, requests []OfxMessage, s
 	return nil
 }
 
-func (oq *OfxRequest) Marshal() (*bytes.Buffer, error) {
+func (oq *Request) Marshal() (*bytes.Buffer, error) {
 	var b bytes.Buffer
 
 	if len(oq.Version) == 0 {
@@ -127,8 +127,8 @@ NEWFILEUID:NONE
 	return &b, nil
 }
 
-func (oq *OfxRequest) Request() (*OfxResponse, error) {
-	oq.Signon.Dtclient = OfxDate(time.Now())
+func (oq *Request) Request() (*Response, error) {
+	oq.Signon.Dtclient = Date(time.Now())
 
 	b, err := oq.Marshal()
 	if err != nil {
@@ -152,7 +152,7 @@ func (oq *OfxRequest) Request() (*OfxResponse, error) {
 		xmlVersion = false
 	}
 
-	var ofxresp OfxResponse
+	var ofxresp Response
 	if err := ofxresp.Unmarshal(response.Body, xmlVersion); err != nil {
 		return nil, err
 	}
@@ -160,10 +160,10 @@ func (oq *OfxRequest) Request() (*OfxResponse, error) {
 	return &ofxresp, nil
 }
 
-type OfxResponse struct {
-	Version string            // String for OFX header, defaults to 203
-	Signon  OfxSignonResponse //<SIGNONMSGSETV1>
-	Signup  []OfxMessage      //<SIGNUPMSGSETV1>
+type Response struct {
+	Version string         // String for OFX header, defaults to 203
+	Signon  SignonResponse //<SIGNONMSGSETV1>
+	Signup  []Message      //<SIGNUPMSGSETV1>
 	//<BANKMSGSETV1>
 	//<CREDITCARDMSGSETV1>
 	//<LOANMSGSETV1>
@@ -175,11 +175,11 @@ type OfxResponse struct {
 	//<SECLISTMSGSETV1>
 	//<PRESDIRMSGSETV1>
 	//<PRESDLVMSGSETV1>
-	Profile []OfxMessage //<PROFMSGSETV1>
+	Profile []Message //<PROFMSGSETV1>
 	//<IMAGEMSGSETV1>
 }
 
-func (or *OfxResponse) readSGMLHeaders(r *bufio.Reader) error {
+func (or *Response) readSGMLHeaders(r *bufio.Reader) error {
 	var seenHeader, seenVersion bool = false, false
 	for {
 		line, err := r.ReadString('\n')
@@ -240,7 +240,7 @@ func (or *OfxResponse) readSGMLHeaders(r *bufio.Reader) error {
 	return nil
 }
 
-func (or *OfxResponse) readXMLHeaders(decoder *xml.Decoder) error {
+func (or *Response) readXMLHeaders(decoder *xml.Decoder) error {
 	tok, err := decoder.Token()
 	if err != nil {
 		return err
@@ -308,7 +308,7 @@ func (or *OfxResponse) readXMLHeaders(decoder *xml.Decoder) error {
 	return nil
 }
 
-func (or *OfxResponse) Unmarshal(reader io.Reader, xmlVersion bool) error {
+func (or *Response) Unmarshal(reader io.Reader, xmlVersion bool) error {
 	r := bufio.NewReader(reader)
 
 	// parse SGML headers before creating XML decoder

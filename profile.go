@@ -4,18 +4,18 @@ import (
 	"github.com/golang/go/src/encoding/xml"
 )
 
-type OfxProfileRequest struct {
-	XMLName       xml.Name  `xml:"PROFTRNRQ"`
-	TrnUID        OfxUID    `xml:"TRNUID"`
-	ClientRouting OfxString `xml:"PROFRQ>CLIENTROUTING"` // Forced to NONE
-	DtProfup      OfxDate   `xml:"PROFRQ>DTPROFUP"`
+type ProfileRequest struct {
+	XMLName       xml.Name `xml:"PROFTRNRQ"`
+	TrnUID        UID      `xml:"TRNUID"`
+	ClientRouting String   `xml:"PROFRQ>CLIENTROUTING"` // Forced to NONE
+	DtProfup      Date     `xml:"PROFRQ>DTPROFUP"`
 }
 
-func (r *OfxProfileRequest) Name() string {
+func (r *ProfileRequest) Name() string {
 	return "PROFTRNRQ"
 }
 
-func (r *OfxProfileRequest) Valid() (bool, error) {
+func (r *ProfileRequest) Valid() (bool, error) {
 	if ok, err := r.TrnUID.Valid(); !ok {
 		return false, err
 	}

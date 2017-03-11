@@ -11,9 +11,9 @@ import (
 	"time"
 )
 
-type OfxInt int64
+type Int int64
 
-func (oi *OfxInt) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+func (oi *Int) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	var value string
 	err := d.DecodeElement(&value, &start)
 	if err != nil {
@@ -23,7 +23,7 @@ func (oi *OfxInt) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	if err != nil {
 		return err
 	}
-	*oi = (OfxInt)(i)
+	*oi = (Int)(i)
 	return nil
 }
 
@@ -37,9 +37,9 @@ var ofxDateFormats = []string{
 var ofxDateZoneFormat = "20060102150405.000 -0700"
 var ofxDateZoneRegex = regexp.MustCompile(`^\[([+-]?[0-9]+)(\.([0-9]{2}))?(:([A-Z]+))?\]$`)
 
-type OfxDate time.Time
+type Date time.Time
 
-func (od *OfxDate) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+func (od *Date) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	var value string
 	err := d.DecodeElement(&value, &start)
 	if err != nil {
@@ -68,7 +68,7 @@ func (od *OfxDate) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 		value = value[:len(ofxDateFormats[0])] + " " + fmt.Sprintf("%+d%02d", zonehours, zoneminutes)
 		t, err := time.Parse(ofxDateZoneFormat, value)
 		if err == nil {
-			tmpod := OfxDate(t)
+			tmpod := Date(t)
 			*od = tmpod
 			return nil
 		}
@@ -77,7 +77,7 @@ func (od *OfxDate) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	for _, format := range ofxDateFormats {
 		t, err := time.Parse(format, value)
 		if err == nil {
-			tmpod := OfxDate(t)
+			tmpod := Date(t)
 			*od = tmpod
 			return nil
 		}
@@ -85,7 +85,7 @@ func (od *OfxDate) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return errors.New("OFX: Couldn't parse date:" + value)
 }
 
-func (od *OfxDate) String() string {
+func (od *Date) String() string {
 	t := time.Time(*od)
 	format := t.Format(ofxDateFormats[0])
 	zonename, zoneoffset := t.Zone()
@@ -99,25 +99,25 @@ func (od *OfxDate) String() string {
 	return format + ":" + zonename + "]"
 }
 
-func (od *OfxDate) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+func (od *Date) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	return e.EncodeElement(od.String(), start)
 }
 
-type OfxString string
+type String string
 
-func (os *OfxString) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+func (os *String) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	var value string
 	err := d.DecodeElement(&value, &start)
 	if err != nil {
 		return err
 	}
-	*os = OfxString(strings.TrimSpace(value))
+	*os = String(strings.TrimSpace(value))
 	return nil
 }
 
-type OfxBoolean bool
+type Boolean bool
 
-func (ob *OfxBoolean) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+func (ob *Boolean) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	var value string
 	err := d.DecodeElement(&value, &start)
 	if err != nil {
@@ -126,32 +126,32 @@ func (ob *OfxBoolean) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error
 	tmpob := strings.TrimSpace(value)
 	switch tmpob {
 	case "Y":
-		*ob = OfxBoolean(true)
+		*ob = Boolean(true)
 	case "N":
-		*ob = OfxBoolean(false)
+		*ob = Boolean(false)
 	default:
 		return errors.New("Invalid OFX Boolean")
 	}
 	return nil
 }
 
-func (ob *OfxBoolean) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+func (ob *Boolean) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	if *ob {
 		return e.EncodeElement("Y", start)
 	}
 	return e.EncodeElement("N", start)
 }
 
-type OfxUID string
+type UID string
 
-func (ou *OfxUID) Valid() (bool, error) {
+func (ou *UID) Valid() (bool, error) {
 	if len(*ou) != 36 {
 		return false, errors.New("UID not 36 characters long")
 	}
 	return true, nil
 }
 
-func RandomUID() (*OfxUID, error) {
+func RandomUID() (*UID, error) {
 	uidbytes := make([]byte, 16)
 	n, err := rand.Read(uidbytes[:])
 	if err != nil {
@@ -160,6 +160,6 @@ func RandomUID() (*OfxUID, error) {
 	if n != 16 {
 		return nil, errors.New("RandomUID failed to read 16 random bytes")
 	}
-	uid := OfxUID(fmt.Sprintf("%08x-%04x-%04x-%04x-%012x", uidbytes[:4], uidbytes[4:6], uidbytes[6:8], uidbytes[8:10], uidbytes[10:]))
+	uid := UID(fmt.Sprintf("%08x-%04x-%04x-%04x-%012x", uidbytes[:4], uidbytes[4:6], uidbytes[6:8], uidbytes[8:10], uidbytes[10:]))
 	return &uid, nil
 }

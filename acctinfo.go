@@ -4,18 +4,18 @@ import (
 	"github.com/golang/go/src/encoding/xml"
 )
 
-type OfxAcctInfoRequest struct {
+type AcctInfoRequest struct {
 	XMLName   xml.Name `xml:"ACCTINFOTRNRQ"`
-	TrnUID    OfxUID   `xml:"TRNUID"`
-	CltCookie OfxInt   `xml:"CLTCOOKIE"`
-	DtAcctup  OfxDate  `xml:"ACCTINFORQ>DTACCTUP"`
+	TrnUID    UID      `xml:"TRNUID"`
+	CltCookie Int      `xml:"CLTCOOKIE"`
+	DtAcctup  Date     `xml:"ACCTINFORQ>DTACCTUP"`
 }
 
-func (r *OfxAcctInfoRequest) Name() string {
+func (r *AcctInfoRequest) Name() string {
 	return "ACCTINFOTRNRQ"
 }
 
-func (r *OfxAcctInfoRequest) Valid() (bool, error) {
+func (r *AcctInfoRequest) Valid() (bool, error) {
 	if ok, err := r.TrnUID.Valid(); !ok {
 		return false, err
 	}

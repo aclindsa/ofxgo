@@ -5,25 +5,25 @@ import (
 	"github.com/golang/go/src/encoding/xml"
 )
 
-type OfxSignonRequest struct {
-	XMLName   xml.Name  `xml:"SONRQ"`
-	Dtclient  OfxDate   `xml:"DTCLIENT"` // Overridden in OfxRequest.Request()
-	UserId    OfxString `xml:"USERID"`
-	UserPass  OfxString `xml:"USERPASS,omitempty"`
-	UserKey   OfxString `xml:"USERKEY,omitempty"`
-	Language  OfxString `xml:"LANGUAGE"` // Defaults to ENG
-	Org       OfxString `xml:"FI>ORG"`
-	Fid       OfxString `xml:"FI>FID"`
-	AppId     OfxString `xml:"APPID"`  // Defaults to OFXGO
-	AppVer    OfxString `xml:"APPVER"` // Defaults to 0001
-	ClientUID OfxUID    `xml:"CLIENTUID,omitempty"`
+type SignonRequest struct {
+	XMLName   xml.Name `xml:"SONRQ"`
+	Dtclient  Date     `xml:"DTCLIENT"` // Overridden in Request.Request()
+	UserId    String   `xml:"USERID"`
+	UserPass  String   `xml:"USERPASS,omitempty"`
+	UserKey   String   `xml:"USERKEY,omitempty"`
+	Language  String   `xml:"LANGUAGE"` // Defaults to ENG
+	Org       String   `xml:"FI>ORG"`
+	Fid       String   `xml:"FI>FID"`
+	AppId     String   `xml:"APPID"`  // Defaults to OFXGO
+	AppVer    String   `xml:"APPVER"` // Defaults to 0001
+	ClientUID UID      `xml:"CLIENTUID,omitempty"`
 }
 
-func (r *OfxSignonRequest) Name() string {
+func (r *SignonRequest) Name() string {
 	return "SONRQ"
 }
 
-func (r *OfxSignonRequest) Valid() (bool, error) {
+func (r *SignonRequest) Valid() (bool, error) {
 	if len(r.UserId) < 1 || len(r.UserId) > 32 {
 		return false, errors.New("SONRQ>USERID invalid length")
 	}
@@ -59,14 +59,14 @@ func (r *OfxSignonRequest) Valid() (bool, error) {
 	return true, nil
 }
 
-type OfxStatus struct {
-	XMLName  xml.Name  `xml:"STATUS"`
-	Code     OfxInt    `xml:"CODE"`
-	Severity OfxString `xml:"SEVERITY"`
-	Message  OfxString `xml:"MESSAGE,omitempty"`
+type Status struct {
+	XMLName  xml.Name `xml:"STATUS"`
+	Code     Int      `xml:"CODE"`
+	Severity String   `xml:"SEVERITY"`
+	Message  String   `xml:"MESSAGE,omitempty"`
 }
 
-func (s *OfxStatus) Valid() (bool, error) {
+func (s *Status) Valid() (bool, error) {
 	switch s.Severity {
 	case "INFO", "WARN", "ERROR":
 		return true, nil
@@ -75,26 +75,26 @@ func (s *OfxStatus) Valid() (bool, error) {
 	}
 }
 
-type OfxSignonResponse struct {
-	XMLName     xml.Name  `xml:"SONRS"`
-	Status      OfxStatus `xml:"STATUS"`
-	Dtserver    OfxDate   `xml:"DTSERVER"`
-	UserKey     OfxString `xml:"USERKEY,omitempty"`
-	TsKeyExpire OfxDate   `xml:"TSKEYEXPIRE,omitempty"`
-	Language    OfxString `xml:"LANGUAGE"`
-	Dtprofup    OfxDate   `xml:"DTPROFUP,omitempty"`
-	Dtacctup    OfxDate   `xml:"DTACCTUP,omitempty"`
-	Org         OfxString `xml:"FI>ORG"`
-	Fid         OfxString `xml:"FI>FID"`
-	SessCookie  OfxString `xml:"SESSCOOKIE,omitempty"`
-	AccessKey   OfxString `xml:"ACCESSKEY,omitempty"`
+type SignonResponse struct {
+	XMLName     xml.Name `xml:"SONRS"`
+	Status      Status   `xml:"STATUS"`
+	Dtserver    Date     `xml:"DTSERVER"`
+	UserKey     String   `xml:"USERKEY,omitempty"`
+	TsKeyExpire Date     `xml:"TSKEYEXPIRE,omitempty"`
+	Language    String   `xml:"LANGUAGE"`
+	Dtprofup    Date     `xml:"DTPROFUP,omitempty"`
+	Dtacctup    Date     `xml:"DTACCTUP,omitempty"`
+	Org         String   `xml:"FI>ORG"`
+	Fid         String   `xml:"FI>FID"`
+	SessCookie  String   `xml:"SESSCOOKIE,omitempty"`
+	AccessKey   String   `xml:"ACCESSKEY,omitempty"`
 }
 
-func (r *OfxSignonResponse) Name() string {
+func (r *SignonResponse) Name() string {
 	return "SONRS"
 }
 
-func (r *OfxSignonResponse) Valid() (bool, error) {
+func (r *SignonResponse) Valid() (bool, error) {
 	if len(r.Language) != 3 {
 		return false, errors.New("SONRS>LANGUAGE invalid length: " + string(r.Language))
 	}
