@@ -27,6 +27,10 @@ func (oi *Int) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return nil
 }
 
+type Amount string
+
+// TODO parse Amount into big.Rat?
+
 type Date time.Time
 
 var ofxDateFormats = []string{

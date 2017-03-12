@@ -7,7 +7,7 @@ import (
 
 type SignonRequest struct {
 	XMLName   xml.Name `xml:"SONRQ"`
-	Dtclient  Date     `xml:"DTCLIENT"` // Overridden in Request.Request()
+	DtClient  Date     `xml:"DTCLIENT"` // Overridden in Request.Request()
 	UserId    String   `xml:"USERID"`
 	UserPass  String   `xml:"USERPASS,omitempty"`
 	UserKey   String   `xml:"USERKEY,omitempty"`
@@ -78,12 +78,12 @@ func (s *Status) Valid() (bool, error) {
 type SignonResponse struct {
 	XMLName     xml.Name `xml:"SONRS"`
 	Status      Status   `xml:"STATUS"`
-	Dtserver    Date     `xml:"DTSERVER"`
+	DtServer    Date     `xml:"DTSERVER"`
 	UserKey     String   `xml:"USERKEY,omitempty"`
 	TsKeyExpire Date     `xml:"TSKEYEXPIRE,omitempty"`
 	Language    String   `xml:"LANGUAGE"`
-	Dtprofup    Date     `xml:"DTPROFUP,omitempty"`
-	Dtacctup    Date     `xml:"DTACCTUP,omitempty"`
+	DtProfUp    Date     `xml:"DTPROFUP,omitempty"`
+	DtAcctUp    Date     `xml:"DTACCTUP,omitempty"`
 	Org         String   `xml:"FI>ORG"`
 	Fid         String   `xml:"FI>FID"`
 	SessCookie  String   `xml:"SESSCOOKIE,omitempty"`

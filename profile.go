@@ -9,7 +9,7 @@ type ProfileRequest struct {
 	XMLName       xml.Name `xml:"PROFTRNRQ"`
 	TrnUID        UID      `xml:"TRNUID"`
 	ClientRouting String   `xml:"PROFRQ>CLIENTROUTING"` // Forced to NONE
-	DtProfup      Date     `xml:"PROFRQ>DTPROFUP"`
+	DtProfUp      Date     `xml:"PROFRQ>DTPROFUP"`
 }
 
 func (r *ProfileRequest) Name() string {
@@ -29,7 +29,7 @@ type SignonInfo struct {
 	SignonRealm       String   `xml:"SIGNONREALM"`
 	Min               Int      `xml:"MIN"`                      // Minimum number of password characters
 	Max               Int      `xml:"MAX"`                      // Maximum number of password characters
-	Chartype          String   `xml:"CHARTYPE"`                 // ALPHAONLY, NUMERICONLY, ALPHAORNUMERIC, ALPHAANDNUMERIC
+	CharType          String   `xml:"CHARTYPE"`                 // ALPHAONLY, NUMERICONLY, ALPHAORNUMERIC, ALPHAANDNUMERIC
 	CaseSen           Boolean  `xml:"CASESEN"`                  // Password is case-sensitive?
 	Special           Boolean  `xml:"SPECIAL"`                  // Special characters allowed?
 	Spaces            Boolean  `xml:"SPACES"`                   // Spaces allowed?
@@ -101,8 +101,8 @@ type ProfileResponse struct {
 	TrnUID         UID            `xml:"TRNUID"`
 	MessageSetList MessageSetList `xml:"PROFRS>MSGSETLIST"`
 	SignonInfoList []SignonInfo   `xml:"PROFRS>SIGNONINFOLIST>SIGNONINFO"`
-	DtProfup       Date           `xml:"PROFRS>DTPROFUP"`
-	Finame         String         `xml:"PROFRS>FINAME"`
+	DtProfUp       Date           `xml:"PROFRS>DTPROFUP"`
+	FiName         String         `xml:"PROFRS>FINAME"`
 	Addr1          String         `xml:"PROFRS>ADDR1"`
 	Addr2          String         `xml:"PROFRS>ADDR2,omitempty"`
 	Addr3          String         `xml:"PROFRS>ADDR3,omitempty"`

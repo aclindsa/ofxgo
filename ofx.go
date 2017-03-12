@@ -127,7 +127,7 @@ NEWFILEUID:NONE
 }
 
 func (oq *Request) Request() (*Response, error) {
-	oq.Signon.Dtclient = Date(time.Now())
+	oq.Signon.DtClient = Date(time.Now())
 
 	b, err := oq.Marshal()
 	if err != nil {
@@ -368,12 +368,12 @@ func (or *Response) Unmarshal(reader io.Reader, xmlVersion bool) error {
 		} else if start, ok := tok.(xml.StartElement); ok {
 			// TODO decode other types
 			switch start.Name.Local {
-			//			case "SIGNUPMSGSRSV1":
-			//				msgs, err := DecodeSignupMessageSet(decoder, start)
-			//				if err != nil {
-			//					return err
-			//				}
-			//				or.Signup = msgs
+			case "SIGNUPMSGSRSV1":
+				msgs, err := DecodeSignupMessageSet(decoder, start)
+				if err != nil {
+					return err
+				}
+				or.Signup = msgs
 			//case "BANKMSGSRSV1":
 			//case "CREDITCARDMSGSRSV1":
 			//case "LOANMSGSRSV1":
@@ -391,7 +391,7 @@ func (or *Response) Unmarshal(reader io.Reader, xmlVersion bool) error {
 					return err
 				}
 				or.Profile = msgs
-				//case "IMAGEMSGSRSV1":
+			//case "IMAGEMSGSRSV1":
 			default:
 				return errors.New("Unsupported message set: " + start.Name.Local)
 			}
