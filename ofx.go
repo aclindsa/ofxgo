@@ -339,6 +339,9 @@ func (or *Response) Unmarshal(reader io.Reader, xmlVersion bool) error {
 		decoder.Strict = false
 		decoder.AutoCloseAfterCharData = ofxLeafElements
 	}
+	decoder.CharsetReader = func(charset string, input io.Reader) (io.Reader, error) {
+		return input, nil
+	}
 
 	if xmlVersion {
 		// parse the xml header
