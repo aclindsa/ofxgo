@@ -239,8 +239,25 @@ func (or *Response) readSGMLHeaders(r *bufio.Reader) error {
 	return nil
 }
 
+func nextNonWhitespaceToken(decoder *xml.Decoder) (xml.Token, error) {
+	for {
+		tok, err := decoder.Token()
+		if err != nil {
+			return nil, err
+		} else if chars, ok := tok.(xml.CharData); ok {
+			strippedBytes := bytes.TrimSpace(chars)
+			if len(strippedBytes) != 0 {
+				return tok, nil
+			}
+		} else {
+			return tok, nil
+		}
+	}
+}
+
 func (or *Response) readXMLHeaders(decoder *xml.Decoder) error {
-	tok, err := decoder.Token()
+	var tok xml.Token
+	tok, err := nextNonWhitespaceToken(decoder)
 	if err != nil {
 		return err
 	} else if xmlElem, ok := tok.(xml.ProcInst); !ok || xmlElem.Target != "xml" {
@@ -248,7 +265,7 @@ func (or *Response) readXMLHeaders(decoder *xml.Decoder) error {
 	}
 
 	// parse the OFX header
-	tok, err = decoder.Token()
+	tok, err = nextNonWhitespaceToken(decoder)
 	if err != nil {
 		return err
 	} else if ofxElem, ok := tok.(xml.ProcInst); ok && ofxElem.Target == "OFX" {
@@ -330,7 +347,7 @@ func (or *Response) Unmarshal(reader io.Reader, xmlVersion bool) error {
 		}
 	}
 
-	tok, err := decoder.Token()
+	tok, err := nextNonWhitespaceToken(decoder)
 	if err != nil {
 		return err
 	} else if ofxStart, ok := tok.(xml.StartElement); !ok || ofxStart.Name.Local != "OFX" {
@@ -338,7 +355,7 @@ func (or *Response) Unmarshal(reader io.Reader, xmlVersion bool) error {
 	}
 
 	// Unmarshal the signon message
-	tok, err = decoder.Token()
+	tok, err = nextNonWhitespaceToken(decoder)
 	if err != nil {
 		return err
 	} else if signonStart, ok := tok.(xml.StartElement); ok && signonStart.Name.Local == "SIGNONMSGSRSV1" {
@@ -349,7 +366,7 @@ func (or *Response) Unmarshal(reader io.Reader, xmlVersion bool) error {
 		return errors.New("Missing opening SIGNONMSGSRSV1 xml element")
 	}
 
-	tok, err = decoder.Token()
+	tok, err = nextNonWhitespaceToken(decoder)
 	if err != nil {
 		return err
 	} else if signonEnd, ok := tok.(xml.EndElement); !ok || signonEnd.Name.Local != "SIGNONMSGSRSV1" {
@@ -360,7 +377,7 @@ func (or *Response) Unmarshal(reader io.Reader, xmlVersion bool) error {
 	}
 
 	for {
-		tok, err = decoder.Token()
+		tok, err = nextNonWhitespaceToken(decoder)
 		if err != nil {
 			return err
 		} else if ofxEnd, ok := tok.(xml.EndElement); ok && ofxEnd.Name.Local == "OFX" {

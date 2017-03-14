@@ -146,7 +146,7 @@ func (air AcctInfoResponse) Valid() (bool, error) {
 func DecodeSignupMessageSet(d *xml.Decoder, start xml.StartElement) ([]Message, error) {
 	var msgs []Message
 	for {
-		tok, err := d.Token()
+		tok, err := nextNonWhitespaceToken(d)
 		if err != nil {
 			return nil, err
 		} else if end, ok := tok.(xml.EndElement); ok && end.Name.Local == start.Name.Local {

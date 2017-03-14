@@ -63,7 +63,7 @@ type MessageSetList []MessageSet
 func (msl *MessageSetList) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	for {
 		var msgset MessageSet
-		tok, err := d.Token()
+		tok, err := nextNonWhitespaceToken(d)
 		if err != nil {
 			return err
 		} else if end, ok := tok.(xml.EndElement); ok && end.Name.Local == start.Name.Local {
@@ -71,7 +71,7 @@ func (msl *MessageSetList) UnmarshalXML(d *xml.Decoder, start xml.StartElement) 
 			return nil
 		} else if _, ok := tok.(xml.StartElement); ok {
 			// Found starting tag for <xxxMSGSET>. Get the next one (xxxMSGSETVn) and decode that struct
-			tok, err := d.Token()
+			tok, err := nextNonWhitespaceToken(d)
 			if err != nil {
 				return err
 			} else if versionStart, ok := tok.(xml.StartElement); ok {
@@ -83,7 +83,7 @@ func (msl *MessageSetList) UnmarshalXML(d *xml.Decoder, start xml.StartElement) 
 			}
 
 			// Eat ending tags for <xxxMSGSET>
-			tok, err = d.Token()
+			tok, err = nextNonWhitespaceToken(d)
 			if err != nil {
 				return err
 			} else if _, ok := tok.(xml.EndElement); !ok {
@@ -129,7 +129,7 @@ func (pr ProfileResponse) Valid() (bool, error) {
 func DecodeProfileMessageSet(d *xml.Decoder, start xml.StartElement) ([]Message, error) {
 	var msgs []Message
 	for {
-		tok, err := d.Token()
+		tok, err := nextNonWhitespaceToken(d)
 		if err != nil {
 			return nil, err
 		} else if end, ok := tok.(xml.EndElement); ok && end.Name.Local == start.Name.Local {
