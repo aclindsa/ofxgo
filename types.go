@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/golang/go/src/encoding/xml"
+	"math/big"
 	"regexp"
 	"strconv"
 	"strings"
@@ -13,23 +14,36 @@ import (
 
 type Int int64
 
-func (oi *Int) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+type Amount big.Rat
+
+func (a *Amount) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	var value string
+	var b big.Rat
+
 	err := d.DecodeElement(&value, &start)
 	if err != nil {
 		return err
 	}
-	i, err := strconv.ParseInt(strings.TrimSpace(value), 10, 64)
-	if err != nil {
-		return err
+
+	// The OFX spec allows the start of the fractional amount to be delineated
+	// by a comma, so fix that up before attempting to parse it into big.Rat
+	value = strings.Replace(value, ",", ".", 1)
+
+	if _, ok := b.SetString(value); !ok {
+		return errors.New("Failed to parse OFX amount into big.Rat")
 	}
-	*oi = (Int)(i)
+	*a = Amount(b)
 	return nil
 }
 
-type Amount string
+func (a Amount) String() string {
+	var b big.Rat = big.Rat(a)
+	return strings.TrimRight(strings.TrimRight(b.FloatString(100), "0"), ".")
+}
 
-// TODO parse Amount into big.Rat?
+func (a *Amount) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	return e.EncodeElement(a.String(), start)
+}
 
 type Date time.Time
 
@@ -67,15 +81,30 @@ func (od *Date) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 			return err
 		}
 		if len(matches[3]) > 0 {
-			zoneminutes, err = strconv.Atoi(matches[1])
+			zoneminutes, err = strconv.Atoi(matches[3])
 			if err != nil {
 				return err
 			}
 			zoneminutes = zoneminutes * 60 / 100
 		}
 		zone = fmt.Sprintf(" %+03d%02d", zonehours, zoneminutes)
+
+		// Get the time zone name if it's there, default to GMT if the offset
+		// is 0 and a name isn't supplied
+		if len(matches[5]) > 0 {
+			zone = zone + " " + matches[5]
+			zoneFormat = zoneFormat + " MST"
+		} else if zonehours == 0 && zoneminutes == 0 {
+			zone = zone + " GMT"
+			zoneFormat = zoneFormat + " MST"
+		}
+	} else {
+		// Default to GMT if no time zone was specified
+		zone = " +0000 GMT"
+		zoneFormat = " -0700 MST"
 	}
 
+	// Try all the date formats, from longest to shortest
 	for _, format := range ofxDateFormats {
 		t, err := time.Parse(format+zoneFormat, value+zone)
 		if err == nil {
@@ -91,14 +120,23 @@ func (od Date) String() string {
 	t := time.Time(od)
 	format := t.Format(ofxDateFormats[0])
 	zonename, zoneoffset := t.Zone()
-	format += "[" + fmt.Sprintf("%+d", zoneoffset/3600)
-	fractionaloffset := (zoneoffset % 3600) / 360
+	if zoneoffset < 0 {
+		format += "[" + fmt.Sprintf("%+d", zoneoffset/3600)
+	} else {
+		format += "[" + fmt.Sprintf("%d", zoneoffset/3600)
+	}
+	fractionaloffset := (zoneoffset % 3600) / 36
 	if fractionaloffset > 0 {
 		format += "." + fmt.Sprintf("%02d", fractionaloffset)
 	} else if fractionaloffset < 0 {
 		format += "." + fmt.Sprintf("%02d", -fractionaloffset)
 	}
-	return format + ":" + zonename + "]"
+
+	if len(zonename) > 0 {
+		return format + ":" + zonename + "]"
+	} else {
+		return format + "]"
+	}
 }
 
 func (od *Date) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
@@ -115,6 +153,10 @@ func (os *String) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	}
 	*os = String(strings.TrimSpace(value))
 	return nil
+}
+
+func (os *String) String() string {
+	return string(*os)
 }
 
 type Boolean bool
@@ -144,11 +186,18 @@ func (ob *Boolean) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	return e.EncodeElement("N", start)
 }
 
+func (ob *Boolean) String() string {
+	return fmt.Sprintf("%v", *ob)
+}
+
 type UID string
 
-func (ou *UID) Valid() (bool, error) {
-	if len(*ou) != 36 {
+func (ou UID) Valid() (bool, error) {
+	if len(ou) != 36 {
 		return false, errors.New("UID not 36 characters long")
+	}
+	if ou[8] != '-' || ou[13] != '-' || ou[18] != '-' || ou[23] != '-' {
+		return false, errors.New("UID missing hyphens at the appropriate places")
 	}
 	return true, nil
 }
