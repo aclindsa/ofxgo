@@ -21,7 +21,7 @@ type Request struct {
 	Version string        // String for OFX header, defaults to 203
 	Signon  SignonRequest //<SIGNONMSGSETV1>
 	Signup  []Message     //<SIGNUPMSGSETV1>
-	//<BANKMSGSETV1>
+	Banking []Message     //<BANKMSGSETV1>
 	//<CREDITCARDMSGSETV1>
 	//<LOANMSGSETV1>
 	//<INVSTMTMSGSETV1>
@@ -112,6 +112,9 @@ NEWFILEUID:NONE
 	if err := oq.marshalMessageSet(encoder, oq.Signup, "SIGNUPMSGSRQV1"); err != nil {
 		return nil, err
 	}
+	if err := oq.marshalMessageSet(encoder, oq.Banking, "BANKMSGSRQV1"); err != nil {
+		return nil, err
+	}
 	if err := oq.marshalMessageSet(encoder, oq.Profile, "PROFMSGSRQV1"); err != nil {
 		return nil, err
 	}
@@ -126,7 +129,7 @@ NEWFILEUID:NONE
 	return &b, nil
 }
 
-func (oq *Request) Request() (*Response, error) {
+func (oq *Request) Request() (*http.Response, error) {
 	oq.Signon.DtClient = Date(time.Now())
 
 	b, err := oq.Marshal()
@@ -137,11 +140,20 @@ func (oq *Request) Request() (*Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer response.Body.Close()
 
 	if response.StatusCode != 200 {
 		return nil, errors.New("OFXQuery request status: " + response.Status)
 	}
+
+	return response, nil
+}
+
+func (oq *Request) RequestAndParse() (*Response, error) {
+	response, err := oq.Request()
+	if err != nil {
+		return nil, err
+	}
+	defer response.Body.Close()
 
 	// Help the parser out by giving it a clue about what header format to
 	// expect
@@ -163,7 +175,7 @@ type Response struct {
 	Version string         // String for OFX header, defaults to 203
 	Signon  SignonResponse //<SIGNONMSGSETV1>
 	Signup  []Message      //<SIGNUPMSGSETV1>
-	//<BANKMSGSETV1>
+	Banking []Message      //<BANKMSGSETV1>
 	//<CREDITCARDMSGSETV1>
 	//<LOANMSGSETV1>
 	//<INVSTMTMSGSETV1>
@@ -394,7 +406,12 @@ func (or *Response) Unmarshal(reader io.Reader, xmlVersion bool) error {
 					return err
 				}
 				or.Signup = msgs
-			//case "BANKMSGSRSV1":
+			case "BANKMSGSRSV1":
+				msgs, err := DecodeBankingMessageSet(decoder, start)
+				if err != nil {
+					return err
+				}
+				or.Banking = msgs
 			//case "CREDITCARDMSGSRSV1":
 			//case "LOANMSGSRSV1":
 			//case "INVSTMTMSGSRSV1":
