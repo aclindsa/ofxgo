@@ -127,7 +127,7 @@ type Request struct {
 	indent bool // Whether to indent the marshaled XML
 }
 
-func (oq *Request) marshalMessageSet(e *xml.Encoder, requests []Message, setname string) error {
+func marshalMessageSet(e *xml.Encoder, requests []Message, setname string) error {
 	if len(requests) > 0 {
 		messageSetElement := xml.StartElement{Name: xml.Name{Local: setname}}
 		if err := e.EncodeToken(messageSetElement); err != nil {
@@ -199,13 +199,13 @@ NEWFILEUID:NONE
 		return nil, err
 	}
 
-	if err := oq.marshalMessageSet(encoder, oq.Signup, "SIGNUPMSGSRQV1"); err != nil {
+	if err := marshalMessageSet(encoder, oq.Signup, "SIGNUPMSGSRQV1"); err != nil {
 		return nil, err
 	}
-	if err := oq.marshalMessageSet(encoder, oq.Banking, "BANKMSGSRQV1"); err != nil {
+	if err := marshalMessageSet(encoder, oq.Banking, "BANKMSGSRQV1"); err != nil {
 		return nil, err
 	}
-	if err := oq.marshalMessageSet(encoder, oq.Profile, "PROFMSGSRQV1"); err != nil {
+	if err := marshalMessageSet(encoder, oq.Profile, "PROFMSGSRQV1"); err != nil {
 		return nil, err
 	}
 
