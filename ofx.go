@@ -66,7 +66,7 @@ func RawRequest(URL string, r io.Reader) (*http.Response, error) {
 }
 
 // Request marshals a Request object into XML, makes an HTTP request against
-// it's URL, and then unmarshals the response into a Reaponse object.
+// it's URL, and then unmarshals the response into a Response object.
 //
 // Before being marshaled, some of the the Request object's values are
 // overwritten, namely those dictated by the Client's configuration (Version,
@@ -107,7 +107,7 @@ type Message interface {
 
 type Request struct {
 	URL     string
-	Version string        // String for OFX header, defaults to 203
+	Version string        // OFX version string, overwritten in Client.Request()
 	Signon  SignonRequest //<SIGNONMSGSETV1>
 	Signup  []Message     //<SIGNUPMSGSETV1>
 	Banking []Message     //<BANKMSGSETV1>
@@ -384,10 +384,12 @@ func (or *Response) readXMLHeaders(decoder *xml.Decoder) error {
 	return nil
 }
 
+// Number of bytes of response to read when attempting to figure out whether
+// we're using OFX or SGML
 const guessVersionCheckBytes = 1024
 
-// Defaults to XML if it can't determine the version based on the first 1024
-// bytes, or if there is any ambiguity
+// Defaults to XML if it can't determine the version or if there is any
+// ambiguity
 func guessVersion(r *bufio.Reader) (bool, error) {
 	b, _ := r.Peek(guessVersionCheckBytes)
 	if b == nil {

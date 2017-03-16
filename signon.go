@@ -7,7 +7,7 @@ import (
 
 type SignonRequest struct {
 	XMLName   xml.Name `xml:"SONRQ"`
-	DtClient  Date     `xml:"DTCLIENT"` // Overwritten in Client.Request()
+	DtClient  Date     `xml:"DTCLIENT"` // Current time on client, overwritten in Client.Request()
 	UserId    String   `xml:"USERID"`
 	UserPass  String   `xml:"USERPASS,omitempty"`
 	UserKey   String   `xml:"USERKEY,omitempty"`
