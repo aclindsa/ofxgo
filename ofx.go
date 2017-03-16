@@ -11,6 +11,95 @@ import (
 	"time"
 )
 
+type Client struct {
+	// Request fields to overwrite with the client's values. If nonempty,
+	// defaults are used
+	SpecVersion string // VERSION in header
+	AppId       string // SONRQ>APPID
+	AppVer      string // SONRQ>APPVER
+
+	// Don't insert newlines or indentation when marshalling to SGML/XML
+	NoIndent bool
+}
+
+var defaultClient Client
+
+func (c *Client) OfxVersion() string {
+	if len(c.SpecVersion) > 0 {
+		return c.SpecVersion
+	} else {
+		return "203"
+	}
+}
+
+func (c *Client) Id() String {
+	if len(c.AppId) > 0 {
+		return String(c.AppId)
+	} else {
+		return String("OFXGO")
+	}
+}
+
+func (c *Client) Version() String {
+	if len(c.AppVer) > 0 {
+		return String(c.AppVer)
+	} else {
+		return String("0001")
+	}
+}
+
+func (c *Client) IndentRequests() bool {
+	return !c.NoIndent
+}
+
+func RawRequest(URL string, r io.Reader) (*http.Response, error) {
+	response, err := http.Post(URL, "application/x-ofx", r)
+	if err != nil {
+		return nil, err
+	}
+
+	if response.StatusCode != 200 {
+		return nil, errors.New("OFXQuery request status: " + response.Status)
+	}
+
+	return response, nil
+}
+
+// Request marshals a Request object into XML, makes an HTTP request against
+// it's URL, and then unmarshals the response into a Reaponse object.
+//
+// Before being marshaled, some of the the Request object's values are
+// overwritten, namely those dictated by the Client's configuration (Version,
+// AppId, AppVer fields), and the client's curren time (DtClient). These are
+// updated in place in the supplied Request object so they may later be
+// inspected by the caller.
+func (c *Client) Request(r *Request) (*Response, error) {
+	r.Signon.DtClient = Date(time.Now())
+
+	// Overwrite fields that the client controls
+	r.Version = c.OfxVersion()
+	r.Signon.AppId = c.Id()
+	r.Signon.AppVer = c.Version()
+	r.indent = c.IndentRequests()
+
+	b, err := r.Marshal()
+	if err != nil {
+		return nil, err
+	}
+
+	response, err := RawRequest(r.URL, b)
+	if err != nil {
+		return nil, err
+	}
+	defer response.Body.Close()
+
+	ofxresp, err := ParseResponse(response.Body)
+	if err != nil {
+		return nil, err
+	}
+	return ofxresp, nil
+}
+
 type Message interface {
 	Name() string
 	Valid() (bool, error)
@@ -34,6 +123,8 @@ type Request struct {
 	//<PRESDLVMSGSETV1>
 	Profile []Message //<PROFMSGSETV1>
 	//<IMAGEMSGSETV1>
+
+	indent bool // Whether to indent the marshaled XML
 }
 
 func (oq *Request) marshalMessageSet(e *xml.Encoder, requests []Message, setname string) error {
@@ -62,10 +153,7 @@ func (oq *Request) marshalMessageSet(e *xml.Encoder, requests []Message, setname
 func (oq *Request) Marshal() (*bytes.Buffer, error) {
 	var b bytes.Buffer
 
-	if len(oq.Version) == 0 {
-		oq.Version = "203"
-	}
-
+	// Write the header appropriate to our version
 	switch oq.Version {
 	case "102", "103", "151", "160":
 		b.WriteString(`OFXHEADER:100
@@ -87,7 +175,9 @@ NEWFILEUID:NONE
 	}
 
 	encoder := xml.NewEncoder(&b)
-	encoder.Indent("", "    ")
+	if oq.indent {
+		encoder.Indent("", "    ")
+	}
 
 	ofxElement := xml.StartElement{Name: xml.Name{Local: "OFX"}}
 
@@ -127,40 +217,6 @@ NEWFILEUID:NONE
 		return nil, err
 	}
 	return &b, nil
-}
-
-func (oq *Request) Request() (*http.Response, error) {
-	oq.Signon.DtClient = Date(time.Now())
-
-	b, err := oq.Marshal()
-	if err != nil {
-		return nil, err
-	}
-	response, err := http.Post(oq.URL, "application/x-ofx", b)
-	if err != nil {
-		return nil, err
-	}
-
-	if response.StatusCode != 200 {
-		return nil, errors.New("OFXQuery request status: " + response.Status)
-	}
-
-	return response, nil
-}
-
-func (oq *Request) RequestAndParse() (*Response, error) {
-	response, err := oq.Request()
-	if err != nil {
-		return nil, err
-	}
-	defer response.Body.Close()
-
-	var ofxresp Response
-	if err := ofxresp.Unmarshal(response.Body); err != nil {
-		return nil, err
-	}
-
-	return &ofxresp, nil
 }
 
 type Response struct {
@@ -348,17 +404,26 @@ func guessVersion(r *bufio.Reader) (bool, error) {
 	}
 }
 
-func (or *Response) Unmarshal(reader io.Reader) error {
+// ParseResponse parses an OFX response in SGML or XML into a Response object
+// from the given io.Reader
+//
+// It is commonly used as part of Client.Request(), but may be used on its own
+// to parse already-downloaded OFX files (such as those from 'Web Connect'). It
+// performs version autodetection if it can and attempts to be as forgiving as
+// possible about the input format.
+func ParseResponse(reader io.Reader) (*Response, error) {
+	var or Response
+
 	r := bufio.NewReaderSize(reader, guessVersionCheckBytes)
 	xmlVersion, err := guessVersion(r)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// parse SGML headers before creating XML decoder
 	if !xmlVersion {
 		if err := or.readSGMLHeaders(r); err != nil {
-			return err
+			return nil, err
 		}
 	}
 
@@ -374,58 +439,58 @@ func (or *Response) Unmarshal(reader io.Reader) error {
 	if xmlVersion {
 		// parse the xml header
 		if err := or.readXMLHeaders(decoder); err != nil {
-			return err
+			return nil, err
 		}
 	}
 
 	tok, err := nextNonWhitespaceToken(decoder)
 	if err != nil {
-		return err
+		return nil, err
 	} else if ofxStart, ok := tok.(xml.StartElement); !ok || ofxStart.Name.Local != "OFX" {
-		return errors.New("Missing opening OFX xml element")
+		return nil, errors.New("Missing opening OFX xml element")
 	}
 
 	// Unmarshal the signon message
 	tok, err = nextNonWhitespaceToken(decoder)
 	if err != nil {
-		return err
+		return nil, err
 	} else if signonStart, ok := tok.(xml.StartElement); ok && signonStart.Name.Local == "SIGNONMSGSRSV1" {
 		if err := decoder.Decode(&or.Signon); err != nil {
-			return err
+			return nil, err
 		}
 	} else {
-		return errors.New("Missing opening SIGNONMSGSRSV1 xml element")
+		return nil, errors.New("Missing opening SIGNONMSGSRSV1 xml element")
 	}
 
 	tok, err = nextNonWhitespaceToken(decoder)
 	if err != nil {
-		return err
+		return nil, err
 	} else if signonEnd, ok := tok.(xml.EndElement); !ok || signonEnd.Name.Local != "SIGNONMSGSRSV1" {
-		return errors.New("Missing closing SIGNONMSGSRSV1 xml element")
+		return nil, errors.New("Missing closing SIGNONMSGSRSV1 xml element")
 	}
 	if ok, err := or.Signon.Valid(); !ok {
-		return err
+		return nil, err
 	}
 
 	for {
 		tok, err = nextNonWhitespaceToken(decoder)
 		if err != nil {
-			return err
+			return nil, err
 		} else if ofxEnd, ok := tok.(xml.EndElement); ok && ofxEnd.Name.Local == "OFX" {
-			return nil // found closing XML element, so we're done
+			return &or, nil // found closing XML element, so we're done
 		} else if start, ok := tok.(xml.StartElement); ok {
 			// TODO decode other types
 			switch start.Name.Local {
 			case "SIGNUPMSGSRSV1":
 				msgs, err := DecodeSignupMessageSet(decoder, start)
 				if err != nil {
-					return err
+					return nil, err
 				}
 				or.Signup = msgs
 			case "BANKMSGSRSV1":
 				msgs, err := DecodeBankingMessageSet(decoder, start)
 				if err != nil {
-					return err
+					return nil, err
 				}
 				or.Banking = msgs
 			//case "CREDITCARDMSGSRSV1":
@@ -441,15 +506,15 @@ func (or *Response) Unmarshal(reader io.Reader) error {
 			case "PROFMSGSRSV1":
 				msgs, err := DecodeProfileMessageSet(decoder, start)
 				if err != nil {
-					return err
+					return nil, err
 				}
 				or.Profile = msgs
 			//case "IMAGEMSGSRSV1":
 			default:
-				return errors.New("Unsupported message set: " + start.Name.Local)
+				return nil, errors.New("Unsupported message set: " + start.Name.Local)
 			}
 		} else {
-			return errors.New("Found unexpected token")
+			return nil, errors.New("Found unexpected token")
 		}
 	}
 }

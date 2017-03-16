@@ -7,15 +7,15 @@ import (
 
 type SignonRequest struct {
 	XMLName   xml.Name `xml:"SONRQ"`
-	DtClient  Date     `xml:"DTCLIENT"` // Overridden in Request.Request()
+	DtClient  Date     `xml:"DTCLIENT"` // Overwritten in Client.Request()
 	UserId    String   `xml:"USERID"`
 	UserPass  String   `xml:"USERPASS,omitempty"`
 	UserKey   String   `xml:"USERKEY,omitempty"`
 	Language  String   `xml:"LANGUAGE"` // Defaults to ENG
 	Org       String   `xml:"FI>ORG"`
 	Fid       String   `xml:"FI>FID"`
-	AppId     String   `xml:"APPID"`  // Defaults to OFXGO
-	AppVer    String   `xml:"APPVER"` // Defaults to 0001
+	AppId     String   `xml:"APPID"`  // Overwritten in Client.Request()
+	AppVer    String   `xml:"APPVER"` // Overwritten in Client.Request()
 	ClientUID UID      `xml:"CLIENTUID,omitempty"`
 }
 
@@ -41,14 +41,10 @@ func (r *SignonRequest) Valid() (bool, error) {
 	} else if len(r.Language) != 3 {
 		return false, errors.New("SONRQ>LANGUAGE invalid length")
 	}
-	if len(r.AppId) == 0 {
-		r.AppId = "OFXGO"
-	} else if len(r.AppId) > 5 {
+	if len(r.AppId) < 1 || len(r.AppId) > 5 {
 		return false, errors.New("SONRQ>APPID invalid length")
 	}
-	if len(r.AppVer) == 0 {
-		r.AppVer = "0001"
-	} else if len(r.AppVer) > 4 {
+	if len(r.AppVer) < 1 || len(r.AppVer) > 4 {
 		return false, errors.New("SONRQ>APPVER invalid length")
 	}
 	if ok, err := r.ClientUID.Valid(); !ok {
