@@ -155,16 +155,8 @@ func (oq *Request) RequestAndParse() (*Response, error) {
 	}
 	defer response.Body.Close()
 
-	// Help the parser out by giving it a clue about what header format to
-	// expect
-	var xmlVersion bool = true
-	switch oq.Version {
-	case "102", "103", "151", "160":
-		xmlVersion = false
-	}
-
 	var ofxresp Response
-	if err := ofxresp.Unmarshal(response.Body, xmlVersion); err != nil {
+	if err := ofxresp.Unmarshal(response.Body); err != nil {
 		return nil, err
 	}
 
@@ -336,8 +328,32 @@ func (or *Response) readXMLHeaders(decoder *xml.Decoder) error {
 	return nil
 }
 
-func (or *Response) Unmarshal(reader io.Reader, xmlVersion bool) error {
-	r := bufio.NewReader(reader)
+const guessVersionCheckBytes = 1024
+
+// Defaults to XML if it can't determine the version based on the first 1024
+// bytes, or if there is any ambiguity
+func guessVersion(r *bufio.Reader) (bool, error) {
+	b, _ := r.Peek(guessVersionCheckBytes)
+	if b == nil {
+		return false, errors.New("Failed to read OFX header")
+	}
+	sgmlIndex := bytes.Index(b, []byte("OFXHEADER:"))
+	xmlIndex := bytes.Index(b, []byte("OFXHEADER="))
+	if sgmlIndex < 0 {
+		return true, nil
+	} else if xmlIndex < 0 {
+		return false, nil
+	} else {
+		return xmlIndex <= sgmlIndex, nil
+	}
+}
+
+func (or *Response) Unmarshal(reader io.Reader) error {
+	r := bufio.NewReaderSize(reader, guessVersionCheckBytes)
+	xmlVersion, err := guessVersion(r)
+	if err != nil {
+		return err
+	}
 
 	// parse SGML headers before creating XML decoder
 	if !xmlVersion {
