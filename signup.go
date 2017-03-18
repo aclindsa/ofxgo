@@ -61,12 +61,6 @@ func (bai *BankAcctInfo) String() string {
 	return fmt.Sprintf("%+v", *bai)
 }
 
-type CCAcct struct {
-	XMLName xml.Name // CCACCTTO or CCACCTFROM
-	AcctId  String   `xml:"ACCTID"`
-	AcctKey String   `xml:"ACCTKEY,omitempty"` // Unused in USA
-}
-
 type CCAcctInfo struct {
 	XMLName            xml.Name `xml:"CCACCTINFO"`
 	CCAcctFrom         CCAcct   `xml:"CCACCTFROM"`

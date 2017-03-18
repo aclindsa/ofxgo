@@ -5,15 +5,6 @@ import (
 	"github.com/golang/go/src/encoding/xml"
 )
 
-type BankAcct struct {
-	XMLName  xml.Name // BANKACCTTO or BANKACCTFROM
-	BankId   String   `xml:"BANKID"`
-	BranchId String   `xml:"BRANCHID,omitempty"` // Unused in USA
-	AcctId   String   `xml:"ACCTID"`
-	AcctType String   `xml:"ACCTTYPE"`          // One of CHECKING, SAVINGS, MONEYMRKT, CREDITLINE, CD
-	AcctKey  String   `xml:"ACCTKEY,omitempty"` // Unused in USA
-}
-
 type StatementRequest struct {
 	XMLName          xml.Name `xml:"STMTTRNRQ"`
 	TrnUID           UID      `xml:"TRNUID"`
