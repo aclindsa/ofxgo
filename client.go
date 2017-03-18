@@ -44,10 +44,24 @@ func (c *Client) Version() String {
 	}
 }
 
+// Returns true if the marshaled XML should be indented (and contain newlines,
+// since the two are linked in the current implementation)
 func (c *Client) IndentRequests() bool {
 	return !c.NoIndent
 }
 
+// RawRequest is little more than a thin wrapper around http.Post
+//
+// In most cases, you should probably be using Request() instead, but
+// RawRequest can be useful if you need to read the raw unparsed http response
+// yourself (perhaps for downloading an OFX file for use by an external
+// program, or debugging server behavior), or have a handcrafted request you'd
+// like to try.
+//
+// Caveats: RawRequest does *not* take client settings into account as
+// Request() does, so your particular server may or may not like whatever we
+// read from 'r'. The caller is responsible for closing the http Response.Body
+// (see the http module's documentation for more information)
 func RawRequest(URL string, r io.Reader) (*http.Response, error) {
 	response, err := http.Post(URL, "application/x-ofx", r)
 	if err != nil {
