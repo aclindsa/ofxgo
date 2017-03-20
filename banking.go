@@ -167,7 +167,7 @@ type StatementResponse struct {
 	CashAdvBalAmt Amount                 `xml:"STMTRS>CASHADVBALAMT,omitempty"` // Only for CREDITLINE accounts, available balance for cash advances
 	IntRate       Amount                 `xml:"STMTRS>INTRATE,omitempty"`       // Current interest rate
 	BalList       []Balance              `xml:"STMTRS>BALLIST>BAL,omitempty"`
-	MktgInfo      String                 `xml:"STMTRS>MKTGINFO"` // Marketing information
+	MktgInfo      String                 `xml:"STMTRS>MKTGINFO,omitempty"` // Marketing information
 }
 
 func (sr StatementResponse) Name() string {
@@ -198,7 +198,7 @@ type CCStatementResponse struct {
 	RewardBal     Amount    `xml:"CCSTMTRS>REWARDINFO>REWARDBAL,omitempty"`    // Current balance of the reward program
 	RewardEarned  Amount    `xml:"CCSTMTRS>REWARDINFO>REWARDEARNED,omitempty"` // Reward amount earned YTD
 	BalList       []Balance `xml:"CCSTMTRS>BALLIST>BAL,omitempty"`
-	MktgInfo      String    `xml:"CCSTMTRS>MKTGINFO"` // Marketing information
+	MktgInfo      String    `xml:"CCSTMTRS>MKTGINFO,omitempty"` // Marketing information
 }
 
 func (sr CCStatementResponse) Name() string {

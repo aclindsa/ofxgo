@@ -14,7 +14,7 @@ type Request struct {
 	Banking []Message     //<BANKMSGSETV1>
 	//<CREDITCARDMSGSETV1>
 	//<LOANMSGSETV1>
-	//<INVSTMTMSGSETV1>
+	Investments []Message //<INVSTMTMSGSETV1>
 	//<INTERXFERMSGSETV1>
 	//<WIREXFERMSGSETV1>
 	//<BILLPAYMSGSETV1>
@@ -104,6 +104,9 @@ NEWFILEUID:NONE
 		return nil, err
 	}
 	if err := marshalMessageSet(encoder, oq.Banking, "BANKMSGSRQV1"); err != nil {
+		return nil, err
+	}
+	if err := marshalMessageSet(encoder, oq.Investments, "INVSTMTMSGSRQV1"); err != nil {
 		return nil, err
 	}
 	if err := marshalMessageSet(encoder, oq.Profile, "PROFMSGSRQV1"); err != nil {

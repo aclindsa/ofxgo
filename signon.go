@@ -55,22 +55,6 @@ func (r *SignonRequest) Valid() (bool, error) {
 	return true, nil
 }
 
-type Status struct {
-	XMLName  xml.Name `xml:"STATUS"`
-	Code     Int      `xml:"CODE"`
-	Severity String   `xml:"SEVERITY"`
-	Message  String   `xml:"MESSAGE,omitempty"`
-}
-
-func (s *Status) Valid() (bool, error) {
-	switch s.Severity {
-	case "INFO", "WARN", "ERROR":
-		return true, nil
-	default:
-		return false, errors.New("Invalid STATUS>SEVERITY")
-	}
-}
-
 type SignonResponse struct {
 	XMLName     xml.Name `xml:"SONRS"`
 	Status      Status   `xml:"STATUS"`

@@ -16,7 +16,7 @@ type Response struct {
 	Banking []Message      //<BANKMSGSETV1>
 	//<CREDITCARDMSGSETV1>
 	//<LOANMSGSETV1>
-	//<INVSTMTMSGSETV1>
+	Investments []Message //<INVSTMTMSGSETV1>
 	//<INTERXFERMSGSETV1>
 	//<WIREXFERMSGSETV1>
 	//<BILLPAYMSGSETV1>
@@ -271,7 +271,12 @@ func ParseResponse(reader io.Reader) (*Response, error) {
 				or.Banking = msgs
 			//case "CREDITCARDMSGSRSV1":
 			//case "LOANMSGSRSV1":
-			//case "INVSTMTMSGSRSV1":
+			case "INVSTMTMSGSRSV1":
+				msgs, err := DecodeInvestmentsMessageSet(decoder, start)
+				if err != nil {
+					return nil, err
+				}
+				or.Investments = msgs
 			//case "INTERXFERMSGSRSV1":
 			//case "WIREXFERMSGSRSV1":
 			//case "BILLPAYMSGSRSV1":

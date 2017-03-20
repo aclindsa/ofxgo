@@ -76,15 +76,9 @@ func (ci *CCAcctInfo) String() string {
 	return fmt.Sprintf("%+v", *ci)
 }
 
-type InvAcct struct {
-	XMLName  xml.Name // INVACCTTO or INVACCTFROM
-	BrokerId String   `xml:"BROKERID"`
-	AcctId   String   `xml:"ACCTID"`
-}
-
 type InvAcctInfo struct {
 	XMLName       xml.Name `xml:"INVACCTINFO"`
-	INVAcctFrom   InvAcct  `xml:"INVACCTFROM"`
+	InvAcctFrom   InvAcct  `xml:"INVACCTFROM"`
 	UsProductType String   `xml:"USPRODUCTTYPE"`         // One of 401K, 403B, IRA, KEOGH, OTHER, SARSEP, SIMPLE, NORMAL, TDA, TRUST, UGMA
 	Checking      Boolean  `xml:"CHECKING"`              // Has check-writing privileges
 	SvcStatus     String   `xml:"SVCSTATUS"`             // One of AVAIL (available, but not yet requested), PEND (requested, but not yet available), ACTIVE
