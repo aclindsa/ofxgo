@@ -14,6 +14,25 @@ import (
 
 type Int int64
 
+func (i *Int) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	var value string
+
+	err := d.DecodeElement(&value, &start)
+	if err != nil {
+		return err
+	}
+
+	value = strings.TrimSpace(value)
+
+	i2, err := strconv.ParseInt(value, 10, 64)
+	if err != nil {
+		return err
+	}
+
+	*i = Int(i2)
+	return nil
+}
+
 type Amount big.Rat
 
 func (a *Amount) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
@@ -24,6 +43,8 @@ func (a *Amount) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	if err != nil {
 		return err
 	}
+
+	value = strings.TrimSpace(value)
 
 	// The OFX spec allows the start of the fractional amount to be delineated
 	// by a comma, so fix that up before attempting to parse it into big.Rat
@@ -62,6 +83,9 @@ func (od *Date) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	if err != nil {
 		return err
 	}
+
+	value = strings.SplitN(value, "]", 2)[0]
+	value = strings.TrimSpace(value)
 
 	// Split the time zone off, if any
 	split := strings.SplitN(value, "[", 2)

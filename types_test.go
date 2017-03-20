@@ -70,6 +70,8 @@ func TestUnmarshalInt(t *testing.T) {
 	unmarshalHelper(t, "0", &i, &overwritten)
 	i = 198237198
 	unmarshalHelper(t, "198237198", &i, &overwritten)
+	// Make sure stray newlines are handled properly
+	unmarshalHelper(t, "198237198\n", &i, &overwritten)
 }
 
 func TestMarshalAmount(t *testing.T) {
@@ -119,6 +121,8 @@ func TestUnmarshalAmount(t *testing.T) {
 	unmarshalHelper2(t, "-0", &a, &overwritten, eq)
 	b.SetInt64(-19487135)
 	unmarshalHelper2(t, "-19487135", &a, &overwritten, eq)
+	// Make sure stray newlines are handled properly
+	unmarshalHelper2(t, "-19487135\n", &a, &overwritten, eq)
 }
 
 func TestMarshalDate(t *testing.T) {
@@ -163,47 +167,65 @@ func TestUnmarshalDate(t *testing.T) {
 	NST := time.FixedZone("NST", -(3*60+30)*60)
 	NST_nodesc := time.FixedZone("", -(3*60+30)*60)
 
+	eq := func(a, b interface{}) bool {
+		if dateA, ok := a.(*ofxgo.Date); ok {
+			if dateB, ok2 := b.(*ofxgo.Date); ok2 {
+				timeA := (*time.Time)(dateA)
+				return timeA.Equal((time.Time)(*dateB))
+			}
+		}
+		return false
+	}
+
 	// Ensure omitted fields default to the correct values
 	d = ofxgo.Date(time.Date(2017, 3, 14, 15, 9, 26, 53*1000*1000, GMT))
-	unmarshalHelper(t, "20170314150926.053[0]", &d, &overwritten)
-	unmarshalHelper(t, "20170314150926.053", &d, &overwritten)
+	unmarshalHelper2(t, "20170314150926.053[0]", &d, &overwritten, eq)
+	unmarshalHelper2(t, "20170314150926.053", &d, &overwritten, eq)
 	d = ofxgo.Date(time.Date(2017, 3, 14, 0, 0, 0, 0, GMT))
-	unmarshalHelper(t, "20170314", &d, &overwritten)
+	unmarshalHelper2(t, "20170314", &d, &overwritten, eq)
 
 	// Ensure all signs on time zone offsets are properly handled
 	d = ofxgo.Date(time.Date(2017, 3, 14, 15, 9, 26, 53*1000*1000, GMT))
-	unmarshalHelper(t, "20170314150926.053[0:GMT]", &d, &overwritten)
-	unmarshalHelper(t, "20170314150926.053[+0:GMT]", &d, &overwritten)
-	unmarshalHelper(t, "20170314150926.053[-0:GMT]", &d, &overwritten)
-	unmarshalHelper(t, "20170314150926.053[0]", &d, &overwritten)
-	unmarshalHelper(t, "20170314150926.053[+0]", &d, &overwritten)
-	unmarshalHelper(t, "20170314150926.053[-0]", &d, &overwritten)
+	unmarshalHelper2(t, "20170314150926.053[0:GMT]", &d, &overwritten, eq)
+	unmarshalHelper2(t, "20170314150926.053[+0:GMT]", &d, &overwritten, eq)
+	unmarshalHelper2(t, "20170314150926.053[-0:GMT]", &d, &overwritten, eq)
+	unmarshalHelper2(t, "20170314150926.053[0]", &d, &overwritten, eq)
+	unmarshalHelper2(t, "20170314150926.053[+0]", &d, &overwritten, eq)
+	unmarshalHelper2(t, "20170314150926.053[-0]", &d, &overwritten, eq)
 
 	d = ofxgo.Date(time.Date(2017, 3, 14, 15, 9, 26, 53*1000*1000, NPT))
-	unmarshalHelper(t, "20170314150926.053[5.75:NPT]", &d, &overwritten)
+	unmarshalHelper2(t, "20170314150926.053[5.75:NPT]", &d, &overwritten, eq)
 	d = ofxgo.Date(time.Date(2017, 3, 14, 15, 9, 26, 53*1000*1000, EST))
-	unmarshalHelper(t, "20170314150926.053[-5:EST]", &d, &overwritten)
+	unmarshalHelper2(t, "20170314150926.053[-5:EST]", &d, &overwritten, eq)
 	d = ofxgo.Date(time.Date(2017, 3, 14, 15, 9, 26, 53*1000*1000, GMT))
-	unmarshalHelper(t, "20170314150926.053[0:GMT]", &d, &overwritten)
+	unmarshalHelper2(t, "20170314150926.053[0:GMT]", &d, &overwritten, eq)
 	d = ofxgo.Date(time.Date(2017, 3, 14, 15, 9, 26, 53*1000*1000, IST))
-	unmarshalHelper(t, "20170314150926.053[5.50:IST]", &d, &overwritten)
+	unmarshalHelper2(t, "20170314150926.053[5.50:IST]", &d, &overwritten, eq)
 	d = ofxgo.Date(time.Date(2018, 11, 1, 23, 59, 58, 0, EST))
-	unmarshalHelper(t, "20181101235958.000[-5:EST]", &d, &overwritten)
+	unmarshalHelper2(t, "20181101235958.000[-5:EST]", &d, &overwritten, eq)
 	d = ofxgo.Date(time.Date(0, 1, 1, 0, 0, 0, 0, IST))
-	unmarshalHelper(t, "00000101000000.000[5.50:IST]", &d, &overwritten)
+	unmarshalHelper2(t, "00000101000000.000[5.50:IST]", &d, &overwritten, eq)
 	d = ofxgo.Date(time.Unix(0, 0).In(GMT))
-	unmarshalHelper(t, "19700101000000.000[0:GMT]", &d, &overwritten)
+	unmarshalHelper2(t, "19700101000000.000[0:GMT]", &d, &overwritten, eq)
 	d = ofxgo.Date(time.Date(2017, 3, 14, 0, 0, 26, 53*1000*1000, EST))
-	unmarshalHelper(t, "20170314000026.053[-5:EST]", &d, &overwritten)
+	unmarshalHelper2(t, "20170314000026.053[-5:EST]", &d, &overwritten, eq)
 	d = ofxgo.Date(time.Date(2017, 3, 14, 0, 0, 26, 53*1000*1000, NST))
-	unmarshalHelper(t, "20170314000026.053[-3.50:NST]", &d, &overwritten)
+	unmarshalHelper2(t, "20170314000026.053[-3.50:NST]", &d, &overwritten, eq)
 
 	// Autopopulate zone without textual description for GMT
 	d = ofxgo.Date(time.Date(2017, 3, 14, 15, 9, 26, 53*1000*1000, GMT))
-	unmarshalHelper(t, "20170314150926.053[0]", &d, &overwritten)
+	unmarshalHelper2(t, "20170314150926.053[0]", &d, &overwritten, eq)
 	// but not for others:
 	d = ofxgo.Date(time.Date(2017, 3, 14, 0, 0, 26, 53*1000*1000, NST_nodesc))
-	unmarshalHelper(t, "20170314000026.053[-3.50]", &d, &overwritten)
+	unmarshalHelper2(t, "20170314000026.053[-3.50]", &d, &overwritten, eq)
+
+	// Make sure we handle poorly-formatted dates (from Vanguard)
+	d = ofxgo.Date(time.Date(2016, 12, 7, 16, 0, 0, 0, EST))
+	unmarshalHelper2(t, "20161207160000.000[-5:EST]610900.500[-9:BST]", &d, &overwritten, eq) // extra part intentionally different to ensure the first timezone is parsed
+
+	// Make sure we properly handle ending newlines
+	d = ofxgo.Date(time.Date(2018, 11, 1, 23, 59, 58, 0, EST))
+	unmarshalHelper2(t, "20181101235958.000[-5:EST]\n", &d, &overwritten, eq)
 }
 
 func TestMarshalString(t *testing.T) {
