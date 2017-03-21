@@ -131,12 +131,6 @@ type PendingTransactionList struct {
 	Transactions []PendingTransaction `xml:"STMTTRNP,omitempty"`
 }
 
-type Currency struct {
-	XMLName xml.Name // CURRENCY or ORIGCURRENCY
-	CurRate Amount   `xml:"CURRATE"` // Ratio of <CURDEF> currency to <CURSYM> currency
-	CurSym  String   `xml:"CURSYM"`  // ISO-4217 3-character currency identifier
-}
-
 type Balance struct {
 	XMLName xml.Name `xml:"BAL"`
 	Name    String   `xml:"NAME"`

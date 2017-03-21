@@ -21,7 +21,7 @@ type Response struct {
 	//<WIREXFERMSGSETV1>
 	//<BILLPAYMSGSETV1>
 	//<EMAILMSGSETV1>
-	//<SECLISTMSGSETV1>
+	Securities []Message //<SECLISTMSGSETV1>
 	//<PRESDIRMSGSETV1>
 	//<PRESDLVMSGSETV1>
 	Profile []Message //<PROFMSGSETV1>
@@ -281,7 +281,12 @@ func ParseResponse(reader io.Reader) (*Response, error) {
 			//case "WIREXFERMSGSRSV1":
 			//case "BILLPAYMSGSRSV1":
 			//case "EMAILMSGSRSV1":
-			//case "SECLISTMSGSRSV1":
+			case "SECLISTMSGSRSV1":
+				msgs, err := DecodeSecuritiesMessageSet(decoder, start)
+				if err != nil {
+					return nil, err
+				}
+				or.Securities = msgs
 			//case "PRESDIRMSGSRSV1":
 			//case "PRESDLVMSGSRSV1":
 			case "PROFMSGSRSV1":

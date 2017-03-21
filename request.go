@@ -19,7 +19,7 @@ type Request struct {
 	//<WIREXFERMSGSETV1>
 	//<BILLPAYMSGSETV1>
 	//<EMAILMSGSETV1>
-	//<SECLISTMSGSETV1>
+	Securities []Message //<SECLISTMSGSETV1>
 	//<PRESDIRMSGSETV1>
 	//<PRESDLVMSGSETV1>
 	Profile []Message //<PROFMSGSETV1>
@@ -107,6 +107,9 @@ NEWFILEUID:NONE
 		return nil, err
 	}
 	if err := marshalMessageSet(encoder, oq.Investments, "INVSTMTMSGSRQV1"); err != nil {
+		return nil, err
+	}
+	if err := marshalMessageSet(encoder, oq.Securities, "SECLISTMSGSRQV1"); err != nil {
 		return nil, err
 	}
 	if err := marshalMessageSet(encoder, oq.Profile, "PROFMSGSRQV1"); err != nil {

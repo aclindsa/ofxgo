@@ -48,3 +48,9 @@ type InvAcct struct {
 	BrokerId String   `xml:"BROKERID"`
 	AcctId   String   `xml:"ACCTID"`
 }
+
+type Currency struct {
+	XMLName xml.Name // CURRENCY or ORIGCURRENCY
+	CurRate Amount   `xml:"CURRATE"` // Ratio of <CURDEF> currency to <CURSYM> currency
+	CurSym  String   `xml:"CURSYM"`  // ISO-4217 3-character currency identifier
+}
