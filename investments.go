@@ -35,17 +35,523 @@ func (r *InvStatementRequest) Valid() (bool, error) {
 	return true, nil
 }
 
+type InvTran struct {
+	XMLName       xml.Name `xml:"INVTRAN"`
+	FiTId         String   `xml:"FITID"`
+	SrvrTId       String   `xml:"SRVRTID,omitempty"`
+	DtTrade       Date     `xml:"DTTRADE"`                 // trade date; for stock splits, day of record
+	DtSettle      Date     `xml:"DTSETTLE,omitempty"`      // settlement date; for stock splits, execution date
+	ReversalFiTId String   `xml:"REVERSALFITID,omitempty"` // For a reversal transaction, the FITID of the transaction that is being reversed.
+	Memo          String   `xml:"MEMO,omitempty"`
+}
+
+type InvBuy struct {
+	XMLName      xml.Name   `xml:"INVBUY"`
+	InvTran      InvTran    `xml:"INVTRAN"`
+	SecId        SecurityId `xml:"SECID"`
+	Units        Amount     `xml:"UNITS"`            // For stocks, MFs, other, number of shares held. Bonds = face value. Options = number of contracts
+	UnitPrice    Amount     `xml:"UNITPRICE"`        // For stocks, MFs, other, price per share. Bonds = percentage of par. Option = premium per share of underlying security
+	Markup       Amount     `xml:"MARKUP,omitempty"` // Portion of UNITPRICE that is attributed to the dealer markup
+	Commission   Amount     `xml:"COMMISSION,omitempty"`
+	Taxes        Amount     `xml:"TAXES,omitempty"`
+	Fees         Amount     `xml:"FEES,omitempty"`
+	Load         Amount     `xml:"LOAD,omitempty"`
+	Total        Amount     `xml:"TOTAL"`                  // Transaction total. Buys, sells, etc.:((quan. * (price +/- markup/markdown)) +/-(commission + fees + load + taxes + penalty + withholding + statewithholding)). Distributions, interest, margin interest, misc. expense, etc.: amount. Return of cap: cost basis
+	Currency     Currency   `xml:"CURRENCY,omitempty"`     // Overriding currency for UNITPRICE
+	OrigCurrency Currency   `xml:"ORIGCURRENCY,omitempty"` // Overriding currency for UNITPRICE
+	SubAcctSec   String     `xml:"SUBACCTSEC"`             // Sub-account type for this security. One of CASH, MARGIN, SHORT, OTHER
+	SubAcctFund  String     `xml:"SUBACCTFUND"`            // Where did the money for the transaction come from or go to? CASH, MARGIN, SHORT, OTHER
+
+	// The next three elements must either all be provided, or none of  htem
+	LoanId        String `xml:"LOANID,omitempty"`        // For 401(k) accounts only. Indicates that the transaction was due to a loan or a loan repayment, and which loan it was
+	LoanPrincipal Amount `xml:"LOANPRINCIPAL,omitempty"` // For 401(k) accounts only. Indicates how much of the loan repayment was principal
+	LoanInterest  Amount `xml:"LOANINTEREST,omitempty"`  // For 401(k) accounts only. Indicates how much of the loan repayment was interest
+
+	Inv401kSource    String  `xml:"INV401KSOURCE,omitempty"`    // Source of money for this transaction. One of PRETAX, AFTERTAX, MATCH, PROFITSHARING, ROLLOVER, OTHERVEST, OTHERNONVEST for 401(k) accounts. Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST
+	DtPayroll        Date    `xml:"DTPAYROLL,omitempty"`        // For 401(k)accounts, date the funds for this transaction was obtained via payroll deduction
+	PriorYearContrib Boolean `xml:"PRIORYEARCONTRIB,omitempty"` // For 401(k) accounts, indicates that this Buy was made with a prior year contribution
+}
+
+type InvSell struct {
+	XMLName      xml.Name   `xml:"INVSELL"`
+	InvTran      InvTran    `xml:"INVTRAN"`
+	SecId        SecurityId `xml:"SECID"`
+	Units        Amount     `xml:"UNITS"`              // For stocks, MFs, other, number of shares held. Bonds = face value. Options = number of contracts
+	UnitPrice    Amount     `xml:"UNITPRICE"`          // For stocks, MFs, other, price per share. Bonds = percentage of par. Option = premium per share of underlying security
+	Markdown     Amount     `xml:"MARKDOWN,omitempty"` // Portion of UNITPRICE that is attributed to the dealer markdown
+	Commission   Amount     `xml:"COMMISSION,omitempty"`
+	Taxes        Amount     `xml:"TAXES,omitempty"`
+	Fees         Amount     `xml:"FEES,omitempty"`
+	Load         Amount     `xml:"LOAD,omitempty"`
+	Witholding   Amount     `xml:"WITHHOLDING,omitempty"`  // Federal tax witholdings
+	TaxExempt    Boolean    `xml:"TAXEXEMPT,omitempty"`    // Tax-exempt transaction
+	Total        Amount     `xml:"TOTAL"`                  // Transaction total. Buys, sells, etc.:((quan. * (price +/- markup/markdown)) +/-(commission + fees + load + taxes + penalty + withholding + statewithholding)). Distributions, interest, margin interest, misc. expense, etc.: amount. Return of cap: cost basis
+	Gain         Amount     `xml:"GAIN,omitempty"`         // Total gain
+	Currency     Currency   `xml:"CURRENCY,omitempty"`     // Overriding currency for UNITPRICE
+	OrigCurrency Currency   `xml:"ORIGCURRENCY,omitempty"` // Overriding currency for UNITPRICE
+	SubAcctSec   String     `xml:"SUBACCTSEC"`             // Sub-account type for this security. One of CASH, MARGIN, SHORT, OTHER
+	SubAcctFund  String     `xml:"SUBACCTFUND"`            // Where did the money for the transaction come from or go to? CASH, MARGIN, SHORT, OTHER
+
+	LoanId          String `xml:"LOANID,omitempty"`           // For 401(k) accounts only. Indicates that the transaction was due to a loan or a loan repayment, and which loan it was
+	StateWitholding Amount `xml:"STATEWITHHOLDING,omitempty"` // State tax witholdings
+	Penalty         Amount `xml:"PENALTY,omitempty"`          // Amount witheld due to penalty
+
+	Inv401kSource String `xml:"INV401KSOURCE,omitempty"` // Source of money for this transaction. One of PRETAX, AFTERTAX, MATCH, PROFITSHARING, ROLLOVER, OTHERVEST, OTHERNONVEST for 401(k) accounts. Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST
+}
+
+type BuyDebt struct {
+	XMLName  xml.Name `xml:"BUYDEBT"`
+	InvBuy   InvBuy   `xml:"INVBUY"`
+	AccrdInt Amount   `xml:"ACCRDINT,omitempty"` // Accrued interest. This amount is not reflected in the <TOTAL> field of a containing aggregate.
+}
+
+func (t BuyDebt) TransactionType() string {
+	return "BUYDEBT"
+}
+
+type BuyMF struct {
+	XMLName  xml.Name `xml:"BUYMF"`
+	InvBuy   InvBuy   `xml:"INVBUY"`
+	BuyType  String   `xml:"BUYTYPE"`            // One of BUY, BUYTOCOVER (BUYTOCOVER used to close short sales.)
+	RelFiTId String   `xml:"RELFITID,omitempty"` // used to relate transactions associated with mutual fund exchanges
+}
+
+func (t BuyMF) TransactionType() string {
+	return "BUYMF"
+}
+
+type BuyOpt struct {
+	XMLName    xml.Name `xml:"BUYOPT"`
+	InvBuy     InvBuy   `xml:"INVBUY"`
+	OptBuyType String   `xml:"OPTBUYTYPE"` // type of purchase: BUYTOOPEN, BUYTOCLOSE (The BUYTOOPEN buy type is like “ordinary” buying of option and works like stocks.)
+	ShPerCtrct Int      `xml:"SHPERCTRCT"` // Shares per contract
+}
+
+func (t BuyOpt) TransactionType() string {
+	return "BUYOPT"
+}
+
+type BuyOther struct {
+	XMLName xml.Name `xml:"BUYOTHER"`
+	InvBuy  InvBuy   `xml:"INVBUY"`
+}
+
+func (t BuyOther) TransactionType() string {
+	return "BUYOTHER"
+}
+
+type BuyStock struct {
+	XMLName xml.Name `xml:"BUYSTOCK"`
+	InvBuy  InvBuy   `xml:"INVBUY"`
+	BuyType String   `xml:"BUYTYPE"` // One of BUY, BUYTOCOVER (BUYTOCOVER used to close short sales.)
+}
+
+func (t BuyStock) TransactionType() string {
+	return "BUYSTOCK"
+}
+
+type ClosureOpt struct {
+	XMLName    xml.Name   `xml:"CLOSUREOPT"`
+	InvTran    InvTran    `xml:"INVTRAN"`
+	SecId      SecurityId `xml:"SECID"`
+	OptAction  String     `xml:"OPTACTION"`          // One of EXERCISE, ASSIGN, EXPIRE. The EXERCISE action is used to close out an option that is exercised. The ASSIGN action is used when an option writer is assigned. The EXPIRE action is used when the option’s expired date is reached
+	Units      Amount     `xml:"UNITS"`              // For stocks, MFs, other, number of shares held. Bonds = face value. Options = number of contracts
+	ShPerCtrct Int        `xml:"SHPERCTRCT"`         // Shares per contract
+	SubAcctSec String     `xml:"SUBACCTSEC"`         // Sub-account type for this security. One of CASH, MARGIN, SHORT, OTHER
+	RelFiTId   String     `xml:"RELFITID,omitempty"` // used to relate transactions associated with mutual fund exchanges
+	Gain       Amount     `xml:"GAIN,omitempty"`     // Total gain
+}
+
+func (t ClosureOpt) TransactionType() string {
+	return "CLOSUREOPT"
+}
+
+// Investment income is realized as cash into the investment account
+type Income struct {
+	XMLName       xml.Name   `xml:"INCOME"`
+	InvTran       InvTran    `xml:"INVTRAN"`
+	SecId         SecurityId `xml:"SECID"`
+	IncomeType    String     `xml:"INCOMETYPE"` // Type of investment income: CGLONG (capital gains-long term), CGSHORT (capital gains-short term), DIV (dividend), INTEREST, MISC
+	Total         Amount     `xml:"TOTAL"`
+	SubAcctSec    String     `xml:"SUBACCTSEC"`              // Sub-account type for this security. One of CASH, MARGIN, SHORT, OTHER
+	SubAcctFund   String     `xml:"SUBACCTFUND"`             // Where did the money for the transaction come from or go to? CASH, MARGIN, SHORT, OTHER
+	TaxExempt     Boolean    `xml:"TAXEXEMPT,omitempty"`     // Tax-exempt transaction
+	Witholding    Amount     `xml:"WITHHOLDING,omitempty"`   // Federal tax witholdings
+	Currency      Currency   `xml:"CURRENCY,omitempty"`      // Overriding currency for UNITPRICE
+	OrigCurrency  Currency   `xml:"ORIGCURRENCY,omitempty"`  // Overriding currency for UNITPRICE
+	Inv401kSource String     `xml:"INV401KSOURCE,omitempty"` // Source of money for this transaction. One of PRETAX, AFTERTAX, MATCH, PROFITSHARING, ROLLOVER, OTHERVEST, OTHERNONVEST for 401(k) accounts. Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST
+}
+
+func (t Income) TransactionType() string {
+	return "INCOME"
+}
+
+// Expense associated with an investment
+type InvExpense struct {
+	XMLName       xml.Name   `xml:"INVEXPENSE"`
+	InvTran       InvTran    `xml:"INVTRAN"`
+	SecId         SecurityId `xml:"SECID"`
+	Total         Amount     `xml:"TOTAL"`
+	SubAcctSec    String     `xml:"SUBACCTSEC"`              // Sub-account type for this security. One of CASH, MARGIN, SHORT, OTHER
+	SubAcctFund   String     `xml:"SUBACCTFUND"`             // Where did the money for the transaction come from or go to? CASH, MARGIN, SHORT, OTHER
+	Currency      Currency   `xml:"CURRENCY,omitempty"`      // Overriding currency for UNITPRICE
+	OrigCurrency  Currency   `xml:"ORIGCURRENCY,omitempty"`  // Overriding currency for UNITPRICE
+	Inv401kSource String     `xml:"INV401KSOURCE,omitempty"` // Source of money for this transaction. One of PRETAX, AFTERTAX, MATCH, PROFITSHARING, ROLLOVER, OTHERVEST, OTHERNONVEST for 401(k) accounts. Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST
+}
+
+func (t InvExpense) TransactionType() string {
+	return "INVEXPENSE"
+}
+
+// Journaling cash holdings between sub-accounts within the same investment account.
+type JrnlFund struct {
+	XMLName     xml.Name `xml:"JRNLFUND"`
+	InvTran     InvTran  `xml:"INVTRAN"`
+	Total       Amount   `xml:"TOTAL"`
+	SubAcctFrom String   `xml:"SUBACCTFROM"` // Sub-account cash is being transferred from: CASH, MARGIN, SHORT, OTHER
+	SubAcctTo   String   `xml:"SUBACCTTO"`   // Sub-account cash is being transferred to: CASH, MARGIN, SHORT, OTHER
+}
+
+func (t JrnlFund) TransactionType() string {
+	return "JRNLFUND"
+}
+
+// Journaling security holdings between sub-accounts within the same investment account.
+type JrnlSec struct {
+	XMLName     xml.Name   `xml:"JRNLSEC"`
+	InvTran     InvTran    `xml:"INVTRAN"`
+	SecId       SecurityId `xml:"SECID"`
+	SubAcctFrom String     `xml:"SUBACCTFROM"` // Sub-account cash is being transferred from: CASH, MARGIN, SHORT, OTHER
+	SubAcctTo   String     `xml:"SUBACCTTO"`   // Sub-account cash is being transferred to: CASH, MARGIN, SHORT, OTHER
+	Units       Amount     `xml:"UNITS"`       // For stocks, MFs, other, number of shares held. Bonds = face value. Options = number of contracts
+}
+
+func (t JrnlSec) TransactionType() string {
+	return "JRNLSEC"
+}
+
+type MarginInterest struct {
+	XMLName      xml.Name `xml:"MARGININTEREST"`
+	InvTran      InvTran  `xml:"INVTRAN"`
+	Total        Amount   `xml:"TOTAL"`
+	SubAcctFund  String   `xml:"SUBACCTFUND"`            // Where did the money for the transaction come from or go to? CASH, MARGIN, SHORT, OTHER
+	Currency     Currency `xml:"CURRENCY,omitempty"`     // Overriding currency for UNITPRICE
+	OrigCurrency Currency `xml:"ORIGCURRENCY,omitempty"` // Overriding currency for UNITPRICE
+}
+
+func (t MarginInterest) TransactionType() string {
+	return "MARGININTEREST"
+}
+
+// REINVEST is a single transaction that contains both income and an investment transaction. If servers can’t track this as a single transaction they should return an INCOME transaction and an INVTRAN.
+type Reinvest struct {
+	XMLName       xml.Name   `xml:"REINVEST"`
+	InvTran       InvTran    `xml:"INVTRAN"`
+	SecId         SecurityId `xml:"SECID"`
+	IncomeType    String     `xml:"INCOMETYPE"` // Type of investment income: CGLONG (capital gains-long term), CGSHORT (capital gains-short term), DIV (dividend), INTEREST, MISC
+	Total         Amount     `xml:"TOTAL"`      // Transaction total. Buys, sells, etc.:((quan. * (price +/- markup/markdown)) +/-(commission + fees + load + taxes + penalty + withholding + statewithholding)). Distributions, interest, margin interest, misc. expense, etc.: amount. Return of cap: cost basis
+	SubAcctSec    String     `xml:"SUBACCTSEC"` // Sub-account type for this security. One of CASH, MARGIN, SHORT, OTHER
+	Units         Amount     `xml:"UNITS"`      // For stocks, MFs, other, number of shares held. Bonds = face value. Options = number of contracts
+	UnitPrice     Amount     `xml:"UNITPRICE"`  // For stocks, MFs, other, price per share. Bonds = percentage of par. Option = premium per share of underlying security
+	Commission    Amount     `xml:"COMMISSION,omitempty"`
+	Taxes         Amount     `xml:"TAXES,omitempty"`
+	Fees          Amount     `xml:"FEES,omitempty"`
+	Load          Amount     `xml:"LOAD,omitempty"`
+	TaxExempt     Boolean    `xml:"TAXEXEMPT,omitempty"`     // Tax-exempt transaction
+	Currency      Currency   `xml:"CURRENCY,omitempty"`      // Overriding currency for UNITPRICE
+	OrigCurrency  Currency   `xml:"ORIGCURRENCY,omitempty"`  // Overriding currency for UNITPRICE
+	Inv401kSource String     `xml:"INV401KSOURCE,omitempty"` // Source of money for this transaction. One of PRETAX, AFTERTAX, MATCH, PROFITSHARING, ROLLOVER, OTHERVEST, OTHERNONVEST for 401(k) accounts. Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST
+}
+
+func (t Reinvest) TransactionType() string {
+	return "REINVEST"
+}
+
+type RetOfCap struct {
+	XMLName       xml.Name   `xml:"RETOFCAP"`
+	InvTran       InvTran    `xml:"INVTRAN"`
+	SecId         SecurityId `xml:"SECID"`
+	Total         Amount     `xml:"TOTAL"`
+	SubAcctSec    String     `xml:"SUBACCTSEC"`              // Sub-account type for this security. One of CASH, MARGIN, SHORT, OTHER
+	SubAcctFund   String     `xml:"SUBACCTFUND"`             // Where did the money for the transaction come from or go to? CASH, MARGIN, SHORT, OTHER
+	Currency      Currency   `xml:"CURRENCY,omitempty"`      // Overriding currency for UNITPRICE
+	OrigCurrency  Currency   `xml:"ORIGCURRENCY,omitempty"`  // Overriding currency for UNITPRICE
+	Inv401kSource String     `xml:"INV401KSOURCE,omitempty"` // Source of money for this transaction. One of PRETAX, AFTERTAX, MATCH, PROFITSHARING, ROLLOVER, OTHERVEST, OTHERNONVEST for 401(k) accounts. Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST
+}
+
+func (t RetOfCap) TransactionType() string {
+	return "RETOFCAP"
+}
+
+type SellDebt struct {
+	XMLName    xml.Name `xml:"SELLDEBT"`
+	InvSell    InvSell  `xml:"INVSELL"`
+	SellReason String   `xml:"SELLREASON"`         // CALL (the debt was called), SELL (the debt was sold), MATURITY (the debt reached maturity)
+	AccrdInt   Amount   `xml:"ACCRDINT,omitempty"` // Accrued interest
+}
+
+func (t SellDebt) TransactionType() string {
+	return "SELLDEBT"
+}
+
+type SellMF struct {
+	XMLName      xml.Name `xml:"SELLMF"`
+	InvSell      InvSell  `xml:"INVSELL"`
+	SellType     String   `xml:"SELLTYPE"` // Type of sell. SELL, SELLSHORT
+	AvgCostBasis Amount   `xml:"AVGCOSTBASIS"`
+	RelFiTId     String   `xml:"RELFITID,omitempty"` // used to relate transactions associated with mutual fund exchanges
+}
+
+func (t SellMF) TransactionType() string {
+	return "SELLMF"
+}
+
+type SellOpt struct {
+	XMLName     xml.Name `xml:"SELLOPT"`
+	InvSell     InvSell  `xml:"INVSELL"`
+	OptSellType String   `xml:"OPTSELLTYPE"`        // For options, type of sell: SELLTOCLOSE, SELLTOOPEN. The SELLTOCLOSE action is selling a previously bought option. The SELLTOOPEN action is writing an option
+	ShPerCtrct  Int      `xml:"SHPERCTRCT"`         // Shares per contract
+	RelFiTId    String   `xml:"RELFITID,omitempty"` // used to relate transactions associated with mutual fund exchanges
+	RelType     String   `xml:"RELTYPE,omitempty"`  // Related option transaction type: SPREAD, STRADDLE, NONE, OTHER
+	Secured     String   `xml:"SECURED,omitempty"`  // NAKED, COVERED
+}
+
+func (t SellOpt) TransactionType() string {
+	return "SELLOPT"
+}
+
+type SellOther struct {
+	XMLName xml.Name `xml:"SELLOTHER"`
+	InvSell InvSell  `xml:"INVSELL"`
+}
+
+func (t SellOther) TransactionType() string {
+	return "SELLOTHER"
+}
+
+type SellStock struct {
+	XMLName  xml.Name `xml:"SELLSTOCK"`
+	InvSell  InvSell  `xml:"INVSELL"`
+	SellType String   `xml:"SELLTYPE"` // Type of sell. SELL, SELLSHORT
+}
+
+func (t SellStock) TransactionType() string {
+	return "SELLSTOCK"
+}
+
+type Split struct {
+	XMLName       xml.Name   `xml:"SPLIT"`
+	InvTran       InvTran    `xml:"INVTRAN"`
+	SecId         SecurityId `xml:"SECID"`
+	SubAcctSec    String     `xml:"SUBACCTSEC"`              // Sub-account type for this security. One of CASH, MARGIN, SHORT, OTHER
+	OldUnits      Amount     `xml:"OLDUNITS"`                // number of shares before the split
+	NewUnits      Amount     `xml:"NEWUNITS"`                // number of shares after the split
+	Numerator     Int        `xml:"NUMERATOR"`               // split ratio numerator
+	Denominator   Int        `xml:"DENOMINATOR"`             // split ratio denominator
+	Currency      Currency   `xml:"CURRENCY,omitempty"`      // Overriding currency for UNITPRICE
+	OrigCurrency  Currency   `xml:"ORIGCURRENCY,omitempty"`  // Overriding currency for UNITPRICE
+	FracCash      Amount     `xml:"FRACCASH,omitempty"`      // cash for fractional units
+	SubAcctFund   String     `xml:"SUBACCTFUND,omitempty"`   // Where did the money for the transaction come from or go to? CASH, MARGIN, SHORT, OTHER
+	Inv401kSource String     `xml:"INV401KSOURCE,omitempty"` // Source of money for this transaction. One of PRETAX, AFTERTAX, MATCH, PROFITSHARING, ROLLOVER, OTHERVEST, OTHERNONVEST for 401(k) accounts. Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST
+}
+
+func (t Split) TransactionType() string {
+	return "SPLIT"
+}
+
+type Transfer struct {
+	XMLName       xml.Name   `xml:"TRANSFER"`
+	InvTran       InvTran    `xml:"INVTRAN"`
+	SecId         SecurityId `xml:"SECID"`
+	SubAcctSec    String     `xml:"SUBACCTSEC"` // Sub-account type for this security. One of CASH, MARGIN, SHORT, OTHER
+	Units         Amount     `xml:"UNITS"`      // For stocks, MFs, other, number of shares held. Bonds = face value. Options = number of contracts
+	TferAction    String     `xml:"TFERACTION"` // One of IN, OUT
+	PosType       String     `xml:"POSTYPE"`    // Position type. One of LONG, SHORT
+	InvAcctFrom   InvAcct    `xml:"INVACCTFROM,omitempty"`
+	AvgCostBasis  Amount     `xml:"AVGCOSTBASIS,omitempty"`
+	UnitPrice     Amount     `xml:"UNITPRICE,omitempty"` // For stocks, MFs, other, price per share. Bonds = percentage of par. Option = premium per share of underlying security
+	DtPurchase    Date       `xml:"DTPURCHASE,omitempty"`
+	Inv401kSource String     `xml:"INV401KSOURCE,omitempty"` // Source of money for this transaction. One of PRETAX, AFTERTAX, MATCH, PROFITSHARING, ROLLOVER, OTHERVEST, OTHERNONVEST for 401(k) accounts. Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST
+}
+
+func (t Transfer) TransactionType() string {
+	return "TRANSFER"
+}
+
+type InvTransaction interface {
+	TransactionType() string
+}
+
 type InvBankTransaction struct {
 	XMLName      xml.Name      `xml:"INVBANKTRAN"`
 	Transactions []Transaction `xml:"STMTTRN,omitempty"`
 	SubAcctFund  String        `xml:"SUBACCTFUND"` // Where did the money for the transaction come from or go to? CASH, MARGIN, SHORT, OTHER
 }
 
-type InvTransactionList struct {
-	XMLName          xml.Name             `xml:"INVTRANLIST"`
-	DtStart          Date                 `xml:"DTSTART"`
-	DtEnd            Date                 `xml:"DTEND"`
-	BankTransactions []InvBankTransaction `xml:"INVBANKTRAN,omitempty"`
+// Must be unmarshalled manually due to the structure (don't know what kind of
+// InvTransaction is coming next)
+type InvTranList struct {
+	DtStart          Date
+	DtEnd            Date
+	InvTransactions  []InvTransaction
+	BankTransactions []InvBankTransaction
+}
+
+func (l *InvTranList) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	for {
+		tok, err := nextNonWhitespaceToken(d)
+		if err != nil {
+			return err
+		} else if end, ok := tok.(xml.EndElement); ok && end.Name.Local == start.Name.Local {
+			// If we found the end of our starting element, we're done parsing
+			return nil
+		} else if startElement, ok := tok.(xml.StartElement); ok {
+			switch startElement.Name.Local {
+			case "DTSTART":
+				var dtstart Date
+				if err := d.DecodeElement(&dtstart, &startElement); err != nil {
+					return err
+				}
+				l.DtStart = dtstart
+			case "DTEND":
+				var dtend Date
+				if err := d.DecodeElement(&dtend, &startElement); err != nil {
+					return err
+				}
+				l.DtEnd = dtend
+			case "BUYDEBT":
+				var tran BuyDebt
+				if err := d.DecodeElement(&tran, &startElement); err != nil {
+					return err
+				}
+				l.InvTransactions = append(l.InvTransactions, InvTransaction(tran))
+			case "BUYMF":
+				var tran BuyMF
+				if err := d.DecodeElement(&tran, &startElement); err != nil {
+					return err
+				}
+				l.InvTransactions = append(l.InvTransactions, InvTransaction(tran))
+			case "BUYOPT":
+				var tran BuyOpt
+				if err := d.DecodeElement(&tran, &startElement); err != nil {
+					return err
+				}
+				l.InvTransactions = append(l.InvTransactions, InvTransaction(tran))
+			case "BUYOTHER":
+				var tran BuyOther
+				if err := d.DecodeElement(&tran, &startElement); err != nil {
+					return err
+				}
+				l.InvTransactions = append(l.InvTransactions, InvTransaction(tran))
+			case "BUYSTOCK":
+				var tran BuyStock
+				if err := d.DecodeElement(&tran, &startElement); err != nil {
+					return err
+				}
+				l.InvTransactions = append(l.InvTransactions, InvTransaction(tran))
+			case "CLOSUREOPT":
+				var tran ClosureOpt
+				if err := d.DecodeElement(&tran, &startElement); err != nil {
+					return err
+				}
+				l.InvTransactions = append(l.InvTransactions, InvTransaction(tran))
+			case "INCOME":
+				var tran Income
+				if err := d.DecodeElement(&tran, &startElement); err != nil {
+					return err
+				}
+				l.InvTransactions = append(l.InvTransactions, InvTransaction(tran))
+			case "INVEXPENSE":
+				var tran InvExpense
+				if err := d.DecodeElement(&tran, &startElement); err != nil {
+					return err
+				}
+				l.InvTransactions = append(l.InvTransactions, InvTransaction(tran))
+			case "JRNLFUND":
+				var tran JrnlFund
+				if err := d.DecodeElement(&tran, &startElement); err != nil {
+					return err
+				}
+				l.InvTransactions = append(l.InvTransactions, InvTransaction(tran))
+			case "JRNLSEC":
+				var tran JrnlSec
+				if err := d.DecodeElement(&tran, &startElement); err != nil {
+					return err
+				}
+				l.InvTransactions = append(l.InvTransactions, InvTransaction(tran))
+			case "MARGININTEREST":
+				var tran MarginInterest
+				if err := d.DecodeElement(&tran, &startElement); err != nil {
+					return err
+				}
+				l.InvTransactions = append(l.InvTransactions, InvTransaction(tran))
+			case "REINVEST":
+				var tran Reinvest
+				if err := d.DecodeElement(&tran, &startElement); err != nil {
+					return err
+				}
+				l.InvTransactions = append(l.InvTransactions, InvTransaction(tran))
+			case "RETOFCAP":
+				var tran RetOfCap
+				if err := d.DecodeElement(&tran, &startElement); err != nil {
+					return err
+				}
+				l.InvTransactions = append(l.InvTransactions, InvTransaction(tran))
+			case "SELLDEBT":
+				var tran SellDebt
+				if err := d.DecodeElement(&tran, &startElement); err != nil {
+					return err
+				}
+				l.InvTransactions = append(l.InvTransactions, InvTransaction(tran))
+			case "SELLMF":
+				var tran SellMF
+				if err := d.DecodeElement(&tran, &startElement); err != nil {
+					return err
+				}
+				l.InvTransactions = append(l.InvTransactions, InvTransaction(tran))
+			case "SELLOPT":
+				var tran SellOpt
+				if err := d.DecodeElement(&tran, &startElement); err != nil {
+					return err
+				}
+				l.InvTransactions = append(l.InvTransactions, InvTransaction(tran))
+			case "SELLOTHER":
+				var tran SellOther
+				if err := d.DecodeElement(&tran, &startElement); err != nil {
+					return err
+				}
+				l.InvTransactions = append(l.InvTransactions, InvTransaction(tran))
+			case "SELLSTOCK":
+				var tran SellStock
+				if err := d.DecodeElement(&tran, &startElement); err != nil {
+					return err
+				}
+				l.InvTransactions = append(l.InvTransactions, InvTransaction(tran))
+			case "SPLIT":
+				var tran Split
+				if err := d.DecodeElement(&tran, &startElement); err != nil {
+					return err
+				}
+				l.InvTransactions = append(l.InvTransactions, InvTransaction(tran))
+			case "TRANSFER":
+				var tran Transfer
+				if err := d.DecodeElement(&tran, &startElement); err != nil {
+					return err
+				}
+				l.InvTransactions = append(l.InvTransactions, InvTransaction(tran))
+			case "INVBANKTRAN":
+				var tran InvBankTransaction
+				if err := d.DecodeElement(&tran, &startElement); err != nil {
+					return err
+				}
+				l.BankTransactions = append(l.BankTransactions, tran)
+			default:
+				return errors.New("Invalid INVTRANLIST child tag: " + startElement.Name.Local)
+			}
+		} else {
+			return errors.New("Didn't find an opening element")
+		}
+	}
 }
 
 type InvPosition struct {
@@ -122,7 +628,7 @@ func (p StockPosition) PositionType() string {
 
 type PositionList []Position
 
-func (p PositionList) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+func (p *PositionList) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	for {
 		tok, err := nextNonWhitespaceToken(d)
 		if err != nil {
@@ -137,31 +643,31 @@ func (p PositionList) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error
 				if err := d.DecodeElement(&position, &startElement); err != nil {
 					return err
 				}
-				p = append(p, Position(position))
+				*p = append(*p, Position(position))
 			case "POSMF":
 				var position MFPosition
 				if err := d.DecodeElement(&position, &startElement); err != nil {
 					return err
 				}
-				p = append(p, Position(position))
+				*p = append(*p, Position(position))
 			case "POSOPT":
 				var position OptPosition
 				if err := d.DecodeElement(&position, &startElement); err != nil {
 					return err
 				}
-				p = append(p, Position(position))
+				*p = append(*p, Position(position))
 			case "POSOTHER":
 				var position OtherPosition
 				if err := d.DecodeElement(&position, &startElement); err != nil {
 					return err
 				}
-				p = append(p, Position(position))
+				*p = append(*p, Position(position))
 			case "POSSTOCK":
 				var position StockPosition
 				if err := d.DecodeElement(&position, &startElement); err != nil {
 					return err
 				}
-				p = append(p, Position(position))
+				*p = append(*p, Position(position))
 			default:
 				return errors.New("Invalid INVPOSLIST child tag: " + startElement.Name.Local)
 			}
@@ -186,12 +692,12 @@ type InvStatementResponse struct {
 	Status    Status   `xml:"STATUS"`
 	CltCookie String   `xml:"CLTCOOKIE,omitempty"`
 	// TODO OFXEXTENSION
-	DtAsOf      Date               `xml:"INVSTMTRS>DTASOF"`
-	CurDef      String             `xml:"INVSTMTRS>CURDEF"`
-	InvAcctFrom InvAcct            `xml:"INVSTMTRS>INVACCTFROM"`
-	InvTranList InvTransactionList `xml:"INVSTMTRS>INVTRANLIST,omitempty"`
-	InvPosList  PositionList       `xml:"INVSTMTRS>INVPOSLIST,omitempty"`
-	InvBal      InvBalance         `xml:"INVSTMTRS>INVBAL,omitempty"`
+	DtAsOf      Date         `xml:"INVSTMTRS>DTASOF"`
+	CurDef      String       `xml:"INVSTMTRS>CURDEF"`
+	InvAcctFrom InvAcct      `xml:"INVSTMTRS>INVACCTFROM"`
+	InvTranList InvTranList  `xml:"INVSTMTRS>INVTRANLIST,omitempty"`
+	InvPosList  PositionList `xml:"INVSTMTRS>INVPOSLIST,omitempty"`
+	InvBal      InvBalance   `xml:"INVSTMTRS>INVBAL,omitempty"`
 	// TODO INVOOLIST
 	MktgInfo String `xml:"INVSTMTRS>MKTGINFO,omitempty"` // Marketing information
 	// TODO INV401K
