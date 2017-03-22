@@ -75,15 +75,14 @@ func RawRequest(URL string, r io.Reader) (*http.Response, error) {
 	return response, nil
 }
 
-// Request marshals a Request object into XML, makes an HTTP request against
-// it's URL, and then unmarshals the response into a Response object.
+// RequestNoParse marshals a Request object into XML, makes an HTTP request,
+// and returns the raw HTTP response. Unlike RawRequest(), it takes client
+// settings into account. Unlike Request(), it doesn't parse the response into
+// a Request object.
 //
-// Before being marshaled, some of the the Request object's values are
-// overwritten, namely those dictated by the Client's configuration (Version,
-// AppId, AppVer fields), and the client's curren time (DtClient). These are
-// updated in place in the supplied Request object so they may later be
-// inspected by the caller.
-func (c *Client) Request(r *Request) (*Response, error) {
+// Caveat: The caller is responsible for closing the http Response.Body (see
+// the http module's documentation for more information)
+func (c *Client) RequestNoParse(r *Request) (*http.Response, error) {
 	r.Signon.DtClient = Date(time.Now())
 
 	// Overwrite fields that the client controls
@@ -97,7 +96,19 @@ func (c *Client) Request(r *Request) (*Response, error) {
 		return nil, err
 	}
 
-	response, err := RawRequest(r.URL, b)
+	return RawRequest(r.URL, b)
+}
+
+// Request marshals a Request object into XML, makes an HTTP request against
+// it's URL, and then unmarshals the response into a Response object.
+//
+// Before being marshaled, some of the the Request object's values are
+// overwritten, namely those dictated by the Client's configuration (Version,
+// AppId, AppVer fields), and the client's curren time (DtClient). These are
+// updated in place in the supplied Request object so they may later be
+// inspected by the caller.
+func (c *Client) Request(r *Request) (*Response, error) {
+	response, err := c.RequestNoParse(r)
 	if err != nil {
 		return nil, err
 	}
