@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"errors"
-	"github.com/golang/go/src/encoding/xml"
+	"github.com/aclindsa/go/src/encoding/xml"
 	"io"
 	"strings"
 )

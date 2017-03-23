@@ -3,7 +3,7 @@ package ofxgo_test
 import (
 	"fmt"
 	"github.com/aclindsa/ofxgo"
-	"github.com/golang/go/src/encoding/xml"
+	"github.com/aclindsa/go/src/encoding/xml"
 	"math/big"
 	"reflect"
 	"testing"

@@ -2,7 +2,7 @@ package ofxgo
 
 import (
 	"errors"
-	"github.com/golang/go/src/encoding/xml"
+	"github.com/aclindsa/go/src/encoding/xml"
 )
 
 type CCStatementRequest struct {

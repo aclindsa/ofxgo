@@ -3,7 +3,7 @@ package ofxgo
 import (
 	"errors"
 	"fmt"
-	"github.com/golang/go/src/encoding/xml"
+	"github.com/aclindsa/go/src/encoding/xml"
 )
 
 type AcctInfoRequest struct {

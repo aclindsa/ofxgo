@@ -4,7 +4,7 @@ import (
 	"crypto/rand"
 	"errors"
 	"fmt"
-	"github.com/golang/go/src/encoding/xml"
+	"github.com/aclindsa/go/src/encoding/xml"
 	"math/big"
 	"regexp"
 	"strconv"
