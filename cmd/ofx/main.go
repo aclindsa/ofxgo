@@ -14,6 +14,7 @@ var commands = []Command{
 	bankTransactionsCommand,
 	ccTransactionsCommand,
 	invTransactionsCommand,
+	detectSettingsCommand,
 }
 
 func usage() {
