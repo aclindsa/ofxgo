@@ -7,12 +7,12 @@ import (
 )
 
 type Request struct {
-	URL     string
-	Version string        // OFX version string, overwritten in Client.Request()
-	Signon  SignonRequest //<SIGNONMSGSETV1>
-	Signup  []Message     //<SIGNUPMSGSETV1>
-	Banking []Message     //<BANKMSGSETV1>
-	//<CREDITCARDMSGSETV1>
+	URL         string
+	Version     string        // OFX version string, overwritten in Client.Request()
+	Signon      SignonRequest //<SIGNONMSGSETV1>
+	Signup      []Message     //<SIGNUPMSGSETV1>
+	Banking     []Message     //<BANKMSGSETV1>
+	CreditCards []Message     //<CREDITCARDMSGSETV1>
 	//<LOANMSGSETV1>
 	Investments []Message //<INVSTMTMSGSETV1>
 	//<INTERXFERMSGSETV1>
@@ -104,6 +104,9 @@ NEWFILEUID:NONE
 		return nil, err
 	}
 	if err := marshalMessageSet(encoder, oq.Banking, "BANKMSGSRQV1"); err != nil {
+		return nil, err
+	}
+	if err := marshalMessageSet(encoder, oq.CreditCards, "CREDITCARDMSGSRQV1"); err != nil {
 		return nil, err
 	}
 	if err := marshalMessageSet(encoder, oq.Investments, "INVSTMTMSGSRQV1"); err != nil {

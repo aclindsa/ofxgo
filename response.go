@@ -10,11 +10,11 @@ import (
 )
 
 type Response struct {
-	Version string         // String for OFX header, defaults to 203
-	Signon  SignonResponse //<SIGNONMSGSETV1>
-	Signup  []Message      //<SIGNUPMSGSETV1>
-	Banking []Message      //<BANKMSGSETV1>
-	//<CREDITCARDMSGSETV1>
+	Version     string         // String for OFX header, defaults to 203
+	Signon      SignonResponse //<SIGNONMSGSETV1>
+	Signup      []Message      //<SIGNUPMSGSETV1>
+	Banking     []Message      //<BANKMSGSETV1>
+	CreditCards []Message      //<CREDITCARDMSGSETV1>
 	//<LOANMSGSETV1>
 	Investments []Message //<INVSTMTMSGSETV1>
 	//<INTERXFERMSGSETV1>
@@ -269,7 +269,12 @@ func ParseResponse(reader io.Reader) (*Response, error) {
 					return nil, err
 				}
 				or.Banking = msgs
-			//case "CREDITCARDMSGSRSV1":
+			case "CREDITCARDMSGSRSV1":
+				msgs, err := DecodeCCMessageSet(decoder, start)
+				if err != nil {
+					return nil, err
+				}
+				or.CreditCards = msgs
 			//case "LOANMSGSRSV1":
 			case "INVSTMTMSGSRSV1":
 				msgs, err := DecodeInvestmentsMessageSet(decoder, start)
