@@ -39,7 +39,7 @@ func bankTransactions() {
 			AcctId:   ofxgo.String(acctId),
 			AcctType: ofxgo.String(acctType),
 		},
-		DtStart: ofxgo.Date(time.Unix(0, 0)),
+		DtStart: ofxgo.Date(time.Now().AddDate(-1, 0, 0)),
 		DtEnd:   ofxgo.Date(time.Now()),
 		Include: true,
 	}

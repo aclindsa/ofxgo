@@ -52,7 +52,7 @@ func invDownload() {
 			BrokerId: ofxgo.String(brokerId),
 			AcctId:   ofxgo.String(acctId),
 		},
-		DtStart:        ofxgo.Date(time.Unix(0, 0)),
+		DtStart:        ofxgo.Date(time.Now().AddDate(-1, 0, 0)),
 		DtEnd:          ofxgo.Date(time.Now()),
 		Include:        true,
 		IncludeOO:      true,
