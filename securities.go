@@ -227,7 +227,7 @@ func (r *SecurityList) UnmarshalXML(d *xml.Decoder, start xml.StartElement) erro
 	}
 }
 
-func DecodeSecuritiesMessageSet(d *xml.Decoder, start xml.StartElement) ([]Message, error) {
+func decodeSecuritiesMessageSet(d *xml.Decoder, start xml.StartElement) ([]Message, error) {
 	var msgs []Message
 	for {
 		tok, err := nextNonWhitespaceToken(d)

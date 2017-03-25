@@ -126,7 +126,7 @@ func (pr ProfileResponse) Valid() (bool, error) {
 	return true, nil
 }
 
-func DecodeProfileMessageSet(d *xml.Decoder, start xml.StartElement) ([]Message, error) {
+func decodeProfileMessageSet(d *xml.Decoder, start xml.StartElement) ([]Message, error) {
 	var msgs []Message
 	for {
 		tok, err := nextNonWhitespaceToken(d)

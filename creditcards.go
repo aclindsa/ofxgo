@@ -58,7 +58,7 @@ func (sr CCStatementResponse) Valid() (bool, error) {
 	return true, nil
 }
 
-func DecodeCCMessageSet(d *xml.Decoder, start xml.StartElement) ([]Message, error) {
+func decodeCCMessageSet(d *xml.Decoder, start xml.StartElement) ([]Message, error) {
 	var msgs []Message
 	for {
 		tok, err := nextNonWhitespaceToken(d)

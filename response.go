@@ -258,26 +258,26 @@ func ParseResponse(reader io.Reader) (*Response, error) {
 			// TODO decode other types
 			switch start.Name.Local {
 			case "SIGNUPMSGSRSV1":
-				msgs, err := DecodeSignupMessageSet(decoder, start)
+				msgs, err := decodeSignupMessageSet(decoder, start)
 				if err != nil {
 					return nil, err
 				}
 				or.Signup = msgs
 			case "BANKMSGSRSV1":
-				msgs, err := DecodeBankingMessageSet(decoder, start)
+				msgs, err := decodeBankingMessageSet(decoder, start)
 				if err != nil {
 					return nil, err
 				}
 				or.Banking = msgs
 			case "CREDITCARDMSGSRSV1":
-				msgs, err := DecodeCCMessageSet(decoder, start)
+				msgs, err := decodeCCMessageSet(decoder, start)
 				if err != nil {
 					return nil, err
 				}
 				or.CreditCards = msgs
 			//case "LOANMSGSRSV1":
 			case "INVSTMTMSGSRSV1":
-				msgs, err := DecodeInvestmentsMessageSet(decoder, start)
+				msgs, err := decodeInvestmentsMessageSet(decoder, start)
 				if err != nil {
 					return nil, err
 				}
@@ -287,7 +287,7 @@ func ParseResponse(reader io.Reader) (*Response, error) {
 			//case "BILLPAYMSGSRSV1":
 			//case "EMAILMSGSRSV1":
 			case "SECLISTMSGSRSV1":
-				msgs, err := DecodeSecuritiesMessageSet(decoder, start)
+				msgs, err := decodeSecuritiesMessageSet(decoder, start)
 				if err != nil {
 					return nil, err
 				}
@@ -295,7 +295,7 @@ func ParseResponse(reader io.Reader) (*Response, error) {
 			//case "PRESDIRMSGSRSV1":
 			//case "PRESDLVMSGSRSV1":
 			case "PROFMSGSRSV1":
-				msgs, err := DecodeProfileMessageSet(decoder, start)
+				msgs, err := decodeProfileMessageSet(decoder, start)
 				if err != nil {
 					return nil, err
 				}

@@ -122,7 +122,7 @@ func (air AcctInfoResponse) Valid() (bool, error) {
 	return true, nil
 }
 
-func DecodeSignupMessageSet(d *xml.Decoder, start xml.StartElement) ([]Message, error) {
+func decodeSignupMessageSet(d *xml.Decoder, start xml.StartElement) ([]Message, error) {
 	var msgs []Message
 	for {
 		tok, err := nextNonWhitespaceToken(d)

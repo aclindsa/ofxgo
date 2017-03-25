@@ -713,7 +713,7 @@ func (sr InvStatementResponse) Valid() (bool, error) {
 	return true, nil
 }
 
-func DecodeInvestmentsMessageSet(d *xml.Decoder, start xml.StartElement) ([]Message, error) {
+func decodeInvestmentsMessageSet(d *xml.Decoder, start xml.StartElement) ([]Message, error) {
 	var msgs []Message
 	for {
 		tok, err := nextNonWhitespaceToken(d)
