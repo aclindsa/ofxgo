@@ -52,7 +52,8 @@ func bankTransactions() {
 	}
 
 	if response.Signon.Status.Code != 0 {
-		fmt.Printf("Nonzero signon status with message: %s\n", response.Signon.Status.Message)
+		meaning, _ := response.Signon.Status.CodeMeaning()
+		fmt.Printf("Nonzero signon status (%d: %s) with message: %s\n", response.Signon.Status.Code, meaning, response.Signon.Status.Message)
 		os.Exit(1)
 	}
 

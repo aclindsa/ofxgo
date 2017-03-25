@@ -36,25 +36,26 @@ func getAccounts() {
 	}
 	query.Signup = append(query.Signup, &acctInfo)
 
-	signupResponse, err := client.Request(query)
+	response, err := client.Request(query)
 	if err != nil {
 		fmt.Println("Error requesting account information:", err)
 		os.Exit(1)
 	}
 
-	if signupResponse.Signon.Status.Code != 0 {
-		fmt.Printf("Nonzero signon status with message: %s\n", signupResponse.Signon.Status.Message)
+	if response.Signon.Status.Code != 0 {
+		meaning, _ := response.Signon.Status.CodeMeaning()
+		fmt.Printf("Nonzero signon status (%d: %s) with message: %s\n", response.Signon.Status.Code, meaning, response.Signon.Status.Message)
 		os.Exit(1)
 	}
 
-	if len(signupResponse.Signup) < 1 {
+	if len(response.Signup) < 1 {
 		fmt.Println("No signup messages received")
 		return
 	}
 
 	fmt.Println("\nFound the following accounts:\n")
 
-	if acctinfo, ok := signupResponse.Signup[0].(ofxgo.AcctInfoResponse); ok {
+	if acctinfo, ok := response.Signup[0].(ofxgo.AcctInfoResponse); ok {
 		for _, acct := range acctinfo.AcctInfo {
 			if acct.BankAcctInfo != nil {
 				fmt.Printf("Bank Account:\n\tBankId: \"%s\"\n\tAcctId: \"%s\"\n\tAcctType: %s\n", acct.BankAcctInfo.BankAcctFrom.BankId, acct.BankAcctInfo.BankAcctFrom.AcctId, acct.BankAcctInfo.BankAcctFrom.AcctType)
