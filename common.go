@@ -119,7 +119,7 @@ type Status struct {
 
 func (s *Status) Valid() (bool, error) {
 	switch s.Severity {
-	case "INFO", "WARN", "ERROR":
+	case "INFO", "WARN", "WARNING", "ERROR":
 	default:
 		return false, errors.New("Invalid STATUS>SEVERITY")
 	}
