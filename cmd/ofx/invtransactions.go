@@ -95,7 +95,7 @@ func invTransactions() {
 				printInvBuy(stmt.CurDef, &tran.InvBuy)
 			case ofxgo.ClosureOpt:
 				printInvTran(&tran.InvTran)
-				fmt.Println("%s %s contracts (%s shares each)\n", tran.OptAction, tran.Units, tran, tran.ShPerCtrct)
+				fmt.Printf("%s %s contracts (%d shares each)\n", tran.OptAction, tran.Units, tran.ShPerCtrct)
 			case ofxgo.Income:
 				printInvTran(&tran.InvTran)
 				currency := stmt.CurDef
@@ -170,7 +170,7 @@ func invTransactions() {
 				} else if len(tran.OrigCurrency.CurSym) > 0 {
 					currency = tran.Currency.CurSym
 				}
-				fmt.Printf(" %s/%s %s -> %s shares of %s %s (%s %s for fractional shares)\n", tran.Numerator, tran.Denominator, tran.OldUnits, tran.NewUnits, tran.SecId.UniqueIdType, tran.SecId.UniqueId, tran.FracCash, currency)
+				fmt.Printf(" %d/%d %s -> %s shares of %s %s (%s %s for fractional shares)\n", tran.Numerator, tran.Denominator, tran.OldUnits, tran.NewUnits, tran.SecId.UniqueIdType, tran.SecId.UniqueId, tran.FracCash, currency)
 				// TODO print ticker instead of CUSIP
 			case ofxgo.Transfer:
 				printInvTran(&tran.InvTran)

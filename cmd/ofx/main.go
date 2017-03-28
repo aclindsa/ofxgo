@@ -58,7 +58,7 @@ func runCmd(c *Command) {
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Println("Error: Please supply a sub-command. Usage:\n")
+		fmt.Printf("Error: Please supply a sub-command. Usage:\n\n")
 		usage()
 		os.Exit(1)
 	}

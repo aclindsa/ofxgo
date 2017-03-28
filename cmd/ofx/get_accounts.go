@@ -53,7 +53,7 @@ func getAccounts() {
 		return
 	}
 
-	fmt.Println("\nFound the following accounts:\n")
+	fmt.Printf("\nFound the following accounts:\n\n")
 
 	if acctinfo, ok := response.Signup[0].(ofxgo.AcctInfoResponse); ok {
 		for _, acct := range acctinfo.AcctInfo {
