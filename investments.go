@@ -686,6 +686,111 @@ type InvBalance struct {
 	BalList       []Balance `xml:"BALLIST>BAL,omitempty"`
 }
 
+type ContribSecurity struct {
+	XMLName                 xml.Name   `xml:"CONTRIBSECURITY"`
+	SecId                   SecurityId `xml:"SECID"`
+	PreTaxContribPct        Amount     `xml:"PRETAXCONTRIBPCT,omitempty"`        // Percentage of each new employee pretax contribution allocated to this security, rate.
+	PreTaxContribAmt        Amount     `xml:"PRETAXCONTRIBAMT,omitempty"`        // Fixed amount of each new employee pretax contribution allocated to this security, amount
+	AfterTaxContribPct      Amount     `xml:"AFTERTAXCONTRIBPCT,omitempty"`      // Percentage of each new employee after tax contribution allocated to this security, rate.
+	AfterTaxContribAmt      Amount     `xml:"AFTERTAXCONTRIBAMT,omitempty"`      // Fixed amount of each new employee pretax contribution allocated to this security, amount.
+	MatchContribPct         Amount     `xml:"MATCHCONTRIBPCT,omitempty"`         // Percentage of each new employer match contribution allocated to this security, rate.
+	MatchContribAmt         Amount     `xml:"MATCHCONTRIBAMT,omitempty"`         // Fixed amount of each new employer match contribution allocated to this security, amount.
+	ProfitSharingContribPct Amount     `xml:"PROFITSHARINGCONTRIBPCT,omitempty"` // Percentage of each new employer profit sharing contribution allocated to this security, rate.
+	ProfitSharingContribAmt Amount     `xml:"PROFITSHARINGCONTRIBAMT,omitempty"` // Fixed amount of each new employer profit sharing contribution allocated to this security, amount.
+	RolloverContribPct      Amount     `xml:"ROLLOVERCONTRIBPCT,omitempty"`      // Percentage of new rollover contributions allocated to this security, rate.
+	RolloverContribAmt      Amount     `xml:"ROLLOVERCONTRIBAMT,omitempty"`      // Fixed amount of new rollover contributions allocated to this security, amount.
+	OtherVestPct            Amount     `xml:"OTHERVESTPCT,omitempty"`            // Percentage of each new other employer contribution allocated to this security, rate.
+	OtherVestAmt            Amount     `xml:"OTHERVESTAMT,omitempty"`            // Fixed amount of each new other employer contribution allocated to this security, amount.
+	OtherNonVestPct         Amount     `xml:"OTHERNONVESTPCT,omitempty"`         // Percentage of each new other employee contribution allocated to this security, rate.
+	OtherNonVestAmt         Amount     `xml:"OTHERNONVESTAMT,omitempty"`         // Fixed amount of each new other employee contribution allocated to this security, amount
+}
+
+type VestInfo struct {
+	XMLName  xml.Name `xml:"VESTINFO"`
+	VestDate Date     `xml:"VESTDATE,omitempty"` // Date at which vesting percentage changes. Default (if empty) is that the vesting percentage below applies to the current date
+	VestPct  Amount   `xml:"VESTPCT"`
+}
+
+type LoanInfo struct {
+	XMLName               xml.Name `xml:"VESTINFO"`
+	LoanID                String   `xml:"LOANID"`                          // Identifier of this loan
+	LoanDesc              String   `xml:"LOANDESC,omitempty"`              // Loan description
+	InitialLoanBal        Amount   `xml:"INITIALLOANBAL,omitempty"`        // Initial loan balance
+	LoanStartDate         Date     `xml:"LOANSTARTDATE,omitempty"`         // Start date of loan
+	CurrentLoanBal        Amount   `xml:"CURRENTLOANBAL"`                  // Current loan principal balance
+	DtAsOf                Date     `xml:"DTASOF"`                          // Date and time of the current loan balance
+	LoanRate              Amount   `xml:"LOANRATE,omitempty"`              // Loan annual interest rate
+	LoanPmtAmt            Amount   `xml:"LOANPMTAMT,omitempty"`            // Loan payment amount
+	LoanPmtFreq           String   `xml:"LOANPMTFREQ,omitempty"`           // Frequency of loan repayments: WEEKLY, BIWEEKLY, TWICEMONTHLY, MONTHLY, FOURWEEKS, BIMONTHLY, QUARTERLY, SEMIANNUALLY, ANNUALLY, OTHER. See section 10.2.1 for calculation rules.
+	LoanPmtsInitial       Int      `xml:"LOANPMTSINITIAL,omitempty"`       // Initial number of loan payments.
+	LoanPmtsRemaining     Int      `xml:"LOANPMTSREMAINING,omitempty"`     // Remaining number of loan payments
+	LoanMaturityDate      Date     `xml:"LOANMATURITYDATE,omitempty"`      // Expected loan end date
+	LoanTotalProjInterest Amount   `xml:"LOANTOTALPROJINTEREST,omitempty"` // Total projected interest to be paid on this loan
+	LoanInterestToDate    Amount   `xml:"LOANINTERESTTODATE,omitempty"`    // Total interested paid to date on this loan
+	LoanExtPmtDate        Date     `xml:"LOANNEXTPMTDATE,omitempty"`       // Next payment due date
+}
+
+type Inv401KSummaryAggregate struct {
+	XMLName       xml.Name // One of CONTRIBUTIONS, WITHDRAWALS, EARNINGS
+	PreTax        Amount   `xml:"PRETAX,omitempty"`        // Pretax withdrawals.
+	AfterTax      Amount   `xml:"AFTERTAX,omitempty"`      // After tax withdrawals.
+	Match         Amount   `xml:"MATCH,omitempty"`         // Employer matching withdrawals.
+	ProfitSharing Amount   `xml:"PROFITSHARING,omitempty"` // Profit sharing withdrawals.
+	Rollover      Amount   `xml:"ROLLOVER,omitempty"`      // Rollover withdrawals.
+	OtherVest     Amount   `xml:"OTHERVEST,omitempty"`     // Other vesting withdrawals.
+	OtherNonVest  Amount   `xml:"OTHERNONVEST,omitempty"`  // Other non-vesting withdrawals.
+	Total         Amount   `xml:"TOTAL"`                   // Sum of withdrawals from all fund sources.
+}
+
+type Inv401KSummaryPeriod struct {
+	XMLName       xml.Name                // One of YEARTODATE, INCEPTODATE, or PERIODTODATE
+	DtStart       Date                    `xml:"DTSTART"`
+	DtEnd         Date                    `xml:"DTEND"`
+	Contributions Inv401KSummaryAggregate `xml:"CONTRIBUTIONS,omitempty"` // 401(k) contribution aggregate. Note: this includes loan payments.
+	Withdrawls    Inv401KSummaryAggregate `xml:"WITHDRAWLS,omitempty"`    // 401(k) withdrawals aggregate. Note: this includes loan withdrawals.
+	Earnings      Inv401KSummaryAggregate `xml:"EARNINGS,omitempty"`      // 401(k) earnings aggregate. This is the market value change. It includes dividends/interest, and capital gains - realized and unrealized.
+}
+
+type Inv401K struct {
+	XMLName             xml.Name `xml:"INV401K"`
+	EmployerName        String   `xml:"EMPLOYERNAME"`
+	PlanID              String   `xml:"PLANID,omitempty"`              // Plan number
+	PlanJoinDate        Date     `xml:"PLANJOINDATE,omitempty"`        // Date the employee joined the plan
+	EmployerContactInfo String   `xml:"EMPLOYERCONTACTINFO,omitempty"` // Name of contact person at employer, plus any available contact information, such as phone number
+	BrokerContactInfo   String   `xml:"BROKERCONTACTINFO,omitempty"`   // Name of contact person at broker, plus any available contact information, such as phone number
+	DeferPctPreTax      Amount   `xml:"DEFERPCTPRETAX,omitempty"`      // Percent of employee salary deferred before tax
+	DeferPctAfterTax    Amount   `xml:"DEFERPCTAFTERTAX,omitempty"`    // Percent of employee salary deferred after tax
+
+	//<MATCHINFO> Aggregate containing employer match information. Absent if employer does not contribute matching funds.
+	MatchPct            Amount               `xml:"MATCHINFO>MATCHPCT,omitempty"`          // Percent of employee contribution matched, e.g., 75% if contribution rate is $0.75/$1.00
+	MaxMatchAmt         Amount               `xml:"MATCHINFO>MAXMATCHAMT,omitempty"`       // Maximum employer contribution amount in any year
+	MaxMatchPct         Amount               `xml:"MATCHINFO>MAXMATCHPCT,omitempty"`       // Current maximum employer contribution percentage. Maximum match in a year is MAXMATCHPCT up to the MAXMATCHAMT, if provided
+	StartOfYear         Date                 `xml:"MATCHINFO>STARTOFYEAR,omitempty"`       // Specifies when the employer contribution max is reset. Some plans have a maximum based on the company fiscal year rather than calendar year. Assume calendar year if omitted. Only the month and day (MMDD) are used; year (YYYY) and time are ignored
+	BaseMatchAmt        Amount               `xml:"MATCHINFO>BASEMATCHAMT"`                // Specifies a fixed dollar amount contributed by the employer if the employee participates in the plan at all. This may be present in addition to the <MATCHPCT>. $0 if omitted
+	BaseMatchPct        Amount               `xml:"MATCHINFO>BASEMATCHPCT"`                // Specifies a fixed percent of employee salary matched if the employee participates in the plan at all. This may be present in addition to the MATCHPCT>. 0% if omitted. Base match in a year is BASEMATCHPCT up to the BASEMATCHAMT,if provided
+	ContribInfo         []ContribSecurity    `xml:"CONTRIBINTO>CONTRIBSECURITY"`           // Aggregate to describe how new contributions are distributed among the available securities.
+	CurrentVestPct      Amount               `xml:"CURRENTVESTPCT,omitempty"`              // Estimated percentage of employer contributions vested as of the current date. If omitted, assume 100%
+	VestInfo            []VestInfo           `xml:"VESTINFO,omitempty"`                    // Vest change dates. Provides the vesting percentage as of any particular past, current, or future date. 0 or more.
+	LoanInfo            []LoanInfo           `xml:"LOANINFO,omitempty"`                    // List of any loans outstanding against this account
+	YearToDateSummary   Inv401KSummaryPeriod `xml:"INV401KSUMMARY>YEARTODATE"`             // Contributions to date for this calendar year.
+	InceptToDateSummary Inv401KSummaryPeriod `xml:"INV401KSUMMARY>INCEPTODATE,omitempty"`  // Total contributions to date (since inception)
+	PeriodToDate        Inv401KSummaryPeriod `xml:"INV401KSUMMARY>PERIODTODATE,omitempty"` // Total contributions this contribution period
+}
+
+type Inv401KBal struct {
+	XMLName       xml.Name  `xml:"INV401KBAL"`
+	CashBal       Amount    `xml:"CASHBAL,omitempty"`       // Available cash balance
+	PreTax        Amount    `xml:"PRETAX,omitempty"`        // Current value of all securities purchased with Before Tax Employee contributions
+	AfterTax      Amount    `xml:"AFTERTAX,omitempty"`      // Current value of all securities purchased with After Tax Employee contributions
+	Match         Amount    `xml:"MATCH,omitempty"`         // Current value of all securities purchased with Employer Match contributions
+	ProfitSharing Amount    `xml:"PROFITSHARING,omitempty"` // Current value of all securities purchased with Employer Profit Sharing contributions
+	Rollover      Amount    `xml:"ROLLOVER,omitempty"`      // Current value of all securities purchased with Rollover contributions
+	OtherVest     Amount    `xml:"OTHERVEST,omitempty"`     // Current value of all securities purchased with Other (vesting) Employer contributions
+	OtherNonVest  Amount    `xml:"OTHERNONVEST,omitempty"`  // Current value of all securities purchased with Other (non-vesting) Employer contributions
+	Total         Amount    `xml:"TOTAL"`                   // Current value of all securities purchased with all contributions
+	BalList       []Balance `xml:"BALLIST>BAL,omitempty"`
+}
+
 type InvStatementResponse struct {
 	XMLName   xml.Name `xml:"INVSTMTTRNRS"`
 	TrnUID    UID      `xml:"TRNUID"`
@@ -699,9 +804,9 @@ type InvStatementResponse struct {
 	InvPosList  PositionList `xml:"INVSTMTRS>INVPOSLIST,omitempty"`
 	InvBal      InvBalance   `xml:"INVSTMTRS>INVBAL,omitempty"`
 	// TODO INVOOLIST
-	MktgInfo String `xml:"INVSTMTRS>MKTGINFO,omitempty"` // Marketing information
-	// TODO INV401K
-	// TODO INV401KBAL
+	MktgInfo   String     `xml:"INVSTMTRS>MKTGINFO,omitempty"` // Marketing information
+	Inv401K    Inv401K    `xml:"INVSTMTRS>INV401K,omitempty"`
+	Inv401KBal Inv401KBal `xml:"INVSTMTRS>INV401KBAL,omitempty"`
 }
 
 func (sr InvStatementResponse) Name() string {
