@@ -38,12 +38,15 @@ func invTransactions() {
 			BrokerId: ofxgo.String(brokerId),
 			AcctId:   ofxgo.String(acctId),
 		},
-		DtStart:        ofxgo.Date(time.Now().AddDate(-1, 0, 0)),
-		DtEnd:          ofxgo.Date(time.Now()),
+		DtStart:        ofxgo.Date(time.Now().AddDate(-1, 0, 0)), // a year ago
+		DtEnd:          ofxgo.Date(time.Now().AddDate(0, 0, -1)), // Some FIs (*cough* Fidelity) return errors if DTEND is the current day
 		Include:        true,
+		IncludeOO:      true,
+		PosDtAsOf:      ofxgo.Date(time.Now()),
+		IncludePos:     true,
 		IncludeBalance: true,
-		// TODO		Include401K:    true,
-		// TODO		Include401KBal: true,
+		Include401K:    true,
+		Include401KBal: true,
 	}
 	query.Investments = append(query.Investments, &statementRequest)
 
