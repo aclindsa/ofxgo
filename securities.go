@@ -128,7 +128,7 @@ type OptInfo struct {
 	SecInfo      SecInfo    `xml:"SECINFO"`
 	OptType      String     `xml:"OPTTYPE"` // One of PUT, CALL
 	StrikePrice  Amount     `xml:"STRIKEPRICE"`
-	DtExpire     Date       `xml"DTEXPIRE"`                // Expiration date
+	DtExpire     Date       `xml:"DTEXPIRE"`               // Expiration date
 	ShPerCtrct   Int        `xml:"SHPERCTRCT"`             // Shares per contract
 	SecId        SecurityId `xml:"SECID,omitempty"`        // Security ID of the underlying security
 	AssetClass   String     `xml:"ASSETCLASS,omitempty"`   // One of DOMESTICBOND, INTLBOND, LARGESTOCK, SMALLSTOCK, INTLSTOCK, MONEYMRKT, OTHER
