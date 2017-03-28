@@ -2,8 +2,8 @@ package ofxgo_test
 
 import (
 	"fmt"
-	"github.com/aclindsa/ofxgo"
 	"github.com/aclindsa/go/src/encoding/xml"
+	"github.com/aclindsa/ofxgo"
 	"math/big"
 	"reflect"
 	"testing"
