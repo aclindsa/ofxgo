@@ -4,7 +4,6 @@ import (
 	"errors"
 	"io"
 	"net/http"
-	"time"
 )
 
 type Client struct {
@@ -83,13 +82,7 @@ func RawRequest(URL string, r io.Reader) (*http.Response, error) {
 // Caveat: The caller is responsible for closing the http Response.Body (see
 // the http module's documentation for more information)
 func (c *Client) RequestNoParse(r *Request) (*http.Response, error) {
-	r.Signon.DtClient = Date(time.Now())
-
-	// Overwrite fields that the client controls
-	r.Version = c.OfxVersion()
-	r.Signon.AppId = c.Id()
-	r.Signon.AppVer = c.Version()
-	r.indent = c.IndentRequests()
+	r.SetClientFields(c)
 
 	b, err := r.Marshal()
 	if err != nil {

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"github.com/aclindsa/go/src/encoding/xml"
+	"time"
 )
 
 type Request struct {
@@ -51,6 +52,20 @@ func marshalMessageSet(e *xml.Encoder, requests []Message, setname string) error
 	return nil
 }
 
+// Overwrite the fields in this Request object controlled by the Client
+func (oq *Request) SetClientFields(c *Client) {
+	oq.Signon.DtClient = Date(time.Now())
+
+	// Overwrite fields that the client controls
+	oq.Version = c.OfxVersion()
+	oq.Signon.AppId = c.Id()
+	oq.Signon.AppVer = c.Version()
+	oq.indent = c.IndentRequests()
+}
+
+// Marshal this Request into its SGML/XML representation held in a bytes.Buffer
+//
+// If error is non-nil, this bytes.Buffer is ready to be sent to an OFX server
 func (oq *Request) Marshal() (*bytes.Buffer, error) {
 	var b bytes.Buffer
 
