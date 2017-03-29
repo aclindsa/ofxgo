@@ -14,9 +14,9 @@ type SecurityId struct {
 type SecurityRequest struct {
 	XMLName xml.Name `xml:"SECRQ"`
 	// Only one of the next three should be present
-	SecId  SecurityId `xml:"SECID,omitempty"`
-	Ticker String     `xml:"TICKER,omitempty"`
-	FiId   String     `xml:"FIID,omitempty"`
+	SecId  *SecurityId `xml:"SECID,omitempty"`
+	Ticker String      `xml:"TICKER,omitempty"`
+	FiId   String      `xml:"FIID,omitempty"`
 }
 
 type SecListRequest struct {
@@ -69,8 +69,8 @@ type SecInfo struct {
 	FiId      String     `xml:"FIID,omitempty"`
 	Rating    String     `xml:"RATING,omitempty"`
 	UnitPrice Amount     `xml:"UNITPRICE,omitempty"` // Current price, as of DTASOF
-	DtAsOf    Date       `xml:"DTASOF,omitempty"`    // Date UNITPRICE was for
-	Currency  Currency   `xml:"CURRENCY,omitempty"`  // Overriding currency for UNITPRICE
+	DtAsOf    *Date      `xml:"DTASOF,omitempty"`    // Date UNITPRICE was for
+	Currency  *Currency  `xml:"CURRENCY,omitempty"`  // Overriding currency for UNITPRICE
 	Memo      String     `xml:"MEMO,omitempty"`
 }
 
@@ -81,14 +81,14 @@ type DebtInfo struct {
 	DebtType     String   `xml:"DEBTTYPE"`               // One of COUPON, ZERO (zero coupon)
 	DebtClass    String   `xml:"DEBTCLASS,omitempty"`    // One of TREASURY, MUNICIPAL, CORPORATE, OTHER
 	CouponRate   Amount   `xml:"COUPONRT,omitempty"`     // Bond coupon rate for next closest call date
-	DtCoupon     Date     `xml:"DTCOUPON,omitempty"`     // Maturity date for next coupon
+	DtCoupon     *Date    `xml:"DTCOUPON,omitempty"`     // Maturity date for next coupon
 	CouponFreq   String   `xml:"COUPONFREQ,omitempty"`   // When coupons mature - one of MONTHLY, QUARTERLY, SEMIANNUAL, ANNUAL, or OTHER
 	CallPrice    Amount   `xml:"CALLPRICE,omitempty"`    // Bond call price
 	YieldToCall  Amount   `xml:"YIELDTOCALL,omitempty"`  // Yield to next call
-	DtCall       Date     `xml:"DTCALL,omitempty"`       // Next call date
+	DtCall       *Date    `xml:"DTCALL,omitempty"`       // Next call date
 	CallType     String   `xml:"CALLTYPE,omitempt"`      // Type of next call. One of CALL, PUT, PREFUND, MATURITY
 	YieldToMat   Amount   `xml:"YIELDTOMAT,omitempty"`   // Yield to maturity
-	DtMat        Date     `xml:"DTMAT,omitempty"`        // Debt maturity date
+	DtMat        *Date    `xml:"DTMAT,omitempty"`        // Debt maturity date
 	AssetClass   String   `xml:"ASSETCLASS,omitempty"`   // One of DOMESTICBOND, INTLBOND, LARGESTOCK, SMALLSTOCK, INTLSTOCK, MONEYMRKT, OTHER
 	FiAssetClass String   `xml:"FIASSETCLASS,omitempty"` // FI-defined asset class
 }
@@ -114,7 +114,7 @@ type MFInfo struct {
 	SecInfo        SecInfo          `xml:"SECINFO"`
 	MfType         String           `xml:"MFTYPE"`                // One of OPEN, END, CLOSEEND, OTHER
 	Yield          Amount           `xml:"YIELD,omitempty"`       // Current yield reported as the dividend expressed as a portion of the current stock price
-	DtYieldAsOf    Date             `xml:"DTYIELDASOF,omitempty"` // Date YIELD is valid for
+	DtYieldAsOf    *Date            `xml:"DTYIELDASOF,omitempty"` // Date YIELD is valid for
 	AssetClasses   []AssetPortion   `xml:"MFASSETCLASS>PORTION"`
 	FiAssetClasses []FiAssetPortion `xml:"FIMFASSETCLASS>FIPORTION"`
 }
@@ -124,15 +124,15 @@ func (i MFInfo) SecurityType() string {
 }
 
 type OptInfo struct {
-	XMLName      xml.Name   `xml:"OPTINFO"`
-	SecInfo      SecInfo    `xml:"SECINFO"`
-	OptType      String     `xml:"OPTTYPE"` // One of PUT, CALL
-	StrikePrice  Amount     `xml:"STRIKEPRICE"`
-	DtExpire     Date       `xml:"DTEXPIRE"`               // Expiration date
-	ShPerCtrct   Int        `xml:"SHPERCTRCT"`             // Shares per contract
-	SecId        SecurityId `xml:"SECID,omitempty"`        // Security ID of the underlying security
-	AssetClass   String     `xml:"ASSETCLASS,omitempty"`   // One of DOMESTICBOND, INTLBOND, LARGESTOCK, SMALLSTOCK, INTLSTOCK, MONEYMRKT, OTHER
-	FiAssetClass String     `xml:"FIASSETCLASS,omitempty"` // FI-defined asset class
+	XMLName      xml.Name    `xml:"OPTINFO"`
+	SecInfo      SecInfo     `xml:"SECINFO"`
+	OptType      String      `xml:"OPTTYPE"` // One of PUT, CALL
+	StrikePrice  Amount      `xml:"STRIKEPRICE"`
+	DtExpire     Date        `xml:"DTEXPIRE"`               // Expiration date
+	ShPerCtrct   Int         `xml:"SHPERCTRCT"`             // Shares per contract
+	SecId        *SecurityId `xml:"SECID,omitempty"`        // Security ID of the underlying security
+	AssetClass   String      `xml:"ASSETCLASS,omitempty"`   // One of DOMESTICBOND, INTLBOND, LARGESTOCK, SMALLSTOCK, INTLSTOCK, MONEYMRKT, OTHER
+	FiAssetClass String      `xml:"FIASSETCLASS,omitempty"` // FI-defined asset class
 }
 
 func (i OptInfo) SecurityType() string {
@@ -156,7 +156,7 @@ type StockInfo struct {
 	SecInfo      SecInfo  `xml:"SECINFO"`
 	StockType    String   `xml:"STOCKTYPE,omitempty"`    // One of COMMON, PREFERRED, CONVERTIBLE, OTHER
 	Yield        Amount   `xml:"YIELD,omitempty"`        // Current yield reported as the dividend expressed as a portion of the current stock price
-	DtYieldAsOf  Date     `xml:"DTYIELDASOF,omitempty"`  // Date YIELD is valid for
+	DtYieldAsOf  *Date    `xml:"DTYIELDASOF,omitempty"`  // Date YIELD is valid for
 	AssetClass   String   `xml:"ASSETCLASS,omitempty"`   // One of DOMESTICBOND, INTLBOND, LARGESTOCK, SMALLSTOCK, INTLSTOCK, MONEYMRKT, OTHER
 	FiAssetClass String   `xml:"FIASSETCLASS,omitempty"` // FI-defined asset class
 }

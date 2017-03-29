@@ -60,10 +60,10 @@ type SignonResponse struct {
 	Status      Status   `xml:"STATUS"`
 	DtServer    Date     `xml:"DTSERVER"`
 	UserKey     String   `xml:"USERKEY,omitempty"`
-	TsKeyExpire Date     `xml:"TSKEYEXPIRE,omitempty"`
+	TsKeyExpire *Date    `xml:"TSKEYEXPIRE,omitempty"`
 	Language    String   `xml:"LANGUAGE"`
-	DtProfUp    Date     `xml:"DTPROFUP,omitempty"`
-	DtAcctUp    Date     `xml:"DTACCTUP,omitempty"`
+	DtProfUp    *Date    `xml:"DTPROFUP,omitempty"`
+	DtAcctUp    *Date    `xml:"DTACCTUP,omitempty"`
 	Org         String   `xml:"FI>ORG"`
 	Fid         String   `xml:"FI>FID"`
 	SessCookie  String   `xml:"SESSCOOKIE,omitempty"`

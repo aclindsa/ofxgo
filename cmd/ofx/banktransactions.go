@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/aclindsa/ofxgo"
 	"os"
-	"time"
 )
 
 var bankTransactionsCommand = Command{
@@ -39,8 +38,6 @@ func bankTransactions() {
 			AcctId:   ofxgo.String(acctId),
 			AcctType: ofxgo.String(acctType),
 		},
-		DtStart: ofxgo.Date(time.Now().AddDate(-1, 0, 0)),
-		DtEnd:   ofxgo.Date(time.Now()),
 		Include: true,
 	}
 	query.Banking = append(query.Banking, &statementRequest)
@@ -82,7 +79,7 @@ func printTransaction(defCurrency ofxgo.String, tran *ofxgo.Transaction) {
 	var name string
 	if len(tran.Name) > 0 {
 		name = string(tran.Name)
-	} else {
+	} else if tran.Payee != nil {
 		name = string(tran.Payee.Name)
 	}
 

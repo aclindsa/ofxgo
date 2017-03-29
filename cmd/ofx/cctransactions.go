@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/aclindsa/ofxgo"
 	"os"
-	"time"
 )
 
 var ccTransactionsCommand = Command{
@@ -35,8 +34,6 @@ func ccTransactions() {
 		CCAcctFrom: ofxgo.CCAcct{
 			AcctId: ofxgo.String(acctId),
 		},
-		DtStart: ofxgo.Date(time.Now().AddDate(-1, 0, 0)),
-		DtEnd:   ofxgo.Date(time.Now()),
 		Include: true,
 	}
 	query.CreditCards = append(query.CreditCards, &statementRequest)

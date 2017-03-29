@@ -9,8 +9,8 @@ type CCStatementRequest struct {
 	XMLName        xml.Name `xml:"CCSTMTTRNRQ"`
 	TrnUID         UID      `xml:"TRNUID"`
 	CCAcctFrom     CCAcct   `xml:"CCSTMTRQ>CCACCTFROM"`
-	DtStart        Date     `xml:"CCSTMTRQ>INCTRAN>DTSTART,omitempty"`
-	DtEnd          Date     `xml:"CCSTMTRQ>INCTRAN>DTEND,omitempty"`
+	DtStart        *Date    `xml:"CCSTMTRQ>INCTRAN>DTSTART,omitempty"`
+	DtEnd          *Date    `xml:"CCSTMTRQ>INCTRAN>DTEND,omitempty"`
 	Include        Boolean  `xml:"CCSTMTRQ>INCTRAN>INCLUDE"`          // Include transactions (instead of just balance)
 	IncludePending Boolean  `xml:"CCSTMTRQ>INCLUDEPENDING,omitempty"` // Include pending transactions
 	IncTranImg     Boolean  `xml:"CCSTMTRQ>INCTRANIMG,omitempty"`     // Include transaction images
@@ -28,16 +28,16 @@ func (r *CCStatementRequest) Valid() (bool, error) {
 }
 
 type CCStatementResponse struct {
-	XMLName      xml.Name        `xml:"CCSTMTTRNRS"`
-	TrnUID       UID             `xml:"TRNUID"`
-	CurDef       String          `xml:"CCSTMTRS>CURDEF"`
-	CCAcctFrom   CCAcct          `xml:"CCSTMTRS>CCACCTFROM"`
-	BankTranList TransactionList `xml:"CCSTMTRS>BANKTRANLIST,omitempty"`
+	XMLName      xml.Name         `xml:"CCSTMTTRNRS"`
+	TrnUID       UID              `xml:"TRNUID"`
+	CurDef       String           `xml:"CCSTMTRS>CURDEF"`
+	CCAcctFrom   CCAcct           `xml:"CCSTMTRS>CCACCTFROM"`
+	BankTranList *TransactionList `xml:"CCSTMTRS>BANKTRANLIST,omitempty"`
 	//BANKTRANLISTP
 	BalAmt        Amount    `xml:"CCSTMTRS>LEDGERBAL>BALAMT"`
 	DtAsOf        Date      `xml:"CCSTMTRS>LEDGERBAL>DTASOF"`
 	AvailBalAmt   Amount    `xml:"CCSTMTRS>AVAILBAL>BALAMT,omitempty"`
-	AvailDtAsOf   Date      `xml:"CCSTMTRS>AVAILBAL>DTASOF,omitempty"`
+	AvailDtAsOf   *Date     `xml:"CCSTMTRS>AVAILBAL>DTASOF,omitempty"`
 	CashAdvBalAmt Amount    `xml:"CCSTMTRS>CASHADVBALAMT,omitempty"`           // Only for CREDITLINE accounts, available balance for cash advances
 	IntRatePurch  Amount    `xml:"CCSTMTRS>INTRATEPURCH,omitempty"`            // Current interest rate for purchases
 	IntRateCash   Amount    `xml:"CCSTMTRS>INTRATECASH,omitempty"`             // Current interest rate for cash advances

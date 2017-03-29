@@ -9,8 +9,8 @@ type StatementRequest struct {
 	XMLName        xml.Name `xml:"STMTTRNRQ"`
 	TrnUID         UID      `xml:"TRNUID"`
 	BankAcctFrom   BankAcct `xml:"STMTRQ>BANKACCTFROM"`
-	DtStart        Date     `xml:"STMTRQ>INCTRAN>DTSTART,omitempty"`
-	DtEnd          Date     `xml:"STMTRQ>INCTRAN>DTEND,omitempty"`
+	DtStart        *Date    `xml:"STMTRQ>INCTRAN>DTSTART,omitempty"`
+	DtEnd          *Date    `xml:"STMTRQ>INCTRAN>DTEND,omitempty"`
 	Include        Boolean  `xml:"STMTRQ>INCTRAN>INCLUDE"`          // Include transactions (instead of just balance)
 	IncludePending Boolean  `xml:"STMTRQ>INCLUDEPENDING,omitempty"` // Include pending transactions
 	IncTranImg     Boolean  `xml:"STMTRQ>INCTRANIMG,omitempty"`     // Include transaction images
@@ -47,7 +47,7 @@ type ImageData struct {
 	ImageRefType String   `xml:"IMAGEREFTYPE"` // One of OPAQUE, URL, FORMURL (see spec for more details on how to access images of each of these types)
 	// Only one of the next two should be valid at any given time
 	ImageDelay   Int    `xml:"IMAGEDELAY,omitempty"`   // Number of calendar days from DTSERVER (for statement images) or DTPOSTED (for transaction image) the image will become available
-	DtImageAvail Date   `xml:"DTIMAGEAVAIL,omitempty"` // Date image will become available
+	DtImageAvail *Date  `xml:"DTIMAGEAVAIL,omitempty"` // Date image will become available
 	ImageTTL     Int    `xml:"IMAGETTL,omitempty"`     // Number of days after image becomes available that it will remain available
 	CheckSup     String `xml:"CHECKSUP,omitempty"`     // What is contained in check images. One of FRONTONLY, BACKONLY, FRONTANDBACK
 }
@@ -56,8 +56,8 @@ type Transaction struct {
 	XMLName       xml.Name `xml:"STMTTRN"`
 	TrnType       String   `xml:"TRNTYPE"` // One of CREDIT, DEBIT, INT (interest earned or paid. Note: Depends on signage of amount), DIV, FEE, SRVCHG (service charge), DEP (deposit), ATM (Note: Depends on signage of amount), POS (Note: Depends on signage of amount), XFER, CHECK, PAYMENT, CASH, DIRECTDEP, DIRECTDEBIT, REPEATPMT, OTHER
 	DtPosted      Date     `xml:"DTPOSTED"`
-	DtUser        Date     `xml:"DTUSER,omitempty"`
-	DtAvail       Date     `xml:"DTAVAIL,omitempty"`
+	DtUser        *Date    `xml:"DTUSER,omitempty"`
+	DtAvail       *Date    `xml:"DTAVAIL,omitempty"`
 	TrnAmt        Amount   `xml:"TRNAMT"`
 	FiTId         String   `xml:"FITID"`
 	CorrectFiTId  String   `xml:"CORRECTFITID,omitempty"`  // Transaction Id that this transaction corrects, if present
@@ -69,10 +69,10 @@ type Transaction struct {
 	PayeeId       String   `xml:"PAYEEID,omitempty"`
 	// Note: Servers should provide NAME or PAYEE, but not both
 	Name          String      `xml:"NAME,omitempty"`
-	Payee         Payee       `xml:"PAYEE,omitempty"`
+	Payee         *Payee      `xml:"PAYEE,omitempty"`
 	ExtdName      String      `xml:"EXTDNAME,omitempty"`   // Extended name of payee or transaction description
-	BankAcctTo    BankAcct    `xml:"BANKACCTTO,omitempty"` // If the transfer was to a bank account we have the account information for
-	CCAcctTo      CCAcct      `xml:"CCACCTTO,omitempty"`   // If the transfer was to a credit card account we have the account information for
+	BankAcctTo    *BankAcct   `xml:"BANKACCTTO,omitempty"` // If the transfer was to a bank account we have the account information for
+	CCAcctTo      *CCAcct     `xml:"CCACCTTO,omitempty"`   // If the transfer was to a credit card account we have the account information for
 	Memo          String      `xml:"MEMO,omitempty"`       // Extra information (not in NAME)
 	ImageData     []ImageData `xml:"IMAGEDATA,omitempty"`
 	Currency      String      `xml:"CURRENCY,omitempty"`      // If different from CURDEF in STMTTRS
@@ -91,7 +91,7 @@ type PendingTransaction struct {
 	XMLName      xml.Name    `xml:"STMTTRN"`
 	TrnType      String      `xml:"TRNTYPE"` // One of CREDIT, DEBIT, INT (interest earned or paid. Note: Depends on signage of amount), DIV, FEE, SRVCHG (service charge), DEP (deposit), ATM (Note: Depends on signage of amount), POS (Note: Depends on signage of amount), XFER, CHECK, PAYMENT, CASH, DIRECTDEP, DIRECTDEBIT, REPEATPMT, HOLD, OTHER
 	DtTran       Date        `xml:"DTTRAN"`
-	DtExpire     Date        `xml:"DTEXPIRE,omitempty"` // only valid for TrnType==HOLD, the date the hold will expire
+	DtExpire     *Date       `xml:"DTEXPIRE,omitempty"` // only valid for TrnType==HOLD, the date the hold will expire
 	TrnAmt       Amount      `xml:"TRNAMT"`
 	RefNum       String      `xml:"REFNUM,omitempty"`
 	Name         String      `xml:"NAME,omitempty"`
@@ -120,26 +120,26 @@ type Balance struct {
 	// NUMBER = number (value formatted as is)
 	BalType String `xml:"BALTYPE"`
 
-	Value    Amount   `xml:"VALUE"`
-	DtAsOf   Date     `xml:"DTASOF,omitempty"`
-	Currency Currency `xml:"CURRENCY,omitempty"` // if BALTYPE is DOLLAR
+	Value    Amount    `xml:"VALUE"`
+	DtAsOf   *Date     `xml:"DTASOF,omitempty"`
+	Currency *Currency `xml:"CURRENCY,omitempty"` // if BALTYPE is DOLLAR
 }
 
 type StatementResponse struct {
-	XMLName       xml.Name               `xml:"STMTTRNRS"`
-	TrnUID        UID                    `xml:"TRNUID"`
-	CurDef        String                 `xml:"STMTRS>CURDEF"`
-	BankAcctFrom  BankAcct               `xml:"STMTRS>BANKACCTFROM"`
-	BankTranList  TransactionList        `xml:"STMTRS>BANKTRANLIST,omitempty"`
-	BankTranListP PendingTransactionList `xml:"STMTRS>BANKTRANLISTP,omitempty"`
-	BalAmt        Amount                 `xml:"STMTRS>LEDGERBAL>BALAMT"`
-	DtAsOf        Date                   `xml:"STMTRS>LEDGERBAL>DTASOF"`
-	AvailBalAmt   Amount                 `xml:"STMTRS>AVAILBAL>BALAMT,omitempty"`
-	AvailDtAsOf   Date                   `xml:"STMTRS>AVAILBAL>DTASOF,omitempty"`
-	CashAdvBalAmt Amount                 `xml:"STMTRS>CASHADVBALAMT,omitempty"` // Only for CREDITLINE accounts, available balance for cash advances
-	IntRate       Amount                 `xml:"STMTRS>INTRATE,omitempty"`       // Current interest rate
-	BalList       []Balance              `xml:"STMTRS>BALLIST>BAL,omitempty"`
-	MktgInfo      String                 `xml:"STMTRS>MKTGINFO,omitempty"` // Marketing information
+	XMLName       xml.Name                `xml:"STMTTRNRS"`
+	TrnUID        UID                     `xml:"TRNUID"`
+	CurDef        String                  `xml:"STMTRS>CURDEF"`
+	BankAcctFrom  BankAcct                `xml:"STMTRS>BANKACCTFROM"`
+	BankTranList  *TransactionList        `xml:"STMTRS>BANKTRANLIST,omitempty"`
+	BankTranListP *PendingTransactionList `xml:"STMTRS>BANKTRANLISTP,omitempty"`
+	BalAmt        Amount                  `xml:"STMTRS>LEDGERBAL>BALAMT"`
+	DtAsOf        Date                    `xml:"STMTRS>LEDGERBAL>DTASOF"`
+	AvailBalAmt   *Amount                 `xml:"STMTRS>AVAILBAL>BALAMT,omitempty"`
+	AvailDtAsOf   *Date                   `xml:"STMTRS>AVAILBAL>DTASOF,omitempty"`
+	CashAdvBalAmt *Amount                 `xml:"STMTRS>CASHADVBALAMT,omitempty"` // Only for CREDITLINE accounts, available balance for cash advances
+	IntRate       *Amount                 `xml:"STMTRS>INTRATE,omitempty"`       // Current interest rate
+	BalList       []Balance               `xml:"STMTRS>BALLIST>BAL,omitempty"`
+	MktgInfo      String                  `xml:"STMTRS>MKTGINFO,omitempty"` // Marketing information
 }
 
 func (sr StatementResponse) Name() string {

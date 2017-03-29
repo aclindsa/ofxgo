@@ -6,7 +6,6 @@ import (
 	"github.com/aclindsa/ofxgo"
 	"math/big"
 	"os"
-	"time"
 )
 
 var invTransactionsCommand = Command{
@@ -38,11 +37,8 @@ func invTransactions() {
 			BrokerId: ofxgo.String(brokerId),
 			AcctId:   ofxgo.String(acctId),
 		},
-		DtStart:        ofxgo.Date(time.Now().AddDate(-1, 0, 0)), // a year ago
-		DtEnd:          ofxgo.Date(time.Now().AddDate(0, 0, -1)), // Some FIs (*cough* Fidelity) return errors if DTEND is the current day
 		Include:        true,
 		IncludeOO:      true,
-		PosDtAsOf:      ofxgo.Date(time.Now()),
 		IncludePos:     true,
 		IncludeBalance: true,
 		Include401K:    true,
@@ -99,9 +95,9 @@ func invTransactions() {
 			case ofxgo.Income:
 				printInvTran(&tran.InvTran)
 				currency := stmt.CurDef
-				if len(tran.Currency.CurSym) > 0 {
+				if tran.Currency != nil {
 					currency = tran.Currency.CurSym
-				} else if len(tran.OrigCurrency.CurSym) > 0 {
+				} else if tran.OrigCurrency != nil {
 					currency = tran.Currency.CurSym
 				}
 				fmt.Printf(" %s %s %s (%s %s)\n", tran.IncomeType, tran.Total, currency, tran.SecId.UniqueIdType, tran.SecId.UniqueId)
@@ -109,9 +105,9 @@ func invTransactions() {
 			case ofxgo.InvExpense:
 				printInvTran(&tran.InvTran)
 				currency := stmt.CurDef
-				if len(tran.Currency.CurSym) > 0 {
+				if tran.Currency != nil {
 					currency = tran.Currency.CurSym
-				} else if len(tran.OrigCurrency.CurSym) > 0 {
+				} else if tran.OrigCurrency != nil {
 					currency = tran.Currency.CurSym
 				}
 				fmt.Printf(" %s %s (%s %s)\n", tran.Total, currency, tran.SecId.UniqueIdType, tran.SecId.UniqueId)
@@ -126,18 +122,18 @@ func invTransactions() {
 			case ofxgo.MarginInterest:
 				printInvTran(&tran.InvTran)
 				currency := stmt.CurDef
-				if len(tran.Currency.CurSym) > 0 {
+				if tran.Currency != nil {
 					currency = tran.Currency.CurSym
-				} else if len(tran.OrigCurrency.CurSym) > 0 {
+				} else if tran.OrigCurrency != nil {
 					currency = tran.Currency.CurSym
 				}
 				fmt.Printf(" %s %s\n", tran.Total, currency)
 			case ofxgo.Reinvest:
 				printInvTran(&tran.InvTran)
 				currency := stmt.CurDef
-				if len(tran.Currency.CurSym) > 0 {
+				if tran.Currency != nil {
 					currency = tran.Currency.CurSym
-				} else if len(tran.OrigCurrency.CurSym) > 0 {
+				} else if tran.OrigCurrency != nil {
 					currency = tran.Currency.CurSym
 				}
 				fmt.Printf(" %s (%s %s)@%s %s (Total: %s)\n", tran.Units, tran.SecId.UniqueIdType, tran.SecId.UniqueId, tran.UnitPrice, currency, tran.Total)
@@ -145,9 +141,9 @@ func invTransactions() {
 			case ofxgo.RetOfCap:
 				printInvTran(&tran.InvTran)
 				currency := stmt.CurDef
-				if len(tran.Currency.CurSym) > 0 {
+				if tran.Currency != nil {
 					currency = tran.Currency.CurSym
-				} else if len(tran.OrigCurrency.CurSym) > 0 {
+				} else if tran.OrigCurrency != nil {
 					currency = tran.Currency.CurSym
 				}
 				fmt.Printf(" %s %s (%s %s)\n", tran.Total, currency, tran.SecId.UniqueIdType, tran.SecId.UniqueId)
@@ -165,9 +161,9 @@ func invTransactions() {
 			case ofxgo.Split:
 				printInvTran(&tran.InvTran)
 				currency := stmt.CurDef
-				if len(tran.Currency.CurSym) > 0 {
+				if tran.Currency != nil {
 					currency = tran.Currency.CurSym
-				} else if len(tran.OrigCurrency.CurSym) > 0 {
+				} else if tran.OrigCurrency != nil {
 					currency = tran.Currency.CurSym
 				}
 				fmt.Printf(" %d/%d %s -> %s shares of %s %s (%s %s for fractional shares)\n", tran.Numerator, tran.Denominator, tran.OldUnits, tran.NewUnits, tran.SecId.UniqueIdType, tran.SecId.UniqueId, tran.FracCash, currency)
@@ -188,9 +184,9 @@ func printInvTran(it *ofxgo.InvTran) {
 func printInvBuy(defCurrency ofxgo.String, ib *ofxgo.InvBuy) {
 	printInvTran(&ib.InvTran)
 	currency := defCurrency
-	if len(ib.Currency.CurSym) > 0 {
+	if ib.Currency != nil {
 		currency = ib.Currency.CurSym
-	} else if len(ib.OrigCurrency.CurSym) > 0 {
+	} else if ib.OrigCurrency != nil {
 		currency = ib.Currency.CurSym
 	}
 
@@ -201,9 +197,9 @@ func printInvBuy(defCurrency ofxgo.String, ib *ofxgo.InvBuy) {
 func printInvSell(defCurrency ofxgo.String, is *ofxgo.InvSell) {
 	printInvTran(&is.InvTran)
 	currency := defCurrency
-	if len(is.Currency.CurSym) > 0 {
+	if is.Currency != nil {
 		currency = is.Currency.CurSym
-	} else if len(is.OrigCurrency.CurSym) > 0 {
+	} else if is.OrigCurrency != nil {
 		currency = is.Currency.CurSym
 	}
 

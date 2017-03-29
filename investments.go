@@ -12,11 +12,11 @@ type InvStatementRequest struct {
 	TAN       String   `xml:"TAN,omitempty"` // Transaction authorization number
 	// TODO `xml:"OFXEXTENSION,omitempty"`
 	InvAcctFrom      InvAcct `xml:"INVSTMTRQ>INVACCTFROM"`
-	DtStart          Date    `xml:"INVSTMTRQ>INCTRAN>DTSTART,omitempty"`
-	DtEnd            Date    `xml:"INVSTMTRQ>INCTRAN>DTEND,omitempty"`
+	DtStart          *Date   `xml:"INVSTMTRQ>INCTRAN>DTSTART,omitempty"`
+	DtEnd            *Date   `xml:"INVSTMTRQ>INCTRAN>DTEND,omitempty"`
 	Include          Boolean `xml:"INVSTMTRQ>INCTRAN>INCLUDE"`         // Include transactions (instead of just balance)
 	IncludeOO        Boolean `xml:"INVSTMTRQ>INCOO"`                   // Include open orders
-	PosDtAsOf        Date    `xml:"INVSTMTRQ>INCPOS>DTASOF,omitempty"` // Date that positions should be sent down for, if present
+	PosDtAsOf        *Date   `xml:"INVSTMTRQ>INCPOS>DTASOF,omitempty"` // Date that positions should be sent down for, if present
 	IncludePos       Boolean `xml:"INVSTMTRQ>INCPOS>INCLUDE"`          // Include position data in response
 	IncludeBalance   Boolean `xml:"INVSTMTRQ>INCBAL"`                  // Include investment balance in response
 	Include401K      Boolean `xml:"INVSTMTRQ>INC401K,omitempty"`       // Include 401k information
@@ -40,7 +40,7 @@ type InvTran struct {
 	FiTId         String   `xml:"FITID"`
 	SrvrTId       String   `xml:"SRVRTID,omitempty"`
 	DtTrade       Date     `xml:"DTTRADE"`                 // trade date; for stock splits, day of record
-	DtSettle      Date     `xml:"DTSETTLE,omitempty"`      // settlement date; for stock splits, execution date
+	DtSettle      *Date    `xml:"DTSETTLE,omitempty"`      // settlement date; for stock splits, execution date
 	ReversalFiTId String   `xml:"REVERSALFITID,omitempty"` // For a reversal transaction, the FITID of the transaction that is being reversed.
 	Memo          String   `xml:"MEMO,omitempty"`
 }
@@ -57,8 +57,8 @@ type InvBuy struct {
 	Fees         Amount     `xml:"FEES,omitempty"`
 	Load         Amount     `xml:"LOAD,omitempty"`
 	Total        Amount     `xml:"TOTAL"`                  // Transaction total. Buys, sells, etc.:((quan. * (price +/- markup/markdown)) +/-(commission + fees + load + taxes + penalty + withholding + statewithholding)). Distributions, interest, margin interest, misc. expense, etc.: amount. Return of cap: cost basis
-	Currency     Currency   `xml:"CURRENCY,omitempty"`     // Overriding currency for UNITPRICE
-	OrigCurrency Currency   `xml:"ORIGCURRENCY,omitempty"` // Overriding currency for UNITPRICE
+	Currency     *Currency  `xml:"CURRENCY,omitempty"`     // Overriding currency for UNITPRICE
+	OrigCurrency *Currency  `xml:"ORIGCURRENCY,omitempty"` // Overriding currency for UNITPRICE
 	SubAcctSec   String     `xml:"SUBACCTSEC"`             // Sub-account type for this security. One of CASH, MARGIN, SHORT, OTHER
 	SubAcctFund  String     `xml:"SUBACCTFUND"`            // Where did the money for the transaction come from or go to? CASH, MARGIN, SHORT, OTHER
 
@@ -68,7 +68,7 @@ type InvBuy struct {
 	LoanInterest  Amount `xml:"LOANINTEREST,omitempty"`  // For 401(k) accounts only. Indicates how much of the loan repayment was interest
 
 	Inv401kSource    String  `xml:"INV401KSOURCE,omitempty"`    // Source of money for this transaction. One of PRETAX, AFTERTAX, MATCH, PROFITSHARING, ROLLOVER, OTHERVEST, OTHERNONVEST for 401(k) accounts. Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST
-	DtPayroll        Date    `xml:"DTPAYROLL,omitempty"`        // For 401(k)accounts, date the funds for this transaction was obtained via payroll deduction
+	DtPayroll        *Date   `xml:"DTPAYROLL,omitempty"`        // For 401(k)accounts, date the funds for this transaction was obtained via payroll deduction
 	PriorYearContrib Boolean `xml:"PRIORYEARCONTRIB,omitempty"` // For 401(k) accounts, indicates that this Buy was made with a prior year contribution
 }
 
@@ -87,8 +87,8 @@ type InvSell struct {
 	TaxExempt    Boolean    `xml:"TAXEXEMPT,omitempty"`    // Tax-exempt transaction
 	Total        Amount     `xml:"TOTAL"`                  // Transaction total. Buys, sells, etc.:((quan. * (price +/- markup/markdown)) +/-(commission + fees + load + taxes + penalty + withholding + statewithholding)). Distributions, interest, margin interest, misc. expense, etc.: amount. Return of cap: cost basis
 	Gain         Amount     `xml:"GAIN,omitempty"`         // Total gain
-	Currency     Currency   `xml:"CURRENCY,omitempty"`     // Overriding currency for UNITPRICE
-	OrigCurrency Currency   `xml:"ORIGCURRENCY,omitempty"` // Overriding currency for UNITPRICE
+	Currency     *Currency  `xml:"CURRENCY,omitempty"`     // Overriding currency for UNITPRICE
+	OrigCurrency *Currency  `xml:"ORIGCURRENCY,omitempty"` // Overriding currency for UNITPRICE
 	SubAcctSec   String     `xml:"SUBACCTSEC"`             // Sub-account type for this security. One of CASH, MARGIN, SHORT, OTHER
 	SubAcctFund  String     `xml:"SUBACCTFUND"`            // Where did the money for the transaction come from or go to? CASH, MARGIN, SHORT, OTHER
 
@@ -177,8 +177,8 @@ type Income struct {
 	SubAcctFund   String     `xml:"SUBACCTFUND"`             // Where did the money for the transaction come from or go to? CASH, MARGIN, SHORT, OTHER
 	TaxExempt     Boolean    `xml:"TAXEXEMPT,omitempty"`     // Tax-exempt transaction
 	Witholding    Amount     `xml:"WITHHOLDING,omitempty"`   // Federal tax witholdings
-	Currency      Currency   `xml:"CURRENCY,omitempty"`      // Overriding currency for UNITPRICE
-	OrigCurrency  Currency   `xml:"ORIGCURRENCY,omitempty"`  // Overriding currency for UNITPRICE
+	Currency      *Currency  `xml:"CURRENCY,omitempty"`      // Overriding currency for UNITPRICE
+	OrigCurrency  *Currency  `xml:"ORIGCURRENCY,omitempty"`  // Overriding currency for UNITPRICE
 	Inv401kSource String     `xml:"INV401KSOURCE,omitempty"` // Source of money for this transaction. One of PRETAX, AFTERTAX, MATCH, PROFITSHARING, ROLLOVER, OTHERVEST, OTHERNONVEST for 401(k) accounts. Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST
 }
 
@@ -194,8 +194,8 @@ type InvExpense struct {
 	Total         Amount     `xml:"TOTAL"`
 	SubAcctSec    String     `xml:"SUBACCTSEC"`              // Sub-account type for this security. One of CASH, MARGIN, SHORT, OTHER
 	SubAcctFund   String     `xml:"SUBACCTFUND"`             // Where did the money for the transaction come from or go to? CASH, MARGIN, SHORT, OTHER
-	Currency      Currency   `xml:"CURRENCY,omitempty"`      // Overriding currency for UNITPRICE
-	OrigCurrency  Currency   `xml:"ORIGCURRENCY,omitempty"`  // Overriding currency for UNITPRICE
+	Currency      *Currency  `xml:"CURRENCY,omitempty"`      // Overriding currency for UNITPRICE
+	OrigCurrency  *Currency  `xml:"ORIGCURRENCY,omitempty"`  // Overriding currency for UNITPRICE
 	Inv401kSource String     `xml:"INV401KSOURCE,omitempty"` // Source of money for this transaction. One of PRETAX, AFTERTAX, MATCH, PROFITSHARING, ROLLOVER, OTHERVEST, OTHERNONVEST for 401(k) accounts. Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST
 }
 
@@ -231,12 +231,12 @@ func (t JrnlSec) TransactionType() string {
 }
 
 type MarginInterest struct {
-	XMLName      xml.Name `xml:"MARGININTEREST"`
-	InvTran      InvTran  `xml:"INVTRAN"`
-	Total        Amount   `xml:"TOTAL"`
-	SubAcctFund  String   `xml:"SUBACCTFUND"`            // Where did the money for the transaction come from or go to? CASH, MARGIN, SHORT, OTHER
-	Currency     Currency `xml:"CURRENCY,omitempty"`     // Overriding currency for UNITPRICE
-	OrigCurrency Currency `xml:"ORIGCURRENCY,omitempty"` // Overriding currency for UNITPRICE
+	XMLName      xml.Name  `xml:"MARGININTEREST"`
+	InvTran      InvTran   `xml:"INVTRAN"`
+	Total        Amount    `xml:"TOTAL"`
+	SubAcctFund  String    `xml:"SUBACCTFUND"`            // Where did the money for the transaction come from or go to? CASH, MARGIN, SHORT, OTHER
+	Currency     *Currency `xml:"CURRENCY,omitempty"`     // Overriding currency for UNITPRICE
+	OrigCurrency *Currency `xml:"ORIGCURRENCY,omitempty"` // Overriding currency for UNITPRICE
 }
 
 func (t MarginInterest) TransactionType() string {
@@ -258,8 +258,8 @@ type Reinvest struct {
 	Fees          Amount     `xml:"FEES,omitempty"`
 	Load          Amount     `xml:"LOAD,omitempty"`
 	TaxExempt     Boolean    `xml:"TAXEXEMPT,omitempty"`     // Tax-exempt transaction
-	Currency      Currency   `xml:"CURRENCY,omitempty"`      // Overriding currency for UNITPRICE
-	OrigCurrency  Currency   `xml:"ORIGCURRENCY,omitempty"`  // Overriding currency for UNITPRICE
+	Currency      *Currency  `xml:"CURRENCY,omitempty"`      // Overriding currency for UNITPRICE
+	OrigCurrency  *Currency  `xml:"ORIGCURRENCY,omitempty"`  // Overriding currency for UNITPRICE
 	Inv401kSource String     `xml:"INV401KSOURCE,omitempty"` // Source of money for this transaction. One of PRETAX, AFTERTAX, MATCH, PROFITSHARING, ROLLOVER, OTHERVEST, OTHERNONVEST for 401(k) accounts. Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST
 }
 
@@ -274,8 +274,8 @@ type RetOfCap struct {
 	Total         Amount     `xml:"TOTAL"`
 	SubAcctSec    String     `xml:"SUBACCTSEC"`              // Sub-account type for this security. One of CASH, MARGIN, SHORT, OTHER
 	SubAcctFund   String     `xml:"SUBACCTFUND"`             // Where did the money for the transaction come from or go to? CASH, MARGIN, SHORT, OTHER
-	Currency      Currency   `xml:"CURRENCY,omitempty"`      // Overriding currency for UNITPRICE
-	OrigCurrency  Currency   `xml:"ORIGCURRENCY,omitempty"`  // Overriding currency for UNITPRICE
+	Currency      *Currency  `xml:"CURRENCY,omitempty"`      // Overriding currency for UNITPRICE
+	OrigCurrency  *Currency  `xml:"ORIGCURRENCY,omitempty"`  // Overriding currency for UNITPRICE
 	Inv401kSource String     `xml:"INV401KSOURCE,omitempty"` // Source of money for this transaction. One of PRETAX, AFTERTAX, MATCH, PROFITSHARING, ROLLOVER, OTHERVEST, OTHERNONVEST for 401(k) accounts. Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST
 }
 
@@ -348,8 +348,8 @@ type Split struct {
 	NewUnits      Amount     `xml:"NEWUNITS"`                // number of shares after the split
 	Numerator     Int        `xml:"NUMERATOR"`               // split ratio numerator
 	Denominator   Int        `xml:"DENOMINATOR"`             // split ratio denominator
-	Currency      Currency   `xml:"CURRENCY,omitempty"`      // Overriding currency for UNITPRICE
-	OrigCurrency  Currency   `xml:"ORIGCURRENCY,omitempty"`  // Overriding currency for UNITPRICE
+	Currency      *Currency  `xml:"CURRENCY,omitempty"`      // Overriding currency for UNITPRICE
+	OrigCurrency  *Currency  `xml:"ORIGCURRENCY,omitempty"`  // Overriding currency for UNITPRICE
 	FracCash      Amount     `xml:"FRACCASH,omitempty"`      // cash for fractional units
 	SubAcctFund   String     `xml:"SUBACCTFUND,omitempty"`   // Where did the money for the transaction come from or go to? CASH, MARGIN, SHORT, OTHER
 	Inv401kSource String     `xml:"INV401KSOURCE,omitempty"` // Source of money for this transaction. One of PRETAX, AFTERTAX, MATCH, PROFITSHARING, ROLLOVER, OTHERVEST, OTHERNONVEST for 401(k) accounts. Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST
@@ -370,7 +370,7 @@ type Transfer struct {
 	InvAcctFrom   InvAcct    `xml:"INVACCTFROM,omitempty"`
 	AvgCostBasis  Amount     `xml:"AVGCOSTBASIS,omitempty"`
 	UnitPrice     Amount     `xml:"UNITPRICE,omitempty"` // For stocks, MFs, other, price per share. Bonds = percentage of par. Option = premium per share of underlying security
-	DtPurchase    Date       `xml:"DTPURCHASE,omitempty"`
+	DtPurchase    *Date      `xml:"DTPURCHASE,omitempty"`
 	Inv401kSource String     `xml:"INV401KSOURCE,omitempty"` // Source of money for this transaction. One of PRETAX, AFTERTAX, MATCH, PROFITSHARING, ROLLOVER, OTHERVEST, OTHERNONVEST for 401(k) accounts. Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST
 }
 
@@ -564,7 +564,7 @@ type InvPosition struct {
 	MktVal        Amount     `xml:"MKTVAL"`                 // Market value of this position
 	AvgCostBasis  Amount     `xml:"AVGCOSTBASIS,omitempty"` //
 	DtPriceAsOf   Date       `xml:"DTPRICEASOF"`            // Date and time of unit price and market value, and cost basis. If this date is unknown, use 19900101 as the placeholder; do not use 0,
-	Currency      Currency   `xml:"CURRENCY,omitempty"`     // Overriding currency for UNITPRICE
+	Currency      *Currency  `xml:"CURRENCY,omitempty"`     // Overriding currency for UNITPRICE
 	Memo          String     `xml:"MEMO,omitempty"`
 	Inv401kSource String     `xml:"INV401KSOURCE,omitempty"` // One of PRETAX, AFTERTAX, MATCH, PROFITSHARING, ROLLOVER, OTHERVEST, OTHERNONVEST for 401(k) accounts. Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST
 }
@@ -707,7 +707,7 @@ type ContribSecurity struct {
 
 type VestInfo struct {
 	XMLName  xml.Name `xml:"VESTINFO"`
-	VestDate Date     `xml:"VESTDATE,omitempty"` // Date at which vesting percentage changes. Default (if empty) is that the vesting percentage below applies to the current date
+	VestDate *Date    `xml:"VESTDATE,omitempty"` // Date at which vesting percentage changes. Default (if empty) is that the vesting percentage below applies to the current date
 	VestPct  Amount   `xml:"VESTPCT"`
 }
 
@@ -716,18 +716,18 @@ type LoanInfo struct {
 	LoanID                String   `xml:"LOANID"`                          // Identifier of this loan
 	LoanDesc              String   `xml:"LOANDESC,omitempty"`              // Loan description
 	InitialLoanBal        Amount   `xml:"INITIALLOANBAL,omitempty"`        // Initial loan balance
-	LoanStartDate         Date     `xml:"LOANSTARTDATE,omitempty"`         // Start date of loan
+	LoanStartDate         *Date    `xml:"LOANSTARTDATE,omitempty"`         // Start date of loan
 	CurrentLoanBal        Amount   `xml:"CURRENTLOANBAL"`                  // Current loan principal balance
-	DtAsOf                Date     `xml:"DTASOF"`                          // Date and time of the current loan balance
+	DtAsOf                *Date    `xml:"DTASOF"`                          // Date and time of the current loan balance
 	LoanRate              Amount   `xml:"LOANRATE,omitempty"`              // Loan annual interest rate
 	LoanPmtAmt            Amount   `xml:"LOANPMTAMT,omitempty"`            // Loan payment amount
 	LoanPmtFreq           String   `xml:"LOANPMTFREQ,omitempty"`           // Frequency of loan repayments: WEEKLY, BIWEEKLY, TWICEMONTHLY, MONTHLY, FOURWEEKS, BIMONTHLY, QUARTERLY, SEMIANNUALLY, ANNUALLY, OTHER. See section 10.2.1 for calculation rules.
 	LoanPmtsInitial       Int      `xml:"LOANPMTSINITIAL,omitempty"`       // Initial number of loan payments.
 	LoanPmtsRemaining     Int      `xml:"LOANPMTSREMAINING,omitempty"`     // Remaining number of loan payments
-	LoanMaturityDate      Date     `xml:"LOANMATURITYDATE,omitempty"`      // Expected loan end date
+	LoanMaturityDate      *Date    `xml:"LOANMATURITYDATE,omitempty"`      // Expected loan end date
 	LoanTotalProjInterest Amount   `xml:"LOANTOTALPROJINTEREST,omitempty"` // Total projected interest to be paid on this loan
 	LoanInterestToDate    Amount   `xml:"LOANINTERESTTODATE,omitempty"`    // Total interested paid to date on this loan
-	LoanExtPmtDate        Date     `xml:"LOANNEXTPMTDATE,omitempty"`       // Next payment due date
+	LoanExtPmtDate        *Date    `xml:"LOANNEXTPMTDATE,omitempty"`       // Next payment due date
 }
 
 type Inv401KSummaryAggregate struct {
@@ -743,38 +743,38 @@ type Inv401KSummaryAggregate struct {
 }
 
 type Inv401KSummaryPeriod struct {
-	XMLName       xml.Name                // One of YEARTODATE, INCEPTODATE, or PERIODTODATE
-	DtStart       Date                    `xml:"DTSTART"`
-	DtEnd         Date                    `xml:"DTEND"`
-	Contributions Inv401KSummaryAggregate `xml:"CONTRIBUTIONS,omitempty"` // 401(k) contribution aggregate. Note: this includes loan payments.
-	Withdrawls    Inv401KSummaryAggregate `xml:"WITHDRAWLS,omitempty"`    // 401(k) withdrawals aggregate. Note: this includes loan withdrawals.
-	Earnings      Inv401KSummaryAggregate `xml:"EARNINGS,omitempty"`      // 401(k) earnings aggregate. This is the market value change. It includes dividends/interest, and capital gains - realized and unrealized.
+	XMLName       xml.Name                 // One of YEARTODATE, INCEPTODATE, or PERIODTODATE
+	DtStart       Date                     `xml:"DTSTART"`
+	DtEnd         Date                     `xml:"DTEND"`
+	Contributions *Inv401KSummaryAggregate `xml:"CONTRIBUTIONS,omitempty"` // 401(k) contribution aggregate. Note: this includes loan payments.
+	Withdrawls    *Inv401KSummaryAggregate `xml:"WITHDRAWLS,omitempty"`    // 401(k) withdrawals aggregate. Note: this includes loan withdrawals.
+	Earnings      *Inv401KSummaryAggregate `xml:"EARNINGS,omitempty"`      // 401(k) earnings aggregate. This is the market value change. It includes dividends/interest, and capital gains - realized and unrealized.
 }
 
 type Inv401K struct {
 	XMLName             xml.Name `xml:"INV401K"`
 	EmployerName        String   `xml:"EMPLOYERNAME"`
 	PlanID              String   `xml:"PLANID,omitempty"`              // Plan number
-	PlanJoinDate        Date     `xml:"PLANJOINDATE,omitempty"`        // Date the employee joined the plan
+	PlanJoinDate        *Date    `xml:"PLANJOINDATE,omitempty"`        // Date the employee joined the plan
 	EmployerContactInfo String   `xml:"EMPLOYERCONTACTINFO,omitempty"` // Name of contact person at employer, plus any available contact information, such as phone number
 	BrokerContactInfo   String   `xml:"BROKERCONTACTINFO,omitempty"`   // Name of contact person at broker, plus any available contact information, such as phone number
 	DeferPctPreTax      Amount   `xml:"DEFERPCTPRETAX,omitempty"`      // Percent of employee salary deferred before tax
 	DeferPctAfterTax    Amount   `xml:"DEFERPCTAFTERTAX,omitempty"`    // Percent of employee salary deferred after tax
 
 	//<MATCHINFO> Aggregate containing employer match information. Absent if employer does not contribute matching funds.
-	MatchPct            Amount               `xml:"MATCHINFO>MATCHPCT,omitempty"`          // Percent of employee contribution matched, e.g., 75% if contribution rate is $0.75/$1.00
-	MaxMatchAmt         Amount               `xml:"MATCHINFO>MAXMATCHAMT,omitempty"`       // Maximum employer contribution amount in any year
-	MaxMatchPct         Amount               `xml:"MATCHINFO>MAXMATCHPCT,omitempty"`       // Current maximum employer contribution percentage. Maximum match in a year is MAXMATCHPCT up to the MAXMATCHAMT, if provided
-	StartOfYear         Date                 `xml:"MATCHINFO>STARTOFYEAR,omitempty"`       // Specifies when the employer contribution max is reset. Some plans have a maximum based on the company fiscal year rather than calendar year. Assume calendar year if omitted. Only the month and day (MMDD) are used; year (YYYY) and time are ignored
-	BaseMatchAmt        Amount               `xml:"MATCHINFO>BASEMATCHAMT"`                // Specifies a fixed dollar amount contributed by the employer if the employee participates in the plan at all. This may be present in addition to the <MATCHPCT>. $0 if omitted
-	BaseMatchPct        Amount               `xml:"MATCHINFO>BASEMATCHPCT"`                // Specifies a fixed percent of employee salary matched if the employee participates in the plan at all. This may be present in addition to the MATCHPCT>. 0% if omitted. Base match in a year is BASEMATCHPCT up to the BASEMATCHAMT,if provided
-	ContribInfo         []ContribSecurity    `xml:"CONTRIBINTO>CONTRIBSECURITY"`           // Aggregate to describe how new contributions are distributed among the available securities.
-	CurrentVestPct      Amount               `xml:"CURRENTVESTPCT,omitempty"`              // Estimated percentage of employer contributions vested as of the current date. If omitted, assume 100%
-	VestInfo            []VestInfo           `xml:"VESTINFO,omitempty"`                    // Vest change dates. Provides the vesting percentage as of any particular past, current, or future date. 0 or more.
-	LoanInfo            []LoanInfo           `xml:"LOANINFO,omitempty"`                    // List of any loans outstanding against this account
-	YearToDateSummary   Inv401KSummaryPeriod `xml:"INV401KSUMMARY>YEARTODATE"`             // Contributions to date for this calendar year.
-	InceptToDateSummary Inv401KSummaryPeriod `xml:"INV401KSUMMARY>INCEPTODATE,omitempty"`  // Total contributions to date (since inception)
-	PeriodToDate        Inv401KSummaryPeriod `xml:"INV401KSUMMARY>PERIODTODATE,omitempty"` // Total contributions this contribution period
+	MatchPct            Amount                `xml:"MATCHINFO>MATCHPCT,omitempty"`          // Percent of employee contribution matched, e.g., 75% if contribution rate is $0.75/$1.00
+	MaxMatchAmt         Amount                `xml:"MATCHINFO>MAXMATCHAMT,omitempty"`       // Maximum employer contribution amount in any year
+	MaxMatchPct         Amount                `xml:"MATCHINFO>MAXMATCHPCT,omitempty"`       // Current maximum employer contribution percentage. Maximum match in a year is MAXMATCHPCT up to the MAXMATCHAMT, if provided
+	StartOfYear         *Date                 `xml:"MATCHINFO>STARTOFYEAR,omitempty"`       // Specifies when the employer contribution max is reset. Some plans have a maximum based on the company fiscal year rather than calendar year. Assume calendar year if omitted. Only the month and day (MMDD) are used; year (YYYY) and time are ignored
+	BaseMatchAmt        Amount                `xml:"MATCHINFO>BASEMATCHAMT"`                // Specifies a fixed dollar amount contributed by the employer if the employee participates in the plan at all. This may be present in addition to the <MATCHPCT>. $0 if omitted
+	BaseMatchPct        Amount                `xml:"MATCHINFO>BASEMATCHPCT"`                // Specifies a fixed percent of employee salary matched if the employee participates in the plan at all. This may be present in addition to the MATCHPCT>. 0% if omitted. Base match in a year is BASEMATCHPCT up to the BASEMATCHAMT,if provided
+	ContribInfo         []ContribSecurity     `xml:"CONTRIBINTO>CONTRIBSECURITY"`           // Aggregate to describe how new contributions are distributed among the available securities.
+	CurrentVestPct      Amount                `xml:"CURRENTVESTPCT,omitempty"`              // Estimated percentage of employer contributions vested as of the current date. If omitted, assume 100%
+	VestInfo            []VestInfo            `xml:"VESTINFO,omitempty"`                    // Vest change dates. Provides the vesting percentage as of any particular past, current, or future date. 0 or more.
+	LoanInfo            []LoanInfo            `xml:"LOANINFO,omitempty"`                    // List of any loans outstanding against this account
+	YearToDateSummary   Inv401KSummaryPeriod  `xml:"INV401KSUMMARY>YEARTODATE"`             // Contributions to date for this calendar year.
+	InceptToDateSummary *Inv401KSummaryPeriod `xml:"INV401KSUMMARY>INCEPTODATE,omitempty"`  // Total contributions to date (since inception)
+	PeriodToDate        *Inv401KSummaryPeriod `xml:"INV401KSUMMARY>PERIODTODATE,omitempty"` // Total contributions this contribution period
 }
 
 type Inv401KBal struct {
@@ -800,13 +800,13 @@ type InvStatementResponse struct {
 	DtAsOf      Date         `xml:"INVSTMTRS>DTASOF"`
 	CurDef      String       `xml:"INVSTMTRS>CURDEF"`
 	InvAcctFrom InvAcct      `xml:"INVSTMTRS>INVACCTFROM"`
-	InvTranList InvTranList  `xml:"INVSTMTRS>INVTRANLIST,omitempty"`
+	InvTranList *InvTranList `xml:"INVSTMTRS>INVTRANLIST,omitempty"`
 	InvPosList  PositionList `xml:"INVSTMTRS>INVPOSLIST,omitempty"`
-	InvBal      InvBalance   `xml:"INVSTMTRS>INVBAL,omitempty"`
+	InvBal      *InvBalance  `xml:"INVSTMTRS>INVBAL,omitempty"`
 	// TODO INVOOLIST
-	MktgInfo   String     `xml:"INVSTMTRS>MKTGINFO,omitempty"` // Marketing information
-	Inv401K    Inv401K    `xml:"INVSTMTRS>INV401K,omitempty"`
-	Inv401KBal Inv401KBal `xml:"INVSTMTRS>INV401KBAL,omitempty"`
+	MktgInfo   String      `xml:"INVSTMTRS>MKTGINFO,omitempty"` // Marketing information
+	Inv401K    *Inv401K    `xml:"INVSTMTRS>INV401K,omitempty"`
+	Inv401KBal *Inv401KBal `xml:"INVSTMTRS>INV401KBAL,omitempty"`
 }
 
 func (sr InvStatementResponse) Name() string {

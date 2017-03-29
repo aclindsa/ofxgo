@@ -6,7 +6,6 @@ import (
 	"github.com/aclindsa/ofxgo"
 	"io"
 	"os"
-	"time"
 )
 
 var ccDownloadCommand = Command{
@@ -48,8 +47,6 @@ func ccDownload() {
 		CCAcctFrom: ofxgo.CCAcct{
 			AcctId: ofxgo.String(acctId),
 		},
-		DtStart: ofxgo.Date(time.Now().AddDate(-1, 0, 0)),
-		DtEnd:   ofxgo.Date(time.Now()),
 		Include: true,
 	}
 	query.CreditCards = append(query.CreditCards, &statementRequest)

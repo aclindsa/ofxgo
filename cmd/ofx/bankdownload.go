@@ -6,7 +6,6 @@ import (
 	"github.com/aclindsa/ofxgo"
 	"io"
 	"os"
-	"time"
 )
 
 var downloadCommand = Command{
@@ -54,8 +53,6 @@ func download() {
 			AcctId:   ofxgo.String(acctId),
 			AcctType: ofxgo.String(acctType),
 		},
-		DtStart: ofxgo.Date(time.Now().AddDate(-1, 0, 0)),
-		DtEnd:   ofxgo.Date(time.Now()),
 		Include: true,
 	}
 	query.Banking = append(query.Banking, &statementRequest)

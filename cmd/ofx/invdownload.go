@@ -6,7 +6,6 @@ import (
 	"github.com/aclindsa/ofxgo"
 	"io"
 	"os"
-	"time"
 )
 
 var invDownloadCommand = Command{
@@ -52,11 +51,8 @@ func invDownload() {
 			BrokerId: ofxgo.String(brokerId),
 			AcctId:   ofxgo.String(acctId),
 		},
-		DtStart:        ofxgo.Date(time.Now().AddDate(-1, 0, 0)), // a year ago
-		DtEnd:          ofxgo.Date(time.Now().AddDate(0, 0, -1)), // Some FIs (*cough* Fidelity) return errors if DTEND is the current day
 		Include:        true,
 		IncludeOO:      true,
-		PosDtAsOf:      ofxgo.Date(time.Now()),
 		IncludePos:     true,
 		IncludeBalance: true,
 		Include401K:    true,
