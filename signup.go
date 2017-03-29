@@ -18,9 +18,7 @@ func (r *AcctInfoRequest) Name() string {
 }
 
 func (r *AcctInfoRequest) Valid() (bool, error) {
-	if ok, err := r.TrnUID.Valid(); !ok {
-		return false, err
-	}
+	// TODO implement
 	return true, nil
 }
 

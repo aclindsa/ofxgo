@@ -276,21 +276,21 @@ func TestUnmarshalUID(t *testing.T) {
 	unmarshalHelper(t, "d1cf3d3d-9ef9-4a97-b180-81706829cb04", &u, &overwritten)
 }
 
-func TestUIDValid(t *testing.T) {
+func TestUIDRecommendedFormat(t *testing.T) {
 	var u ofxgo.UID = "d1cf3d3d-9ef9-4a97-b180-81706829cb04"
-	if ok, err := u.Valid(); !ok || err != nil {
+	if ok, err := u.RecommendedFormat(); !ok || err != nil {
 		t.Fatalf("UID unexpectedly failed validation\n")
 	}
 	u = "d1cf3d3d-9ef9-4a97-b180-81706829cb0"
-	if ok, err := u.Valid(); ok || err == nil {
+	if ok, err := u.RecommendedFormat(); ok || err == nil {
 		t.Fatalf("UID should have failed validation because it's too short\n")
 	}
 	u = "d1cf3d3d-9ef94a97-b180-81706829cb04"
-	if ok, err := u.Valid(); ok || err == nil {
+	if ok, err := u.RecommendedFormat(); ok || err == nil {
 		t.Fatalf("UID should have failed validation because it's missing hyphens\n")
 	}
 	u = "d1cf3d3d-9ef9-4a97-b180981706829cb04"
-	if ok, err := u.Valid(); ok || err == nil {
+	if ok, err := u.RecommendedFormat(); ok || err == nil {
 		t.Fatalf("UID should have failed validation because its hyphens have been replaced\n")
 	}
 }

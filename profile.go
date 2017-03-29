@@ -17,9 +17,7 @@ func (r *ProfileRequest) Name() string {
 }
 
 func (r *ProfileRequest) Valid() (bool, error) {
-	if ok, err := r.TrnUID.Valid(); !ok {
-		return false, err
-	}
+	// TODO implement
 	r.ClientRouting = "NONE"
 	return true, nil
 }

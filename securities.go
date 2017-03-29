@@ -32,9 +32,7 @@ func (r *SecListRequest) Name() string {
 }
 
 func (r *SecListRequest) Valid() (bool, error) {
-	if ok, err := r.TrnUID.Valid(); !ok {
-		return false, err
-	}
+	// TODO implement
 	return true, nil
 }
 
@@ -51,9 +49,7 @@ func (r SecListResponse) Name() string {
 }
 
 func (r SecListResponse) Valid() (bool, error) {
-	if ok, err := r.TrnUID.Valid(); !ok {
-		return false, err
-	}
+	// TODO implement
 	return true, nil
 }
 

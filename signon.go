@@ -47,11 +47,6 @@ func (r *SignonRequest) Valid() (bool, error) {
 	if len(r.AppVer) < 1 || len(r.AppVer) > 4 {
 		return false, errors.New("SONRQ>APPVER invalid length")
 	}
-	if ok, err := r.ClientUID.Valid(); !ok {
-		if len(r.ClientUID) > 0 { // ClientUID isn't required
-			return false, err
-		}
-	}
 	return true, nil
 }
 

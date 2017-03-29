@@ -216,7 +216,9 @@ func (ob *Boolean) String() string {
 
 type UID string
 
-func (ou UID) Valid() (bool, error) {
+// The OFX specification recommends that UIDs follow the standard UUID
+// 36-character format
+func (ou UID) RecommendedFormat() (bool, error) {
 	if len(ou) != 36 {
 		return false, errors.New("UID not 36 characters long")
 	}
