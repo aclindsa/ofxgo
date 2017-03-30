@@ -33,6 +33,10 @@ func (i *Int) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return nil
 }
 
+func (i Int) Equal(o Int) bool {
+	return i == o
+}
+
 type Amount big.Rat
 
 func (a *Amount) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
@@ -64,6 +68,11 @@ func (a Amount) String() string {
 
 func (a *Amount) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	return e.EncodeElement(a.String(), start)
+}
+
+func (a Amount) Equal(o Amount) bool {
+	ratA := (*big.Rat)(&a)
+	return ratA.Cmp((*big.Rat)(&o)) == 0
 }
 
 type Date time.Time
@@ -167,6 +176,10 @@ func (od *Date) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	return e.EncodeElement(od.String(), start)
 }
 
+func (od Date) Equal(o Date) bool {
+	return time.Time(od).Equal(time.Time(o))
+}
+
 type String string
 
 func (os *String) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
@@ -181,6 +194,10 @@ func (os *String) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 
 func (os *String) String() string {
 	return string(*os)
+}
+
+func (os String) Equal(o String) bool {
+	return os == o
 }
 
 type Boolean bool
@@ -214,6 +231,10 @@ func (ob *Boolean) String() string {
 	return fmt.Sprintf("%v", *ob)
 }
 
+func (ob Boolean) Equal(o Boolean) bool {
+	return ob == o
+}
+
 type UID string
 
 // The OFX specification recommends that UIDs follow the standard UUID
@@ -226,6 +247,10 @@ func (ou UID) RecommendedFormat() (bool, error) {
 		return false, errors.New("UID missing hyphens at the appropriate places")
 	}
 	return true, nil
+}
+
+func (ou UID) Equal(o UID) bool {
+	return ou == o
 }
 
 func RandomUID() (*UID, error) {

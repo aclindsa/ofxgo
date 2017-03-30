@@ -11,7 +11,7 @@ var ignoreSpacesRe = regexp.MustCompile(">[ \t\r\n]+<")
 func marshalCheckRequest(t *testing.T, request *ofxgo.Request, expected string) {
 	buf, err := request.Marshal()
 	if err != nil {
-		t.Fatalf("Unexpected error marshalling request: %s\n", err)
+		t.Fatalf("%s: Unexpected error marshalling request: %s\n", t.Name(), err)
 	}
 	actualString := buf.String()
 

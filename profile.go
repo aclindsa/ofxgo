@@ -97,6 +97,7 @@ func (msl *MessageSetList) UnmarshalXML(d *xml.Decoder, start xml.StartElement) 
 type ProfileResponse struct {
 	XMLName        xml.Name       `xml:"PROFTRNRS"`
 	TrnUID         UID            `xml:"TRNUID"`
+	Status         Status         `xml:"STATUS"`
 	MessageSetList MessageSetList `xml:"PROFRS>MSGSETLIST"`
 	SignonInfoList []SignonInfo   `xml:"PROFRS>SIGNONINFOLIST>SIGNONINFO"`
 	DtProfUp       Date           `xml:"PROFRS>DTPROFUP"`

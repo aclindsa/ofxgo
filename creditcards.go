@@ -28,6 +28,7 @@ func (r *CCStatementRequest) Valid() (bool, error) {
 type CCStatementResponse struct {
 	XMLName      xml.Name         `xml:"CCSTMTTRNRS"`
 	TrnUID       UID              `xml:"TRNUID"`
+	Status       Status           `xml:"STATUS"`
 	CurDef       String           `xml:"CCSTMTRS>CURDEF"`
 	CCAcctFrom   CCAcct           `xml:"CCSTMTRS>CCACCTFROM"`
 	BankTranList *TransactionList `xml:"CCSTMTRS>BANKTRANLIST,omitempty"`

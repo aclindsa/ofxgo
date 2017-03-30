@@ -126,6 +126,7 @@ type Balance struct {
 type StatementResponse struct {
 	XMLName       xml.Name                `xml:"STMTTRNRS"`
 	TrnUID        UID                     `xml:"TRNUID"`
+	Status        Status                  `xml:"STATUS"`
 	CurDef        String                  `xml:"STMTRS>CURDEF"`
 	BankAcctFrom  BankAcct                `xml:"STMTRS>BANKACCTFROM"`
 	BankTranList  *TransactionList        `xml:"STMTRS>BANKTRANLIST,omitempty"`

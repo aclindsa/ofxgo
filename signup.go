@@ -107,6 +107,7 @@ type AcctInfo struct {
 type AcctInfoResponse struct {
 	XMLName  xml.Name   `xml:"ACCTINFOTRNRS"`
 	TrnUID   UID        `xml:"TRNUID"`
+	Status   Status     `xml:"STATUS"`
 	DtAcctUp Date       `xml:"ACCTINFORS>DTACCTUP"`
 	AcctInfo []AcctInfo `xml:"ACCTINFORS>ACCTINFO,omitempty"`
 }
