@@ -9,8 +9,10 @@ import (
 type AcctInfoRequest struct {
 	XMLName   xml.Name `xml:"ACCTINFOTRNRQ"`
 	TrnUID    UID      `xml:"TRNUID"`
-	CltCookie Int      `xml:"CLTCOOKIE"`
-	DtAcctUp  Date     `xml:"ACCTINFORQ>DTACCTUP"`
+	CltCookie String   `xml:"CLTCOOKIE,omitempty"`
+	TAN       String   `xml:"TAN,omitempty"` // Transaction authorization number
+	// TODO `xml:"OFXEXTENSION,omitempty"`
+	DtAcctUp Date `xml:"ACCTINFORQ>DTACCTUP"`
 }
 
 func (r *AcctInfoRequest) Name() string {
@@ -105,9 +107,11 @@ type AcctInfo struct {
 }
 
 type AcctInfoResponse struct {
-	XMLName  xml.Name   `xml:"ACCTINFOTRNRS"`
-	TrnUID   UID        `xml:"TRNUID"`
-	Status   Status     `xml:"STATUS"`
+	XMLName   xml.Name `xml:"ACCTINFOTRNRS"`
+	TrnUID    UID      `xml:"TRNUID"`
+	Status    Status   `xml:"STATUS"`
+	CltCookie String   `xml:"CLTCOOKIE,omitempty"`
+	// TODO `xml:"OFXEXTENSION,omitempty"`
 	DtAcctUp Date       `xml:"ACCTINFORS>DTACCTUP"`
 	AcctInfo []AcctInfo `xml:"ACCTINFORS>ACCTINFO,omitempty"`
 }

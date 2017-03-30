@@ -6,10 +6,13 @@ import (
 )
 
 type ProfileRequest struct {
-	XMLName       xml.Name `xml:"PROFTRNRQ"`
-	TrnUID        UID      `xml:"TRNUID"`
-	ClientRouting String   `xml:"PROFRQ>CLIENTROUTING"` // Forced to NONE
-	DtProfUp      Date     `xml:"PROFRQ>DTPROFUP"`
+	XMLName   xml.Name `xml:"PROFTRNRQ"`
+	TrnUID    UID      `xml:"TRNUID"`
+	CltCookie String   `xml:"CLTCOOKIE,omitempty"`
+	TAN       String   `xml:"TAN,omitempty"` // Transaction authorization number
+	// TODO `xml:"OFXEXTENSION,omitempty"`
+	ClientRouting String `xml:"PROFRQ>CLIENTROUTING"` // Forced to NONE
+	DtProfUp      Date   `xml:"PROFRQ>DTPROFUP"`
 }
 
 func (r *ProfileRequest) Name() string {
@@ -95,9 +98,11 @@ func (msl *MessageSetList) UnmarshalXML(d *xml.Decoder, start xml.StartElement) 
 }
 
 type ProfileResponse struct {
-	XMLName        xml.Name       `xml:"PROFTRNRS"`
-	TrnUID         UID            `xml:"TRNUID"`
-	Status         Status         `xml:"STATUS"`
+	XMLName   xml.Name `xml:"PROFTRNRS"`
+	TrnUID    UID      `xml:"TRNUID"`
+	Status    Status   `xml:"STATUS"`
+	CltCookie String   `xml:"CLTCOOKIE,omitempty"`
+	// TODO `xml:"OFXEXTENSION,omitempty"`
 	MessageSetList MessageSetList `xml:"PROFRS>MSGSETLIST"`
 	SignonInfoList []SignonInfo   `xml:"PROFRS>SIGNONINFOLIST>SIGNONINFO"`
 	DtProfUp       Date           `xml:"PROFRS>DTPROFUP"`

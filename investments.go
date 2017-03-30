@@ -794,7 +794,7 @@ type InvStatementResponse struct {
 	TrnUID    UID      `xml:"TRNUID"`
 	Status    Status   `xml:"STATUS"`
 	CltCookie String   `xml:"CLTCOOKIE,omitempty"`
-	// TODO OFXEXTENSION
+	// TODO `xml:"OFXEXTENSION,omitempty"`
 	DtAsOf      Date         `xml:"INVSTMTRS>DTASOF"`
 	CurDef      String       `xml:"INVSTMTRS>CURDEF"`
 	InvAcctFrom InvAcct      `xml:"INVSTMTRS>INVACCTFROM"`

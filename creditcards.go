@@ -6,14 +6,17 @@ import (
 )
 
 type CCStatementRequest struct {
-	XMLName        xml.Name `xml:"CCSTMTTRNRQ"`
-	TrnUID         UID      `xml:"TRNUID"`
-	CCAcctFrom     CCAcct   `xml:"CCSTMTRQ>CCACCTFROM"`
-	DtStart        *Date    `xml:"CCSTMTRQ>INCTRAN>DTSTART,omitempty"`
-	DtEnd          *Date    `xml:"CCSTMTRQ>INCTRAN>DTEND,omitempty"`
-	Include        Boolean  `xml:"CCSTMTRQ>INCTRAN>INCLUDE"`          // Include transactions (instead of just balance)
-	IncludePending Boolean  `xml:"CCSTMTRQ>INCLUDEPENDING,omitempty"` // Include pending transactions
-	IncTranImg     Boolean  `xml:"CCSTMTRQ>INCTRANIMG,omitempty"`     // Include transaction images
+	XMLName   xml.Name `xml:"CCSTMTTRNRQ"`
+	TrnUID    UID      `xml:"TRNUID"`
+	CltCookie String   `xml:"CLTCOOKIE,omitempty"`
+	TAN       String   `xml:"TAN,omitempty"`
+	// TODO OFXEXTENSION
+	CCAcctFrom     CCAcct  `xml:"CCSTMTRQ>CCACCTFROM"`
+	DtStart        *Date   `xml:"CCSTMTRQ>INCTRAN>DTSTART,omitempty"`
+	DtEnd          *Date   `xml:"CCSTMTRQ>INCTRAN>DTEND,omitempty"`
+	Include        Boolean `xml:"CCSTMTRQ>INCTRAN>INCLUDE"`          // Include transactions (instead of just balance)
+	IncludePending Boolean `xml:"CCSTMTRQ>INCLUDEPENDING,omitempty"` // Include pending transactions
+	IncTranImg     Boolean `xml:"CCSTMTRQ>INCTRANIMG,omitempty"`     // Include transaction images
 }
 
 func (r *CCStatementRequest) Name() string {
@@ -26,9 +29,11 @@ func (r *CCStatementRequest) Valid() (bool, error) {
 }
 
 type CCStatementResponse struct {
-	XMLName      xml.Name         `xml:"CCSTMTTRNRS"`
-	TrnUID       UID              `xml:"TRNUID"`
-	Status       Status           `xml:"STATUS"`
+	XMLName   xml.Name `xml:"CCSTMTTRNRS"`
+	TrnUID    UID      `xml:"TRNUID"`
+	Status    Status   `xml:"STATUS"`
+	CltCookie String   `xml:"CLTCOOKIE,omitempty"`
+	// TODO `xml:"OFXEXTENSION,omitempty"`
 	CurDef       String           `xml:"CCSTMTRS>CURDEF"`
 	CCAcctFrom   CCAcct           `xml:"CCSTMTRS>CCACCTFROM"`
 	BankTranList *TransactionList `xml:"CCSTMTRS>BANKTRANLIST,omitempty"`

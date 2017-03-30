@@ -6,8 +6,11 @@ import (
 )
 
 type StatementRequest struct {
-	XMLName        xml.Name `xml:"STMTTRNRQ"`
-	TrnUID         UID      `xml:"TRNUID"`
+	XMLName   xml.Name `xml:"STMTTRNRQ"`
+	TrnUID    UID      `xml:"TRNUID"`
+	CltCookie String   `xml:"CLTCOOKIE,omitempty"`
+	TAN       String   `xml:"TAN,omitempty"` // Transaction authorization number
+	// TODO `xml:"OFXEXTENSION,omitempty"`
 	BankAcctFrom   BankAcct `xml:"STMTRQ>BANKACCTFROM"`
 	DtStart        *Date    `xml:"STMTRQ>INCTRAN>DTSTART,omitempty"`
 	DtEnd          *Date    `xml:"STMTRQ>INCTRAN>DTEND,omitempty"`
@@ -124,9 +127,11 @@ type Balance struct {
 }
 
 type StatementResponse struct {
-	XMLName       xml.Name                `xml:"STMTTRNRS"`
-	TrnUID        UID                     `xml:"TRNUID"`
-	Status        Status                  `xml:"STATUS"`
+	XMLName   xml.Name `xml:"STMTTRNRS"`
+	TrnUID    UID      `xml:"TRNUID"`
+	Status    Status   `xml:"STATUS"`
+	CltCookie String   `xml:"CLTCOOKIE,omitempty"`
+	// TODO `xml:"OFXEXTENSION,omitempty"`
 	CurDef        String                  `xml:"STMTRS>CURDEF"`
 	BankAcctFrom  BankAcct                `xml:"STMTRS>BANKACCTFROM"`
 	BankTranList  *TransactionList        `xml:"STMTRS>BANKTRANLIST,omitempty"`

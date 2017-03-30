@@ -20,10 +20,11 @@ type SecurityRequest struct {
 }
 
 type SecListRequest struct {
-	XMLName    xml.Name          `xml:"SECLISTTRNRQ"`
-	TrnUID     UID               `xml:"TRNUID"`
-	CltCookie  String            `xml:"CLTCOOKIE,omitempty"`
-	TAN        String            `xml:"TAN,omitempty"` // Transaction authorization number
+	XMLName   xml.Name `xml:"SECLISTTRNRQ"`
+	TrnUID    UID      `xml:"TRNUID"`
+	CltCookie String   `xml:"CLTCOOKIE,omitempty"`
+	TAN       String   `xml:"TAN,omitempty"` // Transaction authorization number
+	// TODO `xml:"OFXEXTENSION,omitempty"`
 	Securities []SecurityRequest `xml:"SECLISTRQ>SECRQ,omitempty"`
 }
 
@@ -41,6 +42,7 @@ type SecListResponse struct {
 	TrnUID    UID      `xml:"TRNUID"`
 	Status    Status   `xml:"STATUS"`
 	CltCookie String   `xml:"CLTCOOKIE,omitempty"`
+	// TODO `xml:"OFXEXTENSION,omitempty"`
 	// SECLISTRS is always empty, so we don't parse it here. The actual securities list will be in a top-level element parallel to SECLISTTRNRS
 }
 
