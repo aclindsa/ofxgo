@@ -43,7 +43,7 @@ type CCStatementResponse struct {
 	//BANKTRANLISTP
 	BalAmt        Amount    `xml:"CCSTMTRS>LEDGERBAL>BALAMT"`
 	DtAsOf        Date      `xml:"CCSTMTRS>LEDGERBAL>DTASOF"`
-	AvailBalAmt   Amount    `xml:"CCSTMTRS>AVAILBAL>BALAMT,omitempty"`
+	AvailBalAmt   *Amount   `xml:"CCSTMTRS>AVAILBAL>BALAMT,omitempty"`
 	AvailDtAsOf   *Date     `xml:"CCSTMTRS>AVAILBAL>DTASOF,omitempty"`
 	CashAdvBalAmt Amount    `xml:"CCSTMTRS>CASHADVBALAMT,omitempty"`           // Only for CREDITLINE accounts, available balance for cash advances
 	IntRatePurch  Amount    `xml:"CCSTMTRS>INTRATEPURCH,omitempty"`            // Current interest rate for purchases
