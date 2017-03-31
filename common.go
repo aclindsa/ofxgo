@@ -147,11 +147,11 @@ var statusMeanings = map[Int][3]string{
 	2025:  [3]string{"Branch ID missing", "ERROR", "A <BRANCHID> value must be provided in the <BANKACCTFROM> aggregate for this country system, but this field is missing."},
 	2026:  [3]string{"Bank name doesn’t match bank ID", "ERROR", "The value of <BANKNAME> in the <EXTBANKACCTTO> aggregate is inconsistent with the value of <BANKID> in the <BANKACCTTO> aggregate."},
 	2027:  [3]string{"Invalid date range", "ERROR", "Response for non-overlapping dates, date ranges in the future, et cetera."},
-	2028:  [3]string{"Requested element unknown", "WARNING", "One or more elements of the request were not recognized by the server or the server (as noted in the FI Profile) does not support the elements. The server executed the element transactions it understood and supported. For example, the request file included private tags in a <PMTRQ> but the server was able to execute the rest of the request."},
+	2028:  [3]string{"Requested element unknown", "WARN", "One or more elements of the request were not recognized by the server or the server (as noted in the FI Profile) does not support the elements. The server executed the element transactions it understood and supported. For example, the request file included private tags in a <PMTRQ> but the server was able to execute the rest of the request."},
 	3000:  [3]string{"MFA Challenge authentication required", "ERROR", "User credentials are correct, but further authentication required. Client should send <MFACHALLENGERQ> in next request."},
 	3001:  [3]string{"MFA Challenge information is invalid", "ERROR", "User or client information sent in MFACHALLENGEA contains invalid information"},
 	6500:  [3]string{"<REJECTIFMISSING>Y invalid without <TOKEN>", "ERROR", "This error code may appear in the <SYNCERROR> element of an <xxxSYNCRS> wrapper (in <PRESDLVMSGSRSV1> and V2 message set responses) or the <CODE> contained in any embedded transaction wrappers within a sync response. The corresponding sync request wrapper included <REJECTIFMISSING>Y with <REFRESH>Y or <TOKENONLY>Y, which is illegal."},
-	6501:  [3]string{"Embedded transactions in request failed to process: Out of date", "WARNING", "<REJECTIFMISSING>Y and embedded transactions appeared in the request sync wrapper and the provided <TOKEN> was out of date. This code should be used in the <SYNCERROR> of the response sync wrapper."},
+	6501:  [3]string{"Embedded transactions in request failed to process: Out of date", "WARN", "<REJECTIFMISSING>Y and embedded transactions appeared in the request sync wrapper and the provided <TOKEN> was out of date. This code should be used in the <SYNCERROR> of the response sync wrapper."},
 	6502:  [3]string{"Unable to process embedded transaction due to out-of-date <TOKEN>", "ERROR", "Used in response transaction wrapper for embedded transactions when <SYNCERROR>6501 appears in the surrounding sync wrapper."},
 	10000: [3]string{"Stop check in process", "INFO", "Stop check is already in process."},
 	10500: [3]string{"Too many checks to process", "ERROR", "The stop-payment request <STPCHKRQ> specifies too many checks."},
@@ -223,7 +223,7 @@ type Status struct {
 
 func (s *Status) Valid() (bool, error) {
 	switch s.Severity {
-	case "INFO", "WARN", "WARNING", "ERROR":
+	case "INFO", "WARN", "ERROR":
 	default:
 		return false, errors.New("Invalid STATUS>SEVERITY")
 	}
