@@ -295,7 +295,7 @@ func ParseResponse(reader io.Reader) (*Response, error) {
 	tok, err = nextNonWhitespaceToken(decoder)
 	if err != nil {
 		return nil, err
-	} else if signonStart, ok := tok.(xml.StartElement); ok && signonStart.Name.Local == "SIGNONMSGSRSV1" {
+	} else if signonStart, ok := tok.(xml.StartElement); ok && signonStart.Name.Local == SignonRs.String() {
 		if err := decoder.Decode(&or.Signon); err != nil {
 			return nil, err
 		}
@@ -306,7 +306,7 @@ func ParseResponse(reader io.Reader) (*Response, error) {
 	tok, err = nextNonWhitespaceToken(decoder)
 	if err != nil {
 		return nil, err
-	} else if signonEnd, ok := tok.(xml.EndElement); !ok || signonEnd.Name.Local != "SIGNONMSGSRSV1" {
+	} else if signonEnd, ok := tok.(xml.EndElement); !ok || signonEnd.Name.Local != SignonRs.String() {
 		return nil, errors.New("Missing closing SIGNONMSGSRSV1 xml element")
 	}
 	if ok, err := or.Signon.Valid(); !ok {
