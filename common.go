@@ -5,11 +5,115 @@ import (
 	"github.com/aclindsa/go/src/encoding/xml"
 )
 
-// Represents a top-level OFX message set (i.e. BANKMSGSRSV1)
+// Represents an OFX message in a message set
 type Message interface {
-	Name() string         // The name of the OFX element this set represents
+	Name() string         // The name of the OFX transaction wrapper element this represents
 	Valid() (bool, error) // Called before a Message is marshaled and after
 	// it's unmarshaled to ensure the request or response is valid
+	Type() messageType // The message set this message belongs to
+}
+
+type messageType uint
+
+const (
+	// Requests
+	SignonRq messageType = iota
+	SignupRq
+	BankRq
+	CreditCardRq
+	LoanRq
+	InvStmtRq
+	InterXferRq
+	WireXferRq
+	BillpayRq
+	EmailRq
+	SecListRq
+	PresDirRq
+	PresDlvRq
+	ProfileRq
+	ImageRq
+	// Responses
+	SignonRs
+	SignupRs
+	BankRs
+	CreditCardRs
+	LoanRs
+	InvStmtRs
+	InterXferRs
+	WireXferRs
+	BillpayRs
+	EmailRs
+	SecListRs
+	PresDirRs
+	PresDlvRs
+	ProfileRs
+	ImageRs
+)
+
+func (t messageType) String() string {
+	switch t {
+	case SignonRq:
+		return "SIGNONMSGSRQV1"
+	case SignupRq:
+		return "SIGNUPMSGSRQV1"
+	case BankRq:
+		return "BANKMSGSRQV1"
+	case CreditCardRq:
+		return "CREDITCARDMSGSRQV1"
+	case LoanRq:
+		return "LOANMSGSRQV1"
+	case InvStmtRq:
+		return "INVSTMTMSGSRQV1"
+	case InterXferRq:
+		return "INTERXFERMSGSRQV1"
+	case WireXferRq:
+		return "WIREXFERMSGSRQV1"
+	case BillpayRq:
+		return "BILLPAYMSGSRQV1"
+	case EmailRq:
+		return "EMAILMSGSRQV1"
+	case SecListRq:
+		return "SECLISTMSGSRQV1"
+	case PresDirRq:
+		return "PRESDIRMSGSRQV1"
+	case PresDlvRq:
+		return "PRESDLVMSGSRQV1"
+	case ProfileRq:
+		return "PROFMSGSRQV1"
+	case ImageRq:
+		return "IMAGEMSGSRQV1"
+	case SignonRs:
+		return "SIGNONMSGSRSV1"
+	case SignupRs:
+		return "SIGNUPMSGSRSV1"
+	case BankRs:
+		return "BANKMSGSRSV1"
+	case CreditCardRs:
+		return "CREDITCARDMSGSRSV1"
+	case LoanRs:
+		return "LOANMSGSRSV1"
+	case InvStmtRs:
+		return "INVSTMTMSGSRSV1"
+	case InterXferRs:
+		return "INTERXFERMSGSRSV1"
+	case WireXferRs:
+		return "WIREXFERMSGSRSV1"
+	case BillpayRs:
+		return "BILLPAYMSGSRSV1"
+	case EmailRs:
+		return "EMAILMSGSRSV1"
+	case SecListRs:
+		return "SECLISTMSGSRSV1"
+	case PresDirRs:
+		return "PRESDIRMSGSRSV1"
+	case PresDlvRs:
+		return "PRESDLVMSGSRSV1"
+	case ProfileRs:
+		return "PROFMSGSRSV1"
+	case ImageRs:
+		return "IMAGEMSGSRSV1"
+	}
+	panic("Invalid messageType")
 }
 
 // Map of error codes to their meanings, SEVERITY, and conditions under which

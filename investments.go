@@ -33,6 +33,10 @@ func (r *InvStatementRequest) Valid() (bool, error) {
 	return true, nil
 }
 
+func (r *InvStatementRequest) Type() messageType {
+	return InvStmtRq
+}
+
 type InvTran struct {
 	XMLName       xml.Name `xml:"INVTRAN"`
 	FiTId         String   `xml:"FITID"`
@@ -814,6 +818,10 @@ func (sr InvStatementResponse) Name() string {
 func (sr InvStatementResponse) Valid() (bool, error) {
 	//TODO implement
 	return true, nil
+}
+
+func (sr InvStatementResponse) Type() messageType {
+	return InvStmtRs
 }
 
 func decodeInvestmentsMessageSet(d *xml.Decoder, start xml.StartElement) ([]Message, error) {

@@ -28,6 +28,10 @@ func (r *CCStatementRequest) Valid() (bool, error) {
 	return true, nil
 }
 
+func (r *CCStatementRequest) Type() messageType {
+	return CreditCardRq
+}
+
 type CCStatementResponse struct {
 	XMLName   xml.Name `xml:"CCSTMTTRNRS"`
 	TrnUID    UID      `xml:"TRNUID"`
@@ -60,6 +64,10 @@ func (sr CCStatementResponse) Name() string {
 func (sr CCStatementResponse) Valid() (bool, error) {
 	//TODO implement
 	return true, nil
+}
+
+func (sr CCStatementResponse) Type() messageType {
+	return CreditCardRs
 }
 
 func decodeCCMessageSet(d *xml.Decoder, start xml.StartElement) ([]Message, error) {

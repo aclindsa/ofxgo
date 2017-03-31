@@ -28,6 +28,10 @@ func (r *StatementRequest) Valid() (bool, error) {
 	return true, nil
 }
 
+func (r *StatementRequest) Type() messageType {
+	return BankRq
+}
+
 type Payee struct {
 	XMLName    xml.Name `xml:"PAYEE"`
 	Name       String   `xml:"NAME"`
@@ -153,6 +157,10 @@ func (sr StatementResponse) Name() string {
 func (sr StatementResponse) Valid() (bool, error) {
 	//TODO implement
 	return true, nil
+}
+
+func (sr StatementResponse) Type() messageType {
+	return BankRs
 }
 
 func decodeBankingMessageSet(d *xml.Decoder, start xml.StartElement) ([]Message, error) {

@@ -37,6 +37,10 @@ func (r *SecListRequest) Valid() (bool, error) {
 	return true, nil
 }
 
+func (r *SecListRequest) Type() messageType {
+	return SecListRq
+}
+
 type SecListResponse struct {
 	XMLName   xml.Name `xml:"SECLISTTRNRS"`
 	TrnUID    UID      `xml:"TRNUID"`
@@ -53,6 +57,10 @@ func (r SecListResponse) Name() string {
 func (r SecListResponse) Valid() (bool, error) {
 	// TODO implement
 	return true, nil
+}
+
+func (r SecListResponse) Type() messageType {
+	return SecListRs
 }
 
 type Security interface {
@@ -174,6 +182,10 @@ func (r SecurityList) Name() string {
 func (r SecurityList) Valid() (bool, error) {
 	// TODO implement
 	return true, nil
+}
+
+func (r SecurityList) Type() messageType {
+	return SecListRs
 }
 
 func (r *SecurityList) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {

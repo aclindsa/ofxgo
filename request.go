@@ -29,14 +29,17 @@ type Request struct {
 	indent bool // Whether to indent the marshaled XML
 }
 
-func marshalMessageSet(e *xml.Encoder, requests []Message, setname string) error {
+func marshalMessageSet(e *xml.Encoder, requests []Message, set messageType) error {
 	if len(requests) > 0 {
-		messageSetElement := xml.StartElement{Name: xml.Name{Local: setname}}
+		messageSetElement := xml.StartElement{Name: xml.Name{Local: set.String()}}
 		if err := e.EncodeToken(messageSetElement); err != nil {
 			return err
 		}
 
 		for _, request := range requests {
+			if request.Type() != set {
+				return errors.New("Expected " + set.String() + " message , found " + request.Type().String())
+			}
 			if ok, err := request.Valid(); !ok {
 				return err
 			}
@@ -104,7 +107,7 @@ NEWFILEUID:NONE
 	if ok, err := oq.Signon.Valid(); !ok {
 		return nil, err
 	}
-	signonMsgSet := xml.StartElement{Name: xml.Name{Local: "SIGNONMSGSRQV1"}}
+	signonMsgSet := xml.StartElement{Name: xml.Name{Local: SignonRq.String()}}
 	if err := encoder.EncodeToken(signonMsgSet); err != nil {
 		return nil, err
 	}
@@ -115,22 +118,22 @@ NEWFILEUID:NONE
 		return nil, err
 	}
 
-	if err := marshalMessageSet(encoder, oq.Signup, "SIGNUPMSGSRQV1"); err != nil {
+	if err := marshalMessageSet(encoder, oq.Signup, SignupRq); err != nil {
 		return nil, err
 	}
-	if err := marshalMessageSet(encoder, oq.Banking, "BANKMSGSRQV1"); err != nil {
+	if err := marshalMessageSet(encoder, oq.Banking, BankRq); err != nil {
 		return nil, err
 	}
-	if err := marshalMessageSet(encoder, oq.CreditCards, "CREDITCARDMSGSRQV1"); err != nil {
+	if err := marshalMessageSet(encoder, oq.CreditCards, CreditCardRq); err != nil {
 		return nil, err
 	}
-	if err := marshalMessageSet(encoder, oq.Investments, "INVSTMTMSGSRQV1"); err != nil {
+	if err := marshalMessageSet(encoder, oq.Investments, InvStmtRq); err != nil {
 		return nil, err
 	}
-	if err := marshalMessageSet(encoder, oq.Securities, "SECLISTMSGSRQV1"); err != nil {
+	if err := marshalMessageSet(encoder, oq.Securities, SecListRq); err != nil {
 		return nil, err
 	}
-	if err := marshalMessageSet(encoder, oq.Profile, "PROFMSGSRQV1"); err != nil {
+	if err := marshalMessageSet(encoder, oq.Profile, ProfileRq); err != nil {
 		return nil, err
 	}
 

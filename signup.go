@@ -24,6 +24,10 @@ func (r *AcctInfoRequest) Valid() (bool, error) {
 	return true, nil
 }
 
+func (r *AcctInfoRequest) Type() messageType {
+	return SignupRq
+}
+
 type HolderInfo struct {
 	XMLName    xml.Name
 	FirstName  String `xml:"FIRSTNAME"`
@@ -123,6 +127,10 @@ func (air AcctInfoResponse) Name() string {
 func (air AcctInfoResponse) Valid() (bool, error) {
 	//TODO implement
 	return true, nil
+}
+
+func (air AcctInfoResponse) Type() messageType {
+	return SignupRs
 }
 
 func decodeSignupMessageSet(d *xml.Decoder, start xml.StartElement) ([]Message, error) {

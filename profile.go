@@ -25,6 +25,10 @@ func (r *ProfileRequest) Valid() (bool, error) {
 	return true, nil
 }
 
+func (r *ProfileRequest) Type() messageType {
+	return ProfileRq
+}
+
 type SignonInfo struct {
 	XMLName           xml.Name `xml:"SIGNONINFO"`
 	SignonRealm       String   `xml:"SIGNONREALM"`
@@ -128,6 +132,10 @@ func (pr ProfileResponse) Name() string {
 func (pr ProfileResponse) Valid() (bool, error) {
 	//TODO implement
 	return true, nil
+}
+
+func (pr ProfileResponse) Type() messageType {
+	return ProfileRs
 }
 
 func decodeProfileMessageSet(d *xml.Decoder, start xml.StartElement) ([]Message, error) {
