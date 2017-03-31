@@ -10,6 +10,9 @@ import (
 	"strings"
 )
 
+// Response is the top-level object returned from a parsed OFX response file.
+// It can be inspected by using type assertions or switches on the message set
+// you're interested in.
 type Response struct {
 	Version    string         // String for OFX header, defaults to 203
 	Signon     SignonResponse //<SIGNONMSGSETV1>
@@ -181,6 +184,10 @@ func guessVersion(r *bufio.Reader) (bool, error) {
 	}
 }
 
+// A map of message set tags to a map of transaction wrapper tags to the
+// reflect.Type of the struct for that transaction type. Used when decoding
+// Responses. Newly-implemented response transaction types *must* be added to
+// this map in order to be unmarshalled.
 var responseTypes = map[string]map[string]reflect.Type{
 	SignupRs.String(): map[string]reflect.Type{
 		(&AcctInfoResponse{}).Name(): reflect.TypeOf(AcctInfoResponse{})},
@@ -220,7 +227,11 @@ func decodeMessageSet(d *xml.Decoder, start xml.StartElement, msgs *[]Message) e
 		} else if startElement, ok := tok.(xml.StartElement); ok {
 			responseType, ok := setTypes[startElement.Name.Local]
 			if !ok {
-				return errors.New("Unsupported response transaction for " + start.Name.Local + ": " + startElement.Name.Local)
+				// If you are a developer and received this message after you
+				// thought you added a new transaction type, make sure you
+				// added it to the responseTypes map above
+				return errors.New("Unsupported response transaction for " +
+					start.Name.Local + ": " + startElement.Name.Local)
 			}
 			response := reflect.New(responseType).Interface()
 			responseMessage := response.(Message)

@@ -7,6 +7,11 @@ import (
 	"time"
 )
 
+// Request is the top-level object marshalled and sent to OFX servers. It is
+// constructed by appending one or more request objects to the message set they
+// correspond to (i.e. appending StatementRequest to Request.Bank to get a bank
+// statemement). If a *Request object is appended to the wrong message set, an
+// error will be returned when Marshal() is called on this Request.
 type Request struct {
 	URL        string
 	Version    string        // OFX version string, overwritten in Client.Request()
