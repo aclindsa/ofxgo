@@ -44,7 +44,7 @@ func invTransactions() {
 		Include401K:    true,
 		Include401KBal: true,
 	}
-	query.Investments = append(query.Investments, &statementRequest)
+	query.InvStmt = append(query.InvStmt, &statementRequest)
 
 	response, err := client.Request(query)
 	if err != nil {
@@ -59,12 +59,12 @@ func invTransactions() {
 		os.Exit(1)
 	}
 
-	if len(response.Investments) < 1 {
+	if len(response.InvStmt) < 1 {
 		fmt.Println("No investment messages received")
 		return
 	}
 
-	if stmt, ok := response.Investments[0].(ofxgo.InvStatementResponse); ok {
+	if stmt, ok := response.InvStmt[0].(*ofxgo.InvStatementResponse); ok {
 		availCash := big.Rat(stmt.InvBal.AvailCash)
 		if availCash.IsInt() && availCash.Num().Int64() != 0 {
 			fmt.Printf("Balance: %s %s (as of %s)\n", stmt.InvBal.AvailCash, stmt.CurDef, stmt.DtAsOf)

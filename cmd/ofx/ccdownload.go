@@ -49,7 +49,7 @@ func ccDownload() {
 		},
 		Include: true,
 	}
-	query.CreditCards = append(query.CreditCards, &statementRequest)
+	query.CreditCard = append(query.CreditCard, &statementRequest)
 
 	response, err := client.RequestNoParse(query)
 

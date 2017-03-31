@@ -58,7 +58,7 @@ func checkEqual(t *testing.T, fieldName string, expected, actual reflect.Value) 
 	}
 
 	if expected.Type() != actual.Type() {
-		t.Fatalf("%s: Expected %s type for %s, found %s\n", t.Name(), expected.Type().Name(), fieldName, actual.Type().Name())
+		t.Fatalf("%s: Expected %s type for %s, found %s\n", t.Name(), expected.Type(), fieldName, actual.Type())
 	}
 
 	equalMethod := equalMethodOf(expected)

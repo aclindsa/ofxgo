@@ -50,16 +50,16 @@ type SecListResponse struct {
 	// SECLISTRS is always empty, so we don't parse it here. The actual securities list will be in a top-level element parallel to SECLISTTRNRS
 }
 
-func (r SecListResponse) Name() string {
+func (r *SecListResponse) Name() string {
 	return "SECLISTTRNRS"
 }
 
-func (r SecListResponse) Valid() (bool, error) {
+func (r *SecListResponse) Valid() (bool, error) {
 	// TODO implement
 	return true, nil
 }
 
-func (r SecListResponse) Type() messageType {
+func (r *SecListResponse) Type() messageType {
 	return SecListRs
 }
 
@@ -175,16 +175,16 @@ type SecurityList struct {
 	Securities []Security
 }
 
-func (r SecurityList) Name() string {
+func (r *SecurityList) Name() string {
 	return "SECLIST"
 }
 
-func (r SecurityList) Valid() (bool, error) {
+func (r *SecurityList) Valid() (bool, error) {
 	// TODO implement
 	return true, nil
 }
 
-func (r SecurityList) Type() messageType {
+func (r *SecurityList) Type() messageType {
 	return SecListRs
 }
 
@@ -233,38 +233,6 @@ func (r *SecurityList) UnmarshalXML(d *xml.Decoder, start xml.StartElement) erro
 			}
 		} else {
 			return errors.New("Didn't find an opening element")
-		}
-	}
-}
-
-func decodeSecuritiesMessageSet(d *xml.Decoder, start xml.StartElement) ([]Message, error) {
-	var msgs []Message
-	for {
-		tok, err := nextNonWhitespaceToken(d)
-		if err != nil {
-			return nil, err
-		} else if end, ok := tok.(xml.EndElement); ok && end.Name.Local == start.Name.Local {
-			// If we found the end of our starting element, we're done parsing
-			return msgs, nil
-		} else if startElement, ok := tok.(xml.StartElement); ok {
-			switch startElement.Name.Local {
-			case "SECLISTTRNRS":
-				var info SecListResponse
-				if err := d.DecodeElement(&info, &startElement); err != nil {
-					return nil, err
-				}
-				msgs = append(msgs, Message(info))
-			case "SECLIST":
-				var info SecurityList
-				if err := d.DecodeElement(&info, &startElement); err != nil {
-					return nil, err
-				}
-				msgs = append(msgs, Message(info))
-			default:
-				return nil, errors.New("Unsupported securities response tag: " + startElement.Name.Local)
-			}
-		} else {
-			return nil, errors.New("Didn't find an opening element")
 		}
 	}
 }

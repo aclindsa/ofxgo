@@ -40,7 +40,7 @@ func bankTransactions() {
 		},
 		Include: true,
 	}
-	query.Banking = append(query.Banking, &statementRequest)
+	query.Bank = append(query.Bank, &statementRequest)
 
 	response, err := client.Request(query)
 	if err != nil {
@@ -54,12 +54,12 @@ func bankTransactions() {
 		os.Exit(1)
 	}
 
-	if len(response.Banking) < 1 {
+	if len(response.Bank) < 1 {
 		fmt.Println("No banking messages received")
 		return
 	}
 
-	if stmt, ok := response.Banking[0].(ofxgo.StatementResponse); ok {
+	if stmt, ok := response.Bank[0].(*ofxgo.StatementResponse); ok {
 		fmt.Printf("Balance: %s %s (as of %s)\n", stmt.BalAmt, stmt.CurDef, stmt.DtAsOf)
 		fmt.Println("Transactions:")
 		for _, tran := range stmt.BankTranList.Transactions {

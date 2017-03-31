@@ -64,7 +64,7 @@ func TestMarshalBankStatementRequest(t *testing.T) {
 		},
 		Include: true,
 	}
-	request.Banking = append(request.Banking, &statementRequest)
+	request.Bank = append(request.Bank, &statementRequest)
 
 	request.SetClientFields(&client)
 	// Overwrite the DtClient value set by SetClientFields to time.Now()
@@ -203,7 +203,7 @@ func TestUnmarshalBankStatementResponse(t *testing.T) {
 		AvailBalAmt:  (*ofxgo.Amount)(&availbalamt),
 		AvailDtAsOf:  &availdtasof,
 	}
-	expected.Banking = append(expected.Banking, statementResponse)
+	expected.Bank = append(expected.Bank, &statementResponse)
 
 	response, err := ofxgo.ParseResponse(responseReader)
 	if err != nil {

@@ -58,7 +58,7 @@ func invDownload() {
 		Include401K:    true,
 		Include401KBal: true,
 	}
-	query.Investments = append(query.Investments, &statementRequest)
+	query.InvStmt = append(query.InvStmt, &statementRequest)
 
 	response, err := client.RequestNoParse(query)
 

@@ -8,23 +8,23 @@ import (
 )
 
 type Request struct {
-	URL         string
-	Version     string        // OFX version string, overwritten in Client.Request()
-	Signon      SignonRequest //<SIGNONMSGSETV1>
-	Signup      []Message     //<SIGNUPMSGSETV1>
-	Banking     []Message     //<BANKMSGSETV1>
-	CreditCards []Message     //<CREDITCARDMSGSETV1>
-	//<LOANMSGSETV1>
-	Investments []Message //<INVSTMTMSGSETV1>
-	//<INTERXFERMSGSETV1>
-	//<WIREXFERMSGSETV1>
-	//<BILLPAYMSGSETV1>
-	//<EMAILMSGSETV1>
-	Securities []Message //<SECLISTMSGSETV1>
-	//<PRESDIRMSGSETV1>
-	//<PRESDLVMSGSETV1>
-	Profile []Message //<PROFMSGSETV1>
-	//<IMAGEMSGSETV1>
+	URL        string
+	Version    string        // OFX version string, overwritten in Client.Request()
+	Signon     SignonRequest //<SIGNONMSGSETV1>
+	Signup     []Message     //<SIGNUPMSGSETV1>
+	Bank       []Message     //<BANKMSGSETV1>
+	CreditCard []Message     //<CREDITCARDMSGSETV1>
+	Loan       []Message     //<LOANMSGSETV1>
+	InvStmt    []Message     //<INVSTMTMSGSETV1>
+	InterXfer  []Message     //<INTERXFERMSGSETV1>
+	WireXfer   []Message     //<WIREXFERMSGSETV1>
+	Billpay    []Message     //<BILLPAYMSGSETV1>
+	Email      []Message     //<EMAILMSGSETV1>
+	SecList    []Message     //<SECLISTMSGSETV1>
+	PresDir    []Message     //<PRESDIRMSGSETV1>
+	PresDlv    []Message     //<PRESDLVMSGSETV1>
+	Profile    []Message     //<PROFMSGSETV1>
+	Image      []Message     //<IMAGEMSGSETV1>
 
 	indent bool // Whether to indent the marshaled XML
 }
@@ -118,23 +118,29 @@ NEWFILEUID:NONE
 		return nil, err
 	}
 
-	if err := marshalMessageSet(encoder, oq.Signup, SignupRq); err != nil {
-		return nil, err
+	messageSets := []struct {
+		Messages []Message
+		Type     messageType
+	}{
+		{oq.Signup, SignupRq},
+		{oq.Bank, BankRq},
+		{oq.CreditCard, CreditCardRq},
+		{oq.Loan, LoanRq},
+		{oq.InvStmt, InvStmtRq},
+		{oq.InterXfer, InterXferRq},
+		{oq.WireXfer, WireXferRq},
+		{oq.Billpay, BillpayRq},
+		{oq.Email, EmailRq},
+		{oq.SecList, SecListRq},
+		{oq.PresDir, PresDirRq},
+		{oq.PresDlv, PresDlvRq},
+		{oq.Profile, ProfileRq},
+		{oq.Image, ImageRq},
 	}
-	if err := marshalMessageSet(encoder, oq.Banking, BankRq); err != nil {
-		return nil, err
-	}
-	if err := marshalMessageSet(encoder, oq.CreditCards, CreditCardRq); err != nil {
-		return nil, err
-	}
-	if err := marshalMessageSet(encoder, oq.Investments, InvStmtRq); err != nil {
-		return nil, err
-	}
-	if err := marshalMessageSet(encoder, oq.Securities, SecListRq); err != nil {
-		return nil, err
-	}
-	if err := marshalMessageSet(encoder, oq.Profile, ProfileRq); err != nil {
-		return nil, err
+	for _, set := range messageSets {
+		if err := marshalMessageSet(encoder, set.Messages, set.Type); err != nil {
+			return nil, err
+		}
 	}
 
 	if err := encoder.EncodeToken(ofxElement.End()); err != nil {

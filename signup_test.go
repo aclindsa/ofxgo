@@ -150,7 +150,7 @@ func TestUnmarshalAcctInfoResponse(t *testing.T) {
 			BankAcctInfo: &bankacctinfo,
 		}},
 	}
-	expected.Signup = append(expected.Signup, acctInfoResponse)
+	expected.Signup = append(expected.Signup, &acctInfoResponse)
 
 	response, err := ofxgo.ParseResponse(responseReader)
 	if err != nil {

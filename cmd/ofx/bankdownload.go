@@ -55,7 +55,7 @@ func download() {
 		},
 		Include: true,
 	}
-	query.Banking = append(query.Banking, &statementRequest)
+	query.Bank = append(query.Bank, &statementRequest)
 
 	response, err := client.RequestNoParse(query)
 	if err != nil {

@@ -54,7 +54,7 @@ func getAccounts() {
 
 	fmt.Printf("\nFound the following accounts:\n\n")
 
-	if acctinfo, ok := response.Signup[0].(ofxgo.AcctInfoResponse); ok {
+	if acctinfo, ok := response.Signup[0].(*ofxgo.AcctInfoResponse); ok {
 		for _, acct := range acctinfo.AcctInfo {
 			if acct.BankAcctInfo != nil {
 				fmt.Printf("Bank Account:\n\tBankId: \"%s\"\n\tAcctId: \"%s\"\n\tAcctType: %s\n", acct.BankAcctInfo.BankAcctFrom.BankId, acct.BankAcctInfo.BankAcctFrom.AcctId, acct.BankAcctInfo.BankAcctFrom.AcctType)

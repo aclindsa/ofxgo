@@ -811,41 +811,15 @@ type InvStatementResponse struct {
 	Inv401KBal *Inv401KBal `xml:"INVSTMTRS>INV401KBAL,omitempty"`
 }
 
-func (sr InvStatementResponse) Name() string {
+func (sr *InvStatementResponse) Name() string {
 	return "INVSTMTTRNRS"
 }
 
-func (sr InvStatementResponse) Valid() (bool, error) {
+func (sr *InvStatementResponse) Valid() (bool, error) {
 	//TODO implement
 	return true, nil
 }
 
-func (sr InvStatementResponse) Type() messageType {
+func (sr *InvStatementResponse) Type() messageType {
 	return InvStmtRs
-}
-
-func decodeInvestmentsMessageSet(d *xml.Decoder, start xml.StartElement) ([]Message, error) {
-	var msgs []Message
-	for {
-		tok, err := nextNonWhitespaceToken(d)
-		if err != nil {
-			return nil, err
-		} else if end, ok := tok.(xml.EndElement); ok && end.Name.Local == start.Name.Local {
-			// If we found the end of our starting element, we're done parsing
-			return msgs, nil
-		} else if startElement, ok := tok.(xml.StartElement); ok {
-			switch startElement.Name.Local {
-			case "INVSTMTTRNRS":
-				var info InvStatementResponse
-				if err := d.DecodeElement(&info, &startElement); err != nil {
-					return nil, err
-				}
-				msgs = append(msgs, Message(info))
-			default:
-				return nil, errors.New("Unsupported investments response tag: " + startElement.Name.Local)
-			}
-		} else {
-			return nil, errors.New("Didn't find an opening element")
-		}
-	}
 }

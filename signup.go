@@ -1,7 +1,6 @@
 package ofxgo
 
 import (
-	"errors"
 	"fmt"
 	"github.com/aclindsa/go/src/encoding/xml"
 )
@@ -120,41 +119,15 @@ type AcctInfoResponse struct {
 	AcctInfo []AcctInfo `xml:"ACCTINFORS>ACCTINFO,omitempty"`
 }
 
-func (air AcctInfoResponse) Name() string {
-	return "ACCTINFORS"
+func (air *AcctInfoResponse) Name() string {
+	return "ACCTINFOTRNRS"
 }
 
-func (air AcctInfoResponse) Valid() (bool, error) {
+func (air *AcctInfoResponse) Valid() (bool, error) {
 	//TODO implement
 	return true, nil
 }
 
-func (air AcctInfoResponse) Type() messageType {
+func (air *AcctInfoResponse) Type() messageType {
 	return SignupRs
-}
-
-func decodeSignupMessageSet(d *xml.Decoder, start xml.StartElement) ([]Message, error) {
-	var msgs []Message
-	for {
-		tok, err := nextNonWhitespaceToken(d)
-		if err != nil {
-			return nil, err
-		} else if end, ok := tok.(xml.EndElement); ok && end.Name.Local == start.Name.Local {
-			// If we found the end of our starting element, we're done parsing
-			return msgs, nil
-		} else if startElement, ok := tok.(xml.StartElement); ok {
-			switch startElement.Name.Local {
-			case "ACCTINFOTRNRS":
-				var info AcctInfoResponse
-				if err := d.DecodeElement(&info, &startElement); err != nil {
-					return nil, err
-				}
-				msgs = append(msgs, Message(info))
-			default:
-				return nil, errors.New("Unsupported signup response tag: " + startElement.Name.Local)
-			}
-		} else {
-			return nil, errors.New("Didn't find an opening element")
-		}
-	}
 }

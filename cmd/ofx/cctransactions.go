@@ -36,7 +36,7 @@ func ccTransactions() {
 		},
 		Include: true,
 	}
-	query.CreditCards = append(query.CreditCards, &statementRequest)
+	query.CreditCard = append(query.CreditCard, &statementRequest)
 
 	response, err := client.Request(query)
 	if err != nil {
@@ -50,12 +50,12 @@ func ccTransactions() {
 		os.Exit(1)
 	}
 
-	if len(response.CreditCards) < 1 {
+	if len(response.CreditCard) < 1 {
 		fmt.Println("No banking messages received")
 		return
 	}
 
-	if stmt, ok := response.CreditCards[0].(ofxgo.CCStatementResponse); ok {
+	if stmt, ok := response.CreditCard[0].(*ofxgo.CCStatementResponse); ok {
 		fmt.Printf("Balance: %s %s (as of %s)\n", stmt.BalAmt, stmt.CurDef, stmt.DtAsOf)
 		fmt.Println("Transactions:")
 		for _, tran := range stmt.BankTranList.Transactions {

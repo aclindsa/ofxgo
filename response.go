@@ -6,26 +6,27 @@ import (
 	"errors"
 	"github.com/aclindsa/go/src/encoding/xml"
 	"io"
+	"reflect"
 	"strings"
 )
 
 type Response struct {
-	Version     string         // String for OFX header, defaults to 203
-	Signon      SignonResponse //<SIGNONMSGSETV1>
-	Signup      []Message      //<SIGNUPMSGSETV1>
-	Banking     []Message      //<BANKMSGSETV1>
-	CreditCards []Message      //<CREDITCARDMSGSETV1>
-	//<LOANMSGSETV1>
-	Investments []Message //<INVSTMTMSGSETV1>
-	//<INTERXFERMSGSETV1>
-	//<WIREXFERMSGSETV1>
-	//<BILLPAYMSGSETV1>
-	//<EMAILMSGSETV1>
-	Securities []Message //<SECLISTMSGSETV1>
-	//<PRESDIRMSGSETV1>
-	//<PRESDLVMSGSETV1>
-	Profile []Message //<PROFMSGSETV1>
-	//<IMAGEMSGSETV1>
+	Version    string         // String for OFX header, defaults to 203
+	Signon     SignonResponse //<SIGNONMSGSETV1>
+	Signup     []Message      //<SIGNUPMSGSETV1>
+	Bank       []Message      //<BANKMSGSETV1>
+	CreditCard []Message      //<CREDITCARDMSGSETV1>
+	Loan       []Message      //<LOANMSGSETV1>
+	InvStmt    []Message      //<INVSTMTMSGSETV1>
+	InterXfer  []Message      //<INTERXFERMSGSETV1>
+	WireXfer   []Message      //<WIREXFERMSGSETV1>
+	Billpay    []Message      //<BILLPAYMSGSETV1>
+	Email      []Message      //<EMAILMSGSETV1>
+	SecList    []Message      //<SECLISTMSGSETV1>
+	PresDir    []Message      //<PRESDIRMSGSETV1>
+	PresDlv    []Message      //<PRESDLVMSGSETV1>
+	Profile    []Message      //<PROFMSGSETV1>
+	Image      []Message      //<IMAGEMSGSETV1>
 }
 
 func (or *Response) readSGMLHeaders(r *bufio.Reader) error {
@@ -180,6 +181,59 @@ func guessVersion(r *bufio.Reader) (bool, error) {
 	}
 }
 
+var responseTypes = map[string]map[string]reflect.Type{
+	SignupRs.String(): map[string]reflect.Type{
+		(&AcctInfoResponse{}).Name(): reflect.TypeOf(AcctInfoResponse{})},
+	BankRs.String(): map[string]reflect.Type{
+		(&StatementResponse{}).Name(): reflect.TypeOf(StatementResponse{})},
+	CreditCardRs.String(): map[string]reflect.Type{
+		(&CCStatementResponse{}).Name(): reflect.TypeOf(CCStatementResponse{})},
+	LoanRs.String(): map[string]reflect.Type{},
+	InvStmtRs.String(): map[string]reflect.Type{
+		(&InvStatementResponse{}).Name(): reflect.TypeOf(InvStatementResponse{})},
+	InterXferRs.String(): map[string]reflect.Type{},
+	WireXferRs.String():  map[string]reflect.Type{},
+	BillpayRs.String():   map[string]reflect.Type{},
+	EmailRs.String():     map[string]reflect.Type{},
+	SecListRs.String(): map[string]reflect.Type{
+		(&SecListResponse{}).Name(): reflect.TypeOf(SecListResponse{}),
+		(&SecurityList{}).Name():    reflect.TypeOf(SecurityList{})},
+	PresDirRs.String(): map[string]reflect.Type{},
+	PresDlvRs.String(): map[string]reflect.Type{},
+	ProfileRs.String(): map[string]reflect.Type{
+		(&ProfileResponse{}).Name(): reflect.TypeOf(ProfileResponse{})},
+	ImageRs.String(): map[string]reflect.Type{},
+}
+
+func decodeMessageSet(d *xml.Decoder, start xml.StartElement, msgs *[]Message) error {
+	setTypes, ok := responseTypes[start.Name.Local]
+	if !ok {
+		return errors.New("Invalid message set: " + start.Name.Local)
+	}
+	for {
+		tok, err := nextNonWhitespaceToken(d)
+		if err != nil {
+			return err
+		} else if end, ok := tok.(xml.EndElement); ok && end.Name.Local == start.Name.Local {
+			// If we found the end of our starting element, we're done parsing
+			return nil
+		} else if startElement, ok := tok.(xml.StartElement); ok {
+			responseType, ok := setTypes[startElement.Name.Local]
+			if !ok {
+				return errors.New("Unsupported response transaction for " + start.Name.Local + ": " + startElement.Name.Local)
+			}
+			response := reflect.New(responseType).Interface()
+			responseMessage := response.(Message)
+			if err := d.DecodeElement(responseMessage, &startElement); err != nil {
+				return err
+			}
+			*msgs = append(*msgs, responseMessage)
+		} else {
+			return errors.New("Didn't find an opening element")
+		}
+	}
+}
+
 // ParseResponse parses an OFX response in SGML or XML into a Response object
 // from the given io.Reader
 //
@@ -248,6 +302,23 @@ func ParseResponse(reader io.Reader) (*Response, error) {
 		return nil, err
 	}
 
+	var messageSlices = map[string]*[]Message{
+		SignupRs.String():     &or.Signup,
+		BankRs.String():       &or.Bank,
+		CreditCardRs.String(): &or.CreditCard,
+		LoanRs.String():       &or.Loan,
+		InvStmtRs.String():    &or.InvStmt,
+		InterXferRs.String():  &or.InterXfer,
+		WireXferRs.String():   &or.WireXfer,
+		BillpayRs.String():    &or.Billpay,
+		EmailRs.String():      &or.Email,
+		SecListRs.String():    &or.SecList,
+		PresDirRs.String():    &or.PresDir,
+		PresDlvRs.String():    &or.PresDlv,
+		ProfileRs.String():    &or.Profile,
+		ImageRs.String():      &or.Image,
+	}
+
 	for {
 		tok, err = nextNonWhitespaceToken(decoder)
 		if err != nil {
@@ -255,54 +326,12 @@ func ParseResponse(reader io.Reader) (*Response, error) {
 		} else if ofxEnd, ok := tok.(xml.EndElement); ok && ofxEnd.Name.Local == "OFX" {
 			return &or, nil // found closing XML element, so we're done
 		} else if start, ok := tok.(xml.StartElement); ok {
-			// TODO decode other types
-			switch start.Name.Local {
-			case "SIGNUPMSGSRSV1":
-				msgs, err := decodeSignupMessageSet(decoder, start)
-				if err != nil {
-					return nil, err
-				}
-				or.Signup = msgs
-			case "BANKMSGSRSV1":
-				msgs, err := decodeBankingMessageSet(decoder, start)
-				if err != nil {
-					return nil, err
-				}
-				or.Banking = msgs
-			case "CREDITCARDMSGSRSV1":
-				msgs, err := decodeCCMessageSet(decoder, start)
-				if err != nil {
-					return nil, err
-				}
-				or.CreditCards = msgs
-			//case "LOANMSGSRSV1":
-			case "INVSTMTMSGSRSV1":
-				msgs, err := decodeInvestmentsMessageSet(decoder, start)
-				if err != nil {
-					return nil, err
-				}
-				or.Investments = msgs
-			//case "INTERXFERMSGSRSV1":
-			//case "WIREXFERMSGSRSV1":
-			//case "BILLPAYMSGSRSV1":
-			//case "EMAILMSGSRSV1":
-			case "SECLISTMSGSRSV1":
-				msgs, err := decodeSecuritiesMessageSet(decoder, start)
-				if err != nil {
-					return nil, err
-				}
-				or.Securities = msgs
-			//case "PRESDIRMSGSRSV1":
-			//case "PRESDLVMSGSRSV1":
-			case "PROFMSGSRSV1":
-				msgs, err := decodeProfileMessageSet(decoder, start)
-				if err != nil {
-					return nil, err
-				}
-				or.Profile = msgs
-			//case "IMAGEMSGSRSV1":
-			default:
-				return nil, errors.New("Unsupported message set: " + start.Name.Local)
+			slice, ok := messageSlices[start.Name.Local]
+			if !ok {
+				return nil, errors.New("Invalid message set: " + start.Name.Local)
+			}
+			if err := decodeMessageSet(decoder, start, slice); err != nil {
+				return nil, err
 			}
 		} else {
 			return nil, errors.New("Found unexpected token")

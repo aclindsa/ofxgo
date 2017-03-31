@@ -1,7 +1,6 @@
 package ofxgo
 
 import (
-	"errors"
 	"github.com/aclindsa/go/src/encoding/xml"
 )
 
@@ -57,41 +56,15 @@ type CCStatementResponse struct {
 	MktgInfo      String    `xml:"CCSTMTRS>MKTGINFO,omitempty"` // Marketing information
 }
 
-func (sr CCStatementResponse) Name() string {
+func (sr *CCStatementResponse) Name() string {
 	return "CCSTMTTRNRS"
 }
 
-func (sr CCStatementResponse) Valid() (bool, error) {
+func (sr *CCStatementResponse) Valid() (bool, error) {
 	//TODO implement
 	return true, nil
 }
 
-func (sr CCStatementResponse) Type() messageType {
+func (sr *CCStatementResponse) Type() messageType {
 	return CreditCardRs
-}
-
-func decodeCCMessageSet(d *xml.Decoder, start xml.StartElement) ([]Message, error) {
-	var msgs []Message
-	for {
-		tok, err := nextNonWhitespaceToken(d)
-		if err != nil {
-			return nil, err
-		} else if end, ok := tok.(xml.EndElement); ok && end.Name.Local == start.Name.Local {
-			// If we found the end of our starting element, we're done parsing
-			return msgs, nil
-		} else if startElement, ok := tok.(xml.StartElement); ok {
-			switch startElement.Name.Local {
-			case "CCSTMTTRNRS":
-				var info CCStatementResponse
-				if err := d.DecodeElement(&info, &startElement); err != nil {
-					return nil, err
-				}
-				msgs = append(msgs, Message(info))
-			default:
-				return nil, errors.New("Unsupported banking response tag: " + startElement.Name.Local)
-			}
-		} else {
-			return nil, errors.New("Didn't find an opening element")
-		}
-	}
 }

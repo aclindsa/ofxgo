@@ -125,41 +125,15 @@ type ProfileResponse struct {
 	Email          String         `xml:"PROFRS>EMAIL,omitempty"`
 }
 
-func (pr ProfileResponse) Name() string {
+func (pr *ProfileResponse) Name() string {
 	return "PROFTRNRS"
 }
 
-func (pr ProfileResponse) Valid() (bool, error) {
+func (pr *ProfileResponse) Valid() (bool, error) {
 	//TODO implement
 	return true, nil
 }
 
-func (pr ProfileResponse) Type() messageType {
+func (pr *ProfileResponse) Type() messageType {
 	return ProfileRs
-}
-
-func decodeProfileMessageSet(d *xml.Decoder, start xml.StartElement) ([]Message, error) {
-	var msgs []Message
-	for {
-		tok, err := nextNonWhitespaceToken(d)
-		if err != nil {
-			return nil, err
-		} else if end, ok := tok.(xml.EndElement); ok && end.Name.Local == start.Name.Local {
-			// If we found the end of our starting element, we're done parsing
-			return msgs, nil
-		} else if startElement, ok := tok.(xml.StartElement); ok {
-			switch startElement.Name.Local {
-			case "PROFTRNRS":
-				var prof ProfileResponse
-				if err := d.DecodeElement(&prof, &startElement); err != nil {
-					return nil, err
-				}
-				msgs = append(msgs, Message(prof))
-			default:
-				return nil, errors.New("Unsupported profile response tag: " + startElement.Name.Local)
-			}
-		} else {
-			return nil, errors.New("Didn't find an opening element")
-		}
-	}
 }
