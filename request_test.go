@@ -3,6 +3,7 @@ package ofxgo_test
 import (
 	"github.com/aclindsa/ofxgo"
 	"regexp"
+	"strings"
 	"testing"
 )
 
@@ -27,15 +28,21 @@ func marshalCheckRequest(t *testing.T, request *ofxgo.Request, expected string) 
 
 		for i := 0; i < compareLength; i++ {
 			if expectedString[i] != actualString[i] {
+				firstDifferencePosition := 13
 				displayStart := i - 10
+				prefix := "..."
+				suffix := "..."
 				if displayStart < 0 {
+					prefix = ""
+					firstDifferencePosition = i
 					displayStart = 0
 				}
 				displayEnd := displayStart + 40
 				if displayEnd > compareLength {
+					suffix = ""
 					displayEnd = compareLength
 				}
-				t.Fatalf("%s expected '...%s...',\ngot '...%s...'\n", t.Name(), expectedString[displayStart:displayEnd], actualString[displayStart:displayEnd])
+				t.Fatalf("%s expected '%s%s%s',\ngot '%s%s%s'\n     %s^ first difference\n", t.Name(), prefix, expectedString[displayStart:displayEnd], suffix, prefix, actualString[displayStart:displayEnd], suffix, strings.Repeat(" ", firstDifferencePosition))
 			}
 		}
 
