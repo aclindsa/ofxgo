@@ -688,6 +688,230 @@ type InvBalance struct {
 	BalList       []Balance `xml:"BALLIST>BAL,omitempty"`
 }
 
+type OO struct {
+	XMLName       xml.Name   `xml:"OO"`
+	FiTId         String     `xml:"FITID"`
+	SrvrTId       String     `xml:"SRVRTID,omitempty"`
+	SecId         SecurityId `xml:"SECID"`
+	DtPlaced      Date       `xml:"DTPLACED"`           // Date the order was placed
+	Units         Amount     `xml:"UNITS"`              // Quantity of the security the open order is for
+	SubAcct       String     `xml:"SUBACCT"`            // One of CASH, MARGIN, SHORT, OTHER
+	Duration      String     `xml:"DURATION"`           // How long the order is good for. One of DAY, GOODTILCANCEL, IMMEDIATE
+	Restriction   String     `xml:"RESTRICTION"`        // Special restriction on the order: One of ALLORNONE, MINUNITS, NONE
+	MinUnits      Amount     `xml:"MINUNITS,omitempty"` // Minimum number of units that must be filled for the order
+	LimitPrice    Amount     `xml:"LIMITPRICE,omitempty"`
+	StopPrice     Amount     `xml:"STOPPRICE,omitempty"`
+	Memo          String     `xml:"MEMO,omitempty"`
+	Currency      *Currency  `xml:"CURRENCY,omitempty"`      // Overriding currency for UNITPRICE
+	Inv401kSource String     `xml:"INV401KSOURCE,omitempty"` // One of PRETAX, AFTERTAX, MATCH, PROFITSHARING, ROLLOVER, OTHERVEST, OTHERNONVEST for 401(k) accounts. Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST
+}
+
+type OpenOrder interface {
+	OrderType() string
+}
+
+type OOBuyDebt struct {
+	XMLName   xml.Name `xml:"OOBUYDEBT"`
+	OO        OO       `xml:"OO"`
+	Auction   Boolean  `xml:"AUCTION"` // whether the debt should be purchased at the auction
+	DtAuction *Date    `xml:"DTAUCTION,omitempty"`
+}
+
+func (o OOBuyDebt) OrderType() string {
+	return "OOBUYDEBT"
+}
+
+type OOBuyMF struct {
+	XMLName  xml.Name `xml:"OOBUYMF"`
+	OO       OO       `xml:"OO"`
+	BuyType  String   `xml:"BUYTYPE"`  // One of BUY, BUYTOCOVER
+	UnitType String   `xml:"UNITTYPE"` // What the units represent: one of SHARES, CURRENCY
+}
+
+func (o OOBuyMF) OrderType() string {
+	return "OOBUYMF"
+}
+
+type OOBuyOpt struct {
+	XMLName    xml.Name `xml:"OOBUYOPT"`
+	OO         OO       `xml:"OO"`
+	OptBuyType String   `xml:"OPTBUYTYPE"` // One of BUYTOOPEN, BUYTOCLOSE
+}
+
+func (o OOBuyOpt) OrderType() string {
+	return "OOBUYOPT"
+}
+
+type OOBuyOther struct {
+	XMLName  xml.Name `xml:"OOBUYOTHER"`
+	OO       OO       `xml:"OO"`
+	UnitType String   `xml:"UNITTYPE"` // What the units represent: one of SHARES, CURRENCY
+}
+
+func (o OOBuyOther) OrderType() string {
+	return "OOBUYOTHER"
+}
+
+type OOBuyStock struct {
+	XMLName xml.Name `xml:"OOBUYSTOCK"`
+	OO      OO       `xml:"OO"`
+	BuyType String   `xml:"BUYTYPE"` // One of BUY, BUYTOCOVER
+}
+
+func (o OOBuyStock) OrderType() string {
+	return "OOBUYSTOCK"
+}
+
+type OOSellDebt struct {
+	XMLName xml.Name `xml:"OOSELLDEBT"`
+	OO      OO       `xml:"OO"`
+}
+
+func (o OOSellDebt) OrderType() string {
+	return "OOSELLDEBT"
+}
+
+type OOSellMF struct {
+	XMLName  xml.Name `xml:"OOSELLMF"`
+	OO       OO       `xml:"OO"`
+	SellType String   `xml:"SELLTYPE"` // One of SELL, SELLSHORT
+	UnitType String   `xml:"UNITTYPE"` // What the units represent: one of SHARES, CURRENCY
+	SellAll  Boolean  `xml:"SELLALL"`  // Sell entire holding
+}
+
+func (o OOSellMF) OrderType() string {
+	return "OOSELLMF"
+}
+
+type OOSellOpt struct {
+	XMLName     xml.Name `xml:"OOSELLOPT"`
+	OO          OO       `xml:"OO"`
+	OptSellType String   `xml:"OPTSELLTYPE"` // One of SELLTOOPEN, SELLTOCLOSE
+}
+
+func (o OOSellOpt) OrderType() string {
+	return "OOSELLOPT"
+}
+
+type OOSellOther struct {
+	XMLName  xml.Name `xml:"OOSELLOTHER"`
+	OO       OO       `xml:"OO"`
+	UnitType String   `xml:"UNITTYPE"` // What the units represent: one of SHARES, CURRENCY
+}
+
+func (o OOSellOther) OrderType() string {
+	return "OOSELLOTHER"
+}
+
+type OOSellStock struct {
+	XMLName  xml.Name `xml:"OOSELLSTOCK"`
+	OO       OO       `xml:"OO"`
+	SellType String   `xml:"SELLTYPE"` // One of SELL, SELLSHORT
+}
+
+func (o OOSellStock) OrderType() string {
+	return "OOSELLSTOCK"
+}
+
+type OOSwitchMF struct {
+	XMLName   xml.Name   `xml:"SWITCHMF"`
+	OO        OO         `xml:"OO"`
+	SecId     SecurityId `xml:"SECID"`     // Security ID of the fund to switch to or purchase
+	UnitType  String     `xml:"UNITTYPE"`  // What the units represent: one of SHARES, CURRENCY
+	SwitchAll Boolean    `xml:"SWITCHALL"` // Switch entire holding
+}
+
+func (o OOSwitchMF) OrderType() string {
+	return "SWITCHMF"
+}
+
+type OOList []OpenOrder
+
+func (o *OOList) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	for {
+		tok, err := nextNonWhitespaceToken(d)
+		if err != nil {
+			return err
+		} else if end, ok := tok.(xml.EndElement); ok && end.Name.Local == start.Name.Local {
+			// If we found the end of our starting element, we're done parsing
+			return nil
+		} else if startElement, ok := tok.(xml.StartElement); ok {
+			switch startElement.Name.Local {
+			case "OOBUYDEBT":
+				var oo OOBuyDebt
+				if err := d.DecodeElement(&oo, &startElement); err != nil {
+					return err
+				}
+				*o = append(*o, OpenOrder(oo))
+			case "OOBUYMF":
+				var oo OOBuyMF
+				if err := d.DecodeElement(&oo, &startElement); err != nil {
+					return err
+				}
+				*o = append(*o, OpenOrder(oo))
+			case "OOBUYOPT":
+				var oo OOBuyOpt
+				if err := d.DecodeElement(&oo, &startElement); err != nil {
+					return err
+				}
+				*o = append(*o, OpenOrder(oo))
+			case "OOBUYOTHER":
+				var oo OOBuyOther
+				if err := d.DecodeElement(&oo, &startElement); err != nil {
+					return err
+				}
+				*o = append(*o, OpenOrder(oo))
+			case "OOBUYSTOCK":
+				var oo OOBuyStock
+				if err := d.DecodeElement(&oo, &startElement); err != nil {
+					return err
+				}
+				*o = append(*o, OpenOrder(oo))
+			case "OOSELLDEBT":
+				var oo OOSellDebt
+				if err := d.DecodeElement(&oo, &startElement); err != nil {
+					return err
+				}
+				*o = append(*o, OpenOrder(oo))
+			case "OOSELLMF":
+				var oo OOSellMF
+				if err := d.DecodeElement(&oo, &startElement); err != nil {
+					return err
+				}
+				*o = append(*o, OpenOrder(oo))
+			case "OOSELLOPT":
+				var oo OOSellOpt
+				if err := d.DecodeElement(&oo, &startElement); err != nil {
+					return err
+				}
+				*o = append(*o, OpenOrder(oo))
+			case "OOSELLOTHER":
+				var oo OOSellOther
+				if err := d.DecodeElement(&oo, &startElement); err != nil {
+					return err
+				}
+				*o = append(*o, OpenOrder(oo))
+			case "OOSELLSTOCK":
+				var oo OOSellStock
+				if err := d.DecodeElement(&oo, &startElement); err != nil {
+					return err
+				}
+				*o = append(*o, OpenOrder(oo))
+			case "SWITCHMF":
+				var oo OOSwitchMF
+				if err := d.DecodeElement(&oo, &startElement); err != nil {
+					return err
+				}
+				*o = append(*o, OpenOrder(oo))
+			default:
+				return errors.New("Invalid OOList child tag: " + startElement.Name.Local)
+			}
+		} else {
+			return errors.New("Didn't find an opening element")
+		}
+	}
+}
+
 type ContribSecurity struct {
 	XMLName                 xml.Name   `xml:"CONTRIBSECURITY"`
 	SecId                   SecurityId `xml:"SECID"`
@@ -805,10 +1029,10 @@ type InvStatementResponse struct {
 	InvTranList *InvTranList `xml:"INVSTMTRS>INVTRANLIST,omitempty"`
 	InvPosList  PositionList `xml:"INVSTMTRS>INVPOSLIST,omitempty"`
 	InvBal      *InvBalance  `xml:"INVSTMTRS>INVBAL,omitempty"`
-	// TODO INVOOLIST
-	MktgInfo   String      `xml:"INVSTMTRS>MKTGINFO,omitempty"` // Marketing information
-	Inv401K    *Inv401K    `xml:"INVSTMTRS>INV401K,omitempty"`
-	Inv401KBal *Inv401KBal `xml:"INVSTMTRS>INV401KBAL,omitempty"`
+	InvOOList   OOList       `xml:"INVSTMTRS>INVOOLIST,omitempty"`
+	MktgInfo    String       `xml:"INVSTMTRS>MKTGINFO,omitempty"` // Marketing information
+	Inv401K     *Inv401K     `xml:"INVSTMTRS>INV401K,omitempty"`
+	Inv401KBal  *Inv401KBal  `xml:"INVSTMTRS>INV401KBAL,omitempty"`
 }
 
 func (sr *InvStatementResponse) Name() string {
