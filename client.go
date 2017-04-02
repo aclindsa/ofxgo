@@ -4,6 +4,7 @@ import (
 	"errors"
 	"io"
 	"net/http"
+	"strings"
 )
 
 type Client struct {
@@ -62,6 +63,10 @@ func (c *Client) IndentRequests() bool {
 // read from 'r'. The caller is responsible for closing the http Response.Body
 // (see the http module's documentation for more information)
 func RawRequest(URL string, r io.Reader) (*http.Response, error) {
+	if !strings.HasPrefix(URL, "https://") {
+		return nil, errors.New("Refusing to send OFX request with possible plain-text password over non-https protocol")
+	}
+
 	response, err := http.Post(URL, "application/x-ofx", r)
 	if err != nil {
 		return nil, err
