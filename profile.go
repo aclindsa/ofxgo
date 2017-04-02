@@ -53,13 +53,16 @@ type SignonInfo struct {
 
 type MessageSet struct {
 	XMLName     xml.Name // <xxxMSGSETVn>
-	Ver         String   `xml:"MSGSETCORE>VER"`
-	Url         String   `xml:"MSGSETCORE>URL"`
-	OfxSec      String   `xml:"MSGSETCORE>OFXSEC"`
-	TranspSec   Boolean  `xml:"MSGSETCORE>TRANSPSEC"`
-	SignonRealm String   `xml:"MSGSETCORE>SIGNONREALM"` // Used to identify which SignonInfo to use for to this MessageSet
-	Language    []String `xml:"MSGSETCORE>LANGUAGE"`
-	SyncMode    String   `xml:"MSGSETCORE>SYNCMODE"`
+	Ver         String   `xml:"MSGSETCORE>VER"`                   // Message set version - should always match 'n' in <xxxMSGSETVn>
+	Url         String   `xml:"MSGSETCORE>URL"`                   // URL where messages in this set are to be set
+	OfxSec      String   `xml:"MSGSETCORE>OFXSEC"`                // NONE or 'TYPE 1'
+	TranspSec   Boolean  `xml:"MSGSETCORE>TRANSPSEC"`             // Transport-level security must be used
+	SignonRealm String   `xml:"MSGSETCORE>SIGNONREALM"`           // Used to identify which SignonInfo to use for to this MessageSet
+	Language    []String `xml:"MSGSETCORE>LANGUAGE"`              // List of supported languages
+	SyncMode    String   `xml:"MSGSETCORE>SYNCMODE"`              // One of FULL, LITE
+	RefreshSupt Boolean  `xml:"MSGSETCORE>REFRESHSUPT,omitempty"` // Y if server supports <REFRESH>Y within synchronizations. This option is irrelevant for full synchronization servers. Clients must ignore <REFRESHSUPT> (or its absence) if the profile also specifies <SYNCMODE>FULL. For lite synchronization, the default is N. Without <REFRESHSUPT>Y, lite synchronization servers are not required to support <REFRESH>Y requests
+	RespFileER  Boolean  `xml:"MSGSETCORE>RESPFILEER"`            // server supports file-based error recovery
+	SpName      String   `xml:"MSGSETCORE>SPNAME"`                // Name of service provider
 	// TODO MessageSet-specific stuff?
 }
 
