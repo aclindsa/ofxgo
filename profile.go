@@ -38,7 +38,7 @@ type SignonInfo struct {
 	CaseSen           Boolean  `xml:"CASESEN"`                  // Password is case-sensitive?
 	Special           Boolean  `xml:"SPECIAL"`                  // Special characters allowed?
 	Spaces            Boolean  `xml:"SPACES"`                   // Spaces allowed?
-	Pinch             Boolean  `xml:"PINCH"`                    // Pin change <PINCHRQ> requests allowed
+	PinCh             Boolean  `xml:"PINCH"`                    // Pin change <PINCHRQ> requests allowed
 	ChgPinFirst       Boolean  `xml:"CHGPINFIRST"`              // Server requires user to change password at first signon
 	UserCred1Label    String   `xml:"USERCRED1LABEL,omitempty"` // Prompt for USERCRED1 (if this field is present, USERCRED1 is required)
 	UserCred2Label    String   `xml:"USERCRED2LABEL,omitempty"` // Prompt for USERCRED2 (if this field is present, USERCRED2 is required)
