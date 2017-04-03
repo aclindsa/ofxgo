@@ -53,6 +53,7 @@ type SignonInfo struct {
 
 type MessageSet struct {
 	XMLName     xml.Name // <xxxMSGSETVn>
+	Name        string   // <xxxMSGSETVn> (copy of XMLName.Local)
 	Ver         String   `xml:"MSGSETCORE>VER"`                   // Message set version - should always match 'n' in <xxxMSGSETVn>
 	Url         String   `xml:"MSGSETCORE>URL"`                   // URL where messages in this set are to be set
 	OfxSec      String   `xml:"MSGSETCORE>OFXSEC"`                // NONE or 'TYPE 1'
@@ -89,6 +90,7 @@ func (msl *MessageSetList) UnmarshalXML(d *xml.Decoder, start xml.StartElement) 
 			} else {
 				return errors.New("Invalid MSGSETLIST formatting")
 			}
+			msgset.Name = msgset.XMLName.Local
 
 			// Eat ending tags for <xxxMSGSET>
 			tok, err = nextNonWhitespaceToken(d)
