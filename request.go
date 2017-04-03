@@ -28,7 +28,7 @@ type Request struct {
 	SecList    []Message     //<SECLISTMSGSETV1>
 	PresDir    []Message     //<PRESDIRMSGSETV1>
 	PresDlv    []Message     //<PRESDLVMSGSETV1>
-	Profile    []Message     //<PROFMSGSETV1>
+	Prof       []Message     //<PROFMSGSETV1>
 	Image      []Message     //<IMAGEMSGSETV1>
 
 	indent bool // Whether to indent the marshaled XML
@@ -139,7 +139,7 @@ NEWFILEUID:NONE
 		{oq.SecList, SecListRq},
 		{oq.PresDir, PresDirRq},
 		{oq.PresDlv, PresDlvRq},
-		{oq.Profile, ProfileRq},
+		{oq.Prof, ProfRq},
 		{oq.Image, ImageRq},
 	}
 	for _, set := range messageSets {

@@ -146,7 +146,7 @@ func tryProfile(appId, appVer, version string, noindent bool) bool {
 		TrnUID:   *uid,
 		DtProfUp: ofxgo.Date(time.Unix(0, 0)),
 	}
-	query.Profile = append(query.Profile, &profileRequest)
+	query.Prof = append(query.Prof, &profileRequest)
 
 	_, err = client.Request(&query)
 	if err == nil {

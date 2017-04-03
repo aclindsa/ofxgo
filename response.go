@@ -28,7 +28,7 @@ type Response struct {
 	SecList    []Message      //<SECLISTMSGSETV1>
 	PresDir    []Message      //<PRESDIRMSGSETV1>
 	PresDlv    []Message      //<PRESDLVMSGSETV1>
-	Profile    []Message      //<PROFMSGSETV1>
+	Prof       []Message      //<PROFMSGSETV1>
 	Image      []Message      //<IMAGEMSGSETV1>
 }
 
@@ -207,7 +207,7 @@ var responseTypes = map[string]map[string]reflect.Type{
 		(&SecurityList{}).Name():    reflect.TypeOf(SecurityList{})},
 	PresDirRs.String(): map[string]reflect.Type{},
 	PresDlvRs.String(): map[string]reflect.Type{},
-	ProfileRs.String(): map[string]reflect.Type{
+	ProfRs.String(): map[string]reflect.Type{
 		(&ProfileResponse{}).Name(): reflect.TypeOf(ProfileResponse{})},
 	ImageRs.String(): map[string]reflect.Type{},
 }
@@ -326,7 +326,7 @@ func ParseResponse(reader io.Reader) (*Response, error) {
 		SecListRs.String():    &or.SecList,
 		PresDirRs.String():    &or.PresDir,
 		PresDlvRs.String():    &or.PresDlv,
-		ProfileRs.String():    &or.Profile,
+		ProfRs.String():       &or.Prof,
 		ImageRs.String():      &or.Image,
 	}
 

@@ -26,7 +26,7 @@ func (r *ProfileRequest) Valid() (bool, error) {
 }
 
 func (r *ProfileRequest) Type() messageType {
-	return ProfileRq
+	return ProfRq
 }
 
 type SignonInfo struct {
@@ -138,5 +138,5 @@ func (pr *ProfileResponse) Valid() (bool, error) {
 }
 
 func (pr *ProfileResponse) Type() messageType {
-	return ProfileRs
+	return ProfRs
 }

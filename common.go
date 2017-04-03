@@ -30,7 +30,7 @@ const (
 	SecListRq
 	PresDirRq
 	PresDlvRq
-	ProfileRq
+	ProfRq
 	ImageRq
 	// Responses
 	SignonRs
@@ -46,7 +46,7 @@ const (
 	SecListRs
 	PresDirRs
 	PresDlvRs
-	ProfileRs
+	ProfRs
 	ImageRs
 )
 
@@ -78,7 +78,7 @@ func (t messageType) String() string {
 		return "PRESDIRMSGSRQV1"
 	case PresDlvRq:
 		return "PRESDLVMSGSRQV1"
-	case ProfileRq:
+	case ProfRq:
 		return "PROFMSGSRQV1"
 	case ImageRq:
 		return "IMAGEMSGSRQV1"
@@ -108,7 +108,7 @@ func (t messageType) String() string {
 		return "PRESDIRMSGSRSV1"
 	case PresDlvRs:
 		return "PRESDLVMSGSRSV1"
-	case ProfileRs:
+	case ProfRs:
 		return "PROFMSGSRSV1"
 	case ImageRs:
 		return "IMAGEMSGSRSV1"
