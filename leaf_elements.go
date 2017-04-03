@@ -7,13 +7,16 @@ package ofxgo
 // element nesting.
 //
 // Generated using the following command with the 1.0.3 SPEC .dtd file:
-//   # sed -rn 's/^<!ELEMENT\s+([A-Z]+)\s+-\s+o\s+%.*TYPE>.*$/\t"\1",/p' *.dtd | sort
+//   # sed -rn 's/^<!ELEMENT\s+([A-Z0-9]+)\s+-\s+o\s+%.*TYPE>.*$/\t"\1",/p' *.dtd | sort
 var ofxLeafElements = []string{
 	"ACCESSKEY",
 	"ACCTID",
 	"ACCTKEY",
 	"ACCTREQUIRED",
 	"ACCTTYPE",
+	"ADDR1",
+	"ADDR2",
+	"ADDR3",
 	"ADJAMT",
 	"ADJDATE",
 	"ADJDESC",
@@ -223,6 +226,10 @@ var ofxLeafElements = []string{
 	"TSPHONE",
 	"URL",
 	"USEHTML",
+	"USERCRED1",
+	"USERCRED1LABEL",
+	"USERCRED2",
+	"USERCRED2LABEL",
 	"USERID",
 	"USERKEY",
 	"USERPASS",
