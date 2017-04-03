@@ -250,6 +250,8 @@ func TestUnmarshalString(t *testing.T) {
 	unmarshalHelper(t, " new&#xA;line&#xA;", &s, &overwritten)
 	s = "Some Name"
 	unmarshalHelper(t, "Some Name", &s, &overwritten)
+	// Make sure stray newlines are handled properly
+	unmarshalHelper(t, "Some Name\n", &s, &overwritten)
 }
 
 func TestMarshalBoolean(t *testing.T) {
@@ -264,6 +266,8 @@ func TestUnmarshalBoolean(t *testing.T) {
 	unmarshalHelper(t, "Y", &b, &overwritten)
 	b = false
 	unmarshalHelper(t, "N", &b, &overwritten)
+	// Make sure stray newlines are handled properly
+	unmarshalHelper(t, "N\n", &b, &overwritten)
 }
 
 func TestMarshalUID(t *testing.T) {
@@ -274,6 +278,9 @@ func TestMarshalUID(t *testing.T) {
 func TestUnmarshalUID(t *testing.T) {
 	var u, overwritten ofxgo.UID = "d1cf3d3d-9ef9-4a97-b180-81706829cb04", ""
 	unmarshalHelper(t, "d1cf3d3d-9ef9-4a97-b180-81706829cb04", &u, &overwritten)
+	// Make sure stray newlines are handled properly
+	u = "0f94ce83-13b7-7568-e4fc-c02c7b47e7ab"
+	unmarshalHelper(t, "0f94ce83-13b7-7568-e4fc-c02c7b47e7ab\n", &u, &overwritten)
 }
 
 func TestUIDRecommendedFormat(t *testing.T) {

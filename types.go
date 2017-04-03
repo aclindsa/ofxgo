@@ -237,6 +237,16 @@ func (ob Boolean) Equal(o Boolean) bool {
 
 type UID string
 
+func (ou *UID) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	var value string
+	err := d.DecodeElement(&value, &start)
+	if err != nil {
+		return err
+	}
+	*ou = UID(strings.TrimSpace(value))
+	return nil
+}
+
 // The OFX specification recommends that UIDs follow the standard UUID
 // 36-character format
 func (ou UID) RecommendedFormat() (bool, error) {
