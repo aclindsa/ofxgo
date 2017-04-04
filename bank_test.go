@@ -2,7 +2,6 @@ package ofxgo_test
 
 import (
 	"github.com/aclindsa/ofxgo"
-	"math/big"
 	"strings"
 	"testing"
 	"time"
@@ -153,7 +152,7 @@ func TestUnmarshalBankStatementResponse(t *testing.T) {
 	expected.Signon.Org = "BNK"
 	expected.Signon.Fid = "1987"
 
-	var trnamt1, trnamt2 big.Rat
+	var trnamt1, trnamt2 ofxgo.Amount
 	trnamt1.SetFrac64(-20000, 100)
 	trnamt2.SetFrac64(-30000, 100)
 	dtuser2 := ofxgo.Date(time.Date(2006, 1, 12, 0, 0, 0, 0, GMT))
@@ -165,7 +164,7 @@ func TestUnmarshalBankStatementResponse(t *testing.T) {
 			{
 				TrnType:  "CHECK",
 				DtPosted: ofxgo.Date(time.Date(2006, 1, 4, 0, 0, 0, 0, GMT)),
-				TrnAmt:   ofxgo.Amount(trnamt1),
+				TrnAmt:   trnamt1,
 				FiTId:    "00592",
 				CheckNum: "2002",
 			},
@@ -173,13 +172,13 @@ func TestUnmarshalBankStatementResponse(t *testing.T) {
 				TrnType:  "ATM",
 				DtPosted: ofxgo.Date(time.Date(2006, 1, 12, 0, 0, 0, 0, GMT)),
 				DtUser:   &dtuser2,
-				TrnAmt:   ofxgo.Amount(trnamt2),
+				TrnAmt:   trnamt2,
 				FiTId:    "00679",
 			},
 		},
 	}
 
-	var balamt, availbalamt big.Rat
+	var balamt, availbalamt ofxgo.Amount
 	balamt.SetFrac64(20029, 100)
 	availbalamt.SetFrac64(20029, 100)
 
@@ -198,9 +197,9 @@ func TestUnmarshalBankStatementResponse(t *testing.T) {
 			AcctType: "CHECKING",
 		},
 		BankTranList: &banktranlist,
-		BalAmt:       ofxgo.Amount(balamt),
+		BalAmt:       balamt,
 		DtAsOf:       ofxgo.Date(time.Date(2006, 1, 14, 16, 0, 0, 0, GMT)),
-		AvailBalAmt:  (*ofxgo.Amount)(&availbalamt),
+		AvailBalAmt:  &availbalamt,
 		AvailDtAsOf:  &availdtasof,
 	}
 	expected.Bank = append(expected.Bank, &statementResponse)

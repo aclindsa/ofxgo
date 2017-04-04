@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"github.com/aclindsa/ofxgo"
-	"math/big"
 	"os"
 )
 
@@ -65,7 +64,7 @@ func invTransactions() {
 	}
 
 	if stmt, ok := response.InvStmt[0].(*ofxgo.InvStatementResponse); ok {
-		availCash := big.Rat(stmt.InvBal.AvailCash)
+		availCash := stmt.InvBal.AvailCash
 		if availCash.IsInt() && availCash.Num().Int64() != 0 {
 			fmt.Printf("Balance: %s %s (as of %s)\n", stmt.InvBal.AvailCash, stmt.CurDef, stmt.DtAsOf)
 		}

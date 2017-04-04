@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/aclindsa/go/src/encoding/xml"
 	"github.com/aclindsa/ofxgo"
-	"math/big"
 	"reflect"
 	"testing"
 	"time"
@@ -76,50 +75,47 @@ func TestUnmarshalInt(t *testing.T) {
 
 func TestMarshalAmount(t *testing.T) {
 	var a ofxgo.Amount
-	var b *big.Rat = (*big.Rat)(&a)
 
-	b.SetFrac64(8, 1)
+	a.SetFrac64(8, 1)
 	marshalHelper(t, "8", &a)
-	b.SetFrac64(1, 8)
+	a.SetFrac64(1, 8)
 	marshalHelper(t, "0.125", &a)
-	b.SetFrac64(-1, 200)
+	a.SetFrac64(-1, 200)
 	marshalHelper(t, "-0.005", &a)
-	b.SetInt64(0)
+	a.SetInt64(0)
 	marshalHelper(t, "0", &a)
-	b.SetInt64(-768276587425)
+	a.SetInt64(-768276587425)
 	marshalHelper(t, "-768276587425", &a)
-	b.SetFrac64(1, 12)
+	a.SetFrac64(1, 12)
 	marshalHelper(t, "0.0833333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333", &a)
 }
 
 func TestUnmarshalAmount(t *testing.T) {
 	var a, overwritten ofxgo.Amount
-	var b *big.Rat = (*big.Rat)(&a)
 
 	// Amount/big.Rat needs a special equality test because reflect.DeepEqual
 	// doesn't always return equal for two values that big.Rat.Cmp() does
 	eq := func(a, b interface{}) bool {
 		if amountA, ok := a.(*ofxgo.Amount); ok {
 			if amountB, ok2 := b.(*ofxgo.Amount); ok2 {
-				ratA := (*big.Rat)(amountA)
-				return ratA.Cmp((*big.Rat)(amountB)) == 0
+				return amountA.Cmp(&amountB.Rat) == 0
 			}
 		}
 		return false
 	}
 
-	b.SetFrac64(12, 1)
+	a.SetFrac64(12, 1)
 	unmarshalHelper2(t, "12", &a, &overwritten, eq)
-	b.SetFrac64(-21309, 100)
+	a.SetFrac64(-21309, 100)
 	unmarshalHelper2(t, "-213.09", &a, &overwritten, eq)
-	b.SetFrac64(8192, 1000)
+	a.SetFrac64(8192, 1000)
 	unmarshalHelper2(t, "8.192", &a, &overwritten, eq)
 	unmarshalHelper2(t, "+8.192", &a, &overwritten, eq)
-	b.SetInt64(0)
+	a.SetInt64(0)
 	unmarshalHelper2(t, "0", &a, &overwritten, eq)
 	unmarshalHelper2(t, "+0", &a, &overwritten, eq)
 	unmarshalHelper2(t, "-0", &a, &overwritten, eq)
-	b.SetInt64(-19487135)
+	a.SetInt64(-19487135)
 	unmarshalHelper2(t, "-19487135", &a, &overwritten, eq)
 	// Make sure stray newlines are handled properly
 	unmarshalHelper2(t, "-19487135\n", &a, &overwritten, eq)

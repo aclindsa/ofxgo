@@ -2,7 +2,6 @@ package ofxgo_test
 
 import (
 	"github.com/aclindsa/ofxgo"
-	"math/big"
 	"strings"
 	"testing"
 	"time"
@@ -99,7 +98,7 @@ NEWFILEUID:NONE
 	expected.Signon.Org = "01"
 	expected.Signon.Fid = "81729"
 
-	var trnamt1, trnamt2, trnamt3 big.Rat
+	var trnamt1, trnamt2, trnamt3 ofxgo.Amount
 	trnamt1.SetFrac64(-796, 100)
 	trnamt2.SetFrac64(383046, 100)
 	trnamt3.SetFrac64(-1770, 100)
@@ -111,28 +110,28 @@ NEWFILEUID:NONE
 			{
 				TrnType:  "DEBIT",
 				DtPosted: ofxgo.Date(time.Date(2017, 2, 9, 12, 0, 0, 0, GMT)),
-				TrnAmt:   ofxgo.Amount(trnamt1),
+				TrnAmt:   trnamt1,
 				FiTId:    "2017020924435657040207171600195",
 				Name:     "SLICE OF NY",
 			},
 			{
 				TrnType:  "CREDIT",
 				DtPosted: ofxgo.Date(time.Date(2016, 12, 28, 12, 0, 0, 0, GMT)),
-				TrnAmt:   ofxgo.Amount(trnamt2),
+				TrnAmt:   trnamt2,
 				FiTId:    "2016122823633637200000258482730",
 				Name:     "Payment Thank You Electro",
 			},
 			{
 				TrnType:  "DEBIT",
 				DtPosted: ofxgo.Date(time.Date(2017, 3, 27, 12, 0, 0, 0, GMT)),
-				TrnAmt:   ofxgo.Amount(trnamt3),
+				TrnAmt:   trnamt3,
 				FiTId:    "2017032724445727085300442885680",
 				Name:     "KROGER FUEL #9999",
 			},
 		},
 	}
 
-	var balamt, availbalamt big.Rat
+	var balamt, availbalamt ofxgo.Amount
 	balamt.SetFrac64(-933400, 100)
 	availbalamt.SetFrac64(763017, 100)
 
@@ -149,9 +148,9 @@ NEWFILEUID:NONE
 			AcctId: "9283744488463775",
 		},
 		BankTranList: &banktranlist,
-		BalAmt:       ofxgo.Amount(balamt),
+		BalAmt:       balamt,
 		DtAsOf:       ofxgo.Date(time.Date(2017, 3, 31, 8, 0, 0, 0, EDT)),
-		AvailBalAmt:  (*ofxgo.Amount)(&availbalamt),
+		AvailBalAmt:  &availbalamt,
 		AvailDtAsOf:  &availdtasof,
 	}
 	expected.CreditCard = append(expected.CreditCard, &statementResponse)

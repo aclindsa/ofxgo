@@ -2,7 +2,6 @@ package ofxgo_test
 
 import (
 	"github.com/aclindsa/ofxgo"
-	"math/big"
 	"strings"
 	"testing"
 	"time"
@@ -308,7 +307,7 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 	expected.Signon.Org = "INVSTRUS"
 	expected.Signon.Fid = "9999"
 
-	var units1, unitprice1, commission1, total1, amount2 big.Rat
+	var units1, unitprice1, commission1, total1, amount2 ofxgo.Amount
 	units1.SetFrac64(100, 1)
 	unitprice1.SetFrac64(229, 1)
 	commission1.SetFrac64(9, 1)
@@ -334,10 +333,10 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 						UniqueId:     "78462F103",
 						UniqueIdType: "CUSIP",
 					},
-					Units:       ofxgo.Amount(units1),
-					UnitPrice:   ofxgo.Amount(unitprice1),
-					Commission:  ofxgo.Amount(commission1),
-					Total:       ofxgo.Amount(total1),
+					Units:       units1,
+					UnitPrice:   unitprice1,
+					Commission:  commission1,
+					Total:       total1,
 					SubAcctSec:  "CASH",
 					SubAcctFund: "CASH",
 				},
@@ -352,7 +351,7 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 						DtPosted: ofxgo.Date(time.Date(2017, 1, 20, 0, 0, 0, 0, GMT)),
 						DtUser:   &dtuser,
 						DtAvail:  &dtavail,
-						TrnAmt:   ofxgo.Amount(amount2),
+						TrnAmt:   amount2,
 						FiTId:    "993838",
 						Name:     "DEPOSIT",
 						Memo:     "CHECK 19980",
@@ -363,7 +362,7 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 		},
 	}
 
-	var availcash, marginbalance, shortbalance, balvalue big.Rat
+	var availcash, marginbalance, shortbalance, balvalue ofxgo.Amount
 	availcash.SetFrac64(1673, 100)
 	marginbalance.SetFrac64(-8192, 10)
 	shortbalance.SetFrac64(0, 1)
@@ -372,21 +371,21 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 	baldtasof := ofxgo.Date(time.Date(2017, 4, 1, 0, 0, 0, 0, GMT))
 
 	invbalance := ofxgo.InvBalance{
-		AvailCash:     ofxgo.Amount(availcash),
-		MarginBalance: ofxgo.Amount(marginbalance),
-		ShortBalance:  ofxgo.Amount(shortbalance),
+		AvailCash:     availcash,
+		MarginBalance: marginbalance,
+		ShortBalance:  shortbalance,
 		BalList: []ofxgo.Balance{
 			ofxgo.Balance{
 				Name:    "Sweep Int Rate",
 				Desc:    "Current interest rate for sweep account balances",
 				BalType: "PERCENT",
-				Value:   ofxgo.Amount(balvalue),
+				Value:   balvalue,
 				DtAsOf:  &baldtasof,
 			},
 		},
 	}
 
-	var balamt, availbalamt, posunits1, posunitprice1, posmktval1, posunits2, posunitprice2, posmktval2, oounits1, oolimitprice1, oounits2, oolimitprice2 big.Rat
+	var balamt, availbalamt, posunits1, posunitprice1, posmktval1, posunits2, posunitprice2, posmktval2, oounits1, oolimitprice1, oounits2, oolimitprice2 ofxgo.Amount
 	balamt.SetFrac64(20029, 100)
 	availbalamt.SetFrac64(20029, 100)
 	posunits1.SetFrac64(200, 1)
@@ -422,9 +421,9 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 					},
 					HeldInAcct:  "CASH",
 					PosType:     "LONG",
-					Units:       ofxgo.Amount(posunits1),
-					UnitPrice:   ofxgo.Amount(posunitprice1),
-					MktVal:      ofxgo.Amount(posmktval1),
+					Units:       posunits1,
+					UnitPrice:   posunitprice1,
+					MktVal:      posmktval1,
 					DtPriceAsOf: ofxgo.Date(time.Date(2017, 3, 31, 16, 0, 0, 0, GMT)),
 					Memo:        "Price as of previous close",
 				},
@@ -437,9 +436,9 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 					},
 					HeldInAcct:  "CASH",
 					PosType:     "LONG",
-					Units:       ofxgo.Amount(posunits2),
-					UnitPrice:   ofxgo.Amount(posunitprice2),
-					MktVal:      ofxgo.Amount(posmktval2),
+					Units:       posunits2,
+					UnitPrice:   posunitprice2,
+					MktVal:      posmktval2,
 					DtPriceAsOf: ofxgo.Date(time.Date(2017, 3, 31, 16, 0, 0, 0, GMT)),
 				},
 			},
@@ -454,11 +453,11 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 						UniqueIdType: "CUSIP",
 					},
 					DtPlaced:    ofxgo.Date(time.Date(2017, 3, 10, 12, 44, 45, 0, GMT)),
-					Units:       ofxgo.Amount(oounits1),
+					Units:       oounits1,
 					SubAcct:     "CASH",
 					Duration:    "GOODTILCANCEL",
 					Restriction: "NONE",
-					LimitPrice:  ofxgo.Amount(oolimitprice1),
+					LimitPrice:  oolimitprice1,
 				},
 				BuyType:  "BUY",
 				UnitType: "SHARES",
@@ -471,11 +470,11 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 						UniqueIdType: "CUSIP",
 					},
 					DtPlaced:    ofxgo.Date(time.Date(2017, 3, 24, 3, 19, 0, 0, GMT)),
-					Units:       ofxgo.Amount(oounits2),
+					Units:       oounits2,
 					SubAcct:     "CASH",
 					Duration:    "GOODTILCANCEL",
 					Restriction: "ALLORNONE",
-					LimitPrice:  ofxgo.Amount(oolimitprice2),
+					LimitPrice:  oolimitprice2,
 				},
 				BuyType: "BUY",
 			},
@@ -483,7 +482,7 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 	}
 	expected.InvStmt = append(expected.InvStmt, &statementResponse)
 
-	var yield1, yield2, strikeprice big.Rat
+	var yield1, yield2, strikeprice ofxgo.Amount
 	yield1.SetFrac64(192, 100)
 	yield2.SetFrac64(17, 1)
 	strikeprice.SetFrac64(79, 1)
@@ -500,7 +499,7 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 					Ticker:  "SPY",
 					FiId:    "99184",
 				},
-				Yield:      ofxgo.Amount(yield1),
+				Yield:      yield1,
 				AssetClass: "OTHER",
 			},
 			ofxgo.OptInfo{
@@ -514,7 +513,7 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 					FiId:    "882919",
 				},
 				OptType:     "PUT",
-				StrikePrice: ofxgo.Amount(strikeprice),
+				StrikePrice: strikeprice,
 				DtExpire:    ofxgo.Date(time.Date(2017, 9, 1, 0, 0, 0, 0, GMT)),
 				ShPerCtrct:  100,
 				SecId: &ofxgo.SecurityId{
@@ -533,7 +532,7 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 					Ticker:  "WHAT",
 					FiId:    "883897",
 				},
-				Yield:      ofxgo.Amount(yield2),
+				Yield:      yield2,
 				AssetClass: "SMALLSTOCK",
 			},
 			ofxgo.MFInfo{
@@ -734,7 +733,7 @@ NEWFILEUID: NONE
 	expected.Signon.Fid = "1000"
 	// Ignored <INTU.BID>1000
 
-	var units1, unitprice1, commission1, fees1, total1, units2, units3 big.Rat
+	var units1, unitprice1, commission1, fees1, total1, units2, units3 ofxgo.Amount
 	units1.SetFrac64(-1, 1)
 	unitprice1.SetFrac64(35, 100)
 	commission1.SetFrac64(885, 100)
@@ -762,11 +761,11 @@ NEWFILEUID: NONE
 						UniqueId:     "SPY161216C00226000",
 						UniqueIdType: "CUSIP",
 					},
-					Units:       ofxgo.Amount(units1),
-					UnitPrice:   ofxgo.Amount(unitprice1),
-					Commission:  ofxgo.Amount(commission1),
-					Fees:        ofxgo.Amount(fees1),
-					Total:       ofxgo.Amount(total1),
+					Units:       units1,
+					UnitPrice:   unitprice1,
+					Commission:  commission1,
+					Fees:        fees1,
+					Total:       total1,
 					SubAcctSec:  "CASH",
 					SubAcctFund: "CASH",
 				},
@@ -784,7 +783,7 @@ NEWFILEUID: NONE
 					UniqueIdType: "CUSIP",
 				},
 				OptAction:  "ASSIGN",
-				Units:      ofxgo.Amount(units2),
+				Units:      units2,
 				ShPerCtrct: 100,
 				SubAcctSec: "CASH",
 			},
@@ -799,25 +798,25 @@ NEWFILEUID: NONE
 					UniqueIdType: "CUSIP",
 				},
 				OptAction:  "ASSIGN",
-				Units:      ofxgo.Amount(units3),
+				Units:      units3,
 				ShPerCtrct: 100,
 				SubAcctSec: "CASH",
 			},
 		},
 	}
 
-	var availcash, marginbalance, shortbalance big.Rat
+	var availcash, marginbalance, shortbalance ofxgo.Amount
 	availcash.SetFrac64(0, 1)
 	marginbalance.SetFrac64(-0, 1)
 	shortbalance.SetFrac64(0, 1)
 
 	invbalance := ofxgo.InvBalance{
-		AvailCash:     ofxgo.Amount(availcash),
-		MarginBalance: ofxgo.Amount(marginbalance),
-		ShortBalance:  ofxgo.Amount(shortbalance),
+		AvailCash:     availcash,
+		MarginBalance: marginbalance,
+		ShortBalance:  shortbalance,
 	}
 
-	var posunits1, posunitprice1, posmktval1, posunits2, posunitprice2, posmktval2 big.Rat
+	var posunits1, posunitprice1, posmktval1, posunits2, posunitprice2, posmktval2 ofxgo.Amount
 	posunits1.SetFrac64(100, 1)
 	posunitprice1.SetFrac64(79, 1)
 	posmktval1.SetFrac64(79000, 1)
@@ -847,9 +846,9 @@ NEWFILEUID: NONE
 					},
 					HeldInAcct:  "CASH",
 					PosType:     "LONG",
-					Units:       ofxgo.Amount(posunits1),
-					UnitPrice:   ofxgo.Amount(posunitprice1),
-					MktVal:      ofxgo.Amount(posmktval1),
+					Units:       posunits1,
+					UnitPrice:   posunitprice1,
+					MktVal:      posmktval1,
 					DtPriceAsOf: ofxgo.Date(time.Date(2017, 4, 3, 12, 0, 0, 0, GMT)),
 				},
 			},
@@ -861,9 +860,9 @@ NEWFILEUID: NONE
 					},
 					HeldInAcct:  "CASH",
 					PosType:     "LONG",
-					Units:       ofxgo.Amount(posunits2),
-					UnitPrice:   ofxgo.Amount(posunitprice2),
-					MktVal:      ofxgo.Amount(posmktval2),
+					Units:       posunits2,
+					UnitPrice:   posunitprice2,
+					MktVal:      posmktval2,
 					DtPriceAsOf: ofxgo.Date(time.Date(2017, 4, 3, 12, 0, 0, 0, GMT)),
 				},
 			},
@@ -872,7 +871,7 @@ NEWFILEUID: NONE
 	}
 	expected.InvStmt = append(expected.InvStmt, &statementResponse)
 
-	var strikeprice big.Rat
+	var strikeprice ofxgo.Amount
 	strikeprice.SetFrac64(226, 1)
 
 	seclist := ofxgo.SecurityList{
@@ -897,7 +896,7 @@ NEWFILEUID: NONE
 					Ticker:  "SPY   161216C00226000",
 				},
 				OptType:     "CALL",
-				StrikePrice: ofxgo.Amount(strikeprice),
+				StrikePrice: strikeprice,
 				DtExpire:    ofxgo.Date(time.Date(2016, 12, 16, 12, 0, 0, 0, GMT)),
 				ShPerCtrct:  100,
 			},

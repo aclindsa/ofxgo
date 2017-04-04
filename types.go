@@ -37,11 +37,12 @@ func (i Int) Equal(o Int) bool {
 	return i == o
 }
 
-type Amount big.Rat
+type Amount struct {
+	big.Rat
+}
 
 func (a *Amount) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	var value string
-	var b big.Rat
 
 	err := d.DecodeElement(&value, &start)
 	if err != nil {
@@ -54,16 +55,14 @@ func (a *Amount) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	// by a comma, so fix that up before attempting to parse it into big.Rat
 	value = strings.Replace(value, ",", ".", 1)
 
-	if _, ok := b.SetString(value); !ok {
-		return errors.New("Failed to parse OFX amount into big.Rat")
+	if _, ok := a.SetString(value); !ok {
+		return errors.New("Failed to parse OFX amount")
 	}
-	*a = Amount(b)
 	return nil
 }
 
 func (a Amount) String() string {
-	var b big.Rat = big.Rat(a)
-	return strings.TrimRight(strings.TrimRight(b.FloatString(100), "0"), ".")
+	return strings.TrimRight(strings.TrimRight(a.FloatString(100), "0"), ".")
 }
 
 func (a *Amount) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
@@ -71,8 +70,7 @@ func (a *Amount) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 }
 
 func (a Amount) Equal(o Amount) bool {
-	ratA := (*big.Rat)(&a)
-	return ratA.Cmp((*big.Rat)(&o)) == 0
+	return (&a).Cmp(&o.Rat) == 0
 }
 
 type Date time.Time
