@@ -54,30 +54,33 @@ func (or *Response) readSGMLHeaders(r *bufio.Reader) error {
 			return errors.New("OFX headers malformed")
 		}
 
+		// Some OFX servers put a space after the colon
+		headervalue := strings.TrimSpace(header[1])
+
 		switch header[0] {
 		case "OFXHEADER":
-			if header[1] != "100" {
+			if headervalue != "100" {
 				return errors.New("OFXHEADER is not 100")
 			}
 			seenHeader = true
 		case "DATA":
-			if header[1] != "OFXSGML" {
+			if headervalue != "OFXSGML" {
 				return errors.New("OFX DATA header does not contain OFXSGML")
 			}
 		case "VERSION":
-			switch header[1] {
+			switch headervalue {
 			case "102", "103", "151", "160":
 				seenVersion = true
-				or.Version = header[1]
+				or.Version = headervalue
 			default:
 				return errors.New("Invalid OFX VERSION in header")
 			}
 		case "SECURITY":
-			if header[1] != "NONE" {
+			if headervalue != "NONE" {
 				return errors.New("OFX SECURITY header not NONE")
 			}
 		case "COMPRESSION":
-			if header[1] != "NONE" {
+			if headervalue != "NONE" {
 				return errors.New("OFX COMPRESSION header not NONE")
 			}
 		case "ENCODING", "CHARSET", "OLDFILEUID", "NEWFILEUID":
