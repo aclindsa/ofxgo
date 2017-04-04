@@ -73,7 +73,9 @@ func (a Amount) Equal(o Amount) bool {
 	return (&a).Cmp(&o.Rat) == 0
 }
 
-type Date time.Time
+type Date struct {
+	time.Time
+}
 
 var ofxDateFormats = []string{
 	"20060102150405.000",
@@ -139,8 +141,7 @@ func (od *Date) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	for _, format := range ofxDateFormats {
 		t, err := time.Parse(format+zoneFormat, value+zone)
 		if err == nil {
-			tmpod := Date(t)
-			*od = tmpod
+			od.Time = t
 			return nil
 		}
 	}
@@ -148,9 +149,8 @@ func (od *Date) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 }
 
 func (od Date) String() string {
-	t := time.Time(od)
-	format := t.Format(ofxDateFormats[0])
-	zonename, zoneoffset := t.Zone()
+	format := od.Format(ofxDateFormats[0])
+	zonename, zoneoffset := od.Zone()
 	if zoneoffset < 0 {
 		format += "[" + fmt.Sprintf("%+d", zoneoffset/3600)
 	} else {
@@ -175,7 +175,17 @@ func (od *Date) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 }
 
 func (od Date) Equal(o Date) bool {
-	return time.Time(od).Equal(time.Time(o))
+	return od.Time.Equal(o.Time)
+}
+
+func NewDate(year int, month time.Month, day, hour, min, sec, nsec int, loc *time.Location) *Date {
+	return &Date{Time: time.Date(year, month, day, hour, min, sec, nsec, loc)}
+}
+
+var gmt = time.FixedZone("GMT", 0)
+
+func NewDateGMT(year int, month time.Month, day, hour, min, sec, nsec int) *Date {
+	return &Date{Time: time.Date(year, month, day, hour, min, sec, nsec, gmt)}
 }
 
 type String string

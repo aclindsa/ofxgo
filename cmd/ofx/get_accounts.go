@@ -31,7 +31,7 @@ func getAccounts() {
 
 	acctInfo := ofxgo.AcctInfoRequest{
 		TrnUID:   *uid,
-		DtAcctUp: ofxgo.Date(time.Unix(0, 0)),
+		DtAcctUp: ofxgo.Date{Time: time.Unix(0, 0)},
 	}
 	query.Signup = append(query.Signup, &acctInfo)
 

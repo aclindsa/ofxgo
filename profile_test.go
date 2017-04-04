@@ -52,13 +52,13 @@ func TestMarshalProfileRequest(t *testing.T) {
 
 	profileRequest := ofxgo.ProfileRequest{
 		TrnUID:   "983373",
-		DtProfUp: ofxgo.Date(time.Date(2016, 1, 1, 0, 0, 0, 0, EST)),
+		DtProfUp: *ofxgo.NewDate(2016, 1, 1, 0, 0, 0, 0, EST),
 	}
 	request.Prof = append(request.Prof, &profileRequest)
 
 	request.SetClientFields(&client)
 	// Overwrite the DtClient value set by SetClientFields to time.Now()
-	request.Signon.DtClient = ofxgo.Date(time.Date(2016, 6, 14, 7, 34, 0, 0, EST))
+	request.Signon.DtClient = *ofxgo.NewDate(2016, 6, 14, 7, 34, 0, 0, EST)
 
 	marshalCheckRequest(t, &request, expectedString)
 }
@@ -214,15 +214,13 @@ NEWFILEUID:NONE
 </PROFMSGSRSV1>
 </OFX>`)
 	var expected ofxgo.Response
-	GMT := time.FixedZone("GMT", 0)
 
 	expected.Version = "102"
 	expected.Signon.Status.Code = 0
 	expected.Signon.Status.Severity = "INFO"
-	expected.Signon.DtServer = ofxgo.Date(time.Date(2017, 4, 3, 9, 34, 58, 0, GMT))
+	expected.Signon.DtServer = *ofxgo.NewDateGMT(2017, 4, 3, 9, 34, 58, 0)
 	expected.Signon.Language = "ENG"
-	dtprofup := ofxgo.Date(time.Date(2002, 11, 19, 14, 0, 0, 0, GMT))
-	expected.Signon.DtProfUp = &dtprofup
+	expected.Signon.DtProfUp = ofxgo.NewDateGMT(2002, 11, 19, 14, 0, 0, 0)
 
 	profileResponse := ofxgo.ProfileResponse{
 		TrnUID: "0f94ce83-13b7-7568-e4fc-c02c7b47e7ab",
@@ -305,7 +303,7 @@ NEWFILEUID:NONE
 				ChgPinFirst: false,
 			},
 		},
-		DtProfUp:   ofxgo.Date(time.Date(2002, 11, 19, 14, 0, 0, 0, GMT)),
+		DtProfUp:   *ofxgo.NewDateGMT(2002, 11, 19, 14, 0, 0, 0),
 		FiName:     "Example Trade Financial",
 		Addr1:      "5555 Buhunkus Drive",
 		City:       "Someville",

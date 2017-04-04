@@ -51,13 +51,13 @@ func TestMarshalAcctInfoRequest(t *testing.T) {
 
 	acctInfoRequest := ofxgo.AcctInfoRequest{
 		TrnUID:   "e3ad9bda-38fa-4e5b-8099-1bd567ddef7a",
-		DtAcctUp: ofxgo.Date(time.Date(2015, 12, 21, 18, 29, 45, 0, EST)),
+		DtAcctUp: *ofxgo.NewDate(2015, 12, 21, 18, 29, 45, 0, EST),
 	}
 	request.Signup = append(request.Signup, &acctInfoRequest)
 
 	request.SetClientFields(&client)
 	// Overwrite the DtClient value set by SetClientFields to time.Now()
-	request.Signon.DtClient = ofxgo.Date(time.Date(2016, 1, 15, 11, 23, 0, 0, EST))
+	request.Signon.DtClient = *ofxgo.NewDate(2016, 1, 15, 11, 23, 0, 0, EST)
 
 	marshalCheckRequest(t, &request, expectedString)
 }
@@ -111,17 +111,14 @@ func TestUnmarshalAcctInfoResponse(t *testing.T) {
 	</SIGNUPMSGSRSV1>
 </OFX>`)
 	var expected ofxgo.Response
-	GMT := time.FixedZone("GMT", 0)
 
 	expected.Version = "203"
 	expected.Signon.Status.Code = 0
 	expected.Signon.Status.Severity = "INFO"
-	expected.Signon.DtServer = ofxgo.Date(time.Date(2006, 1, 15, 11, 23, 03, 0, GMT))
+	expected.Signon.DtServer = *ofxgo.NewDateGMT(2006, 1, 15, 11, 23, 03, 0)
 	expected.Signon.Language = "ENG"
-	dtprofup := ofxgo.Date(time.Date(2005, 2, 21, 9, 13, 0, 0, GMT))
-	expected.Signon.DtProfUp = &dtprofup
-	dtacctup := ofxgo.Date(time.Date(2006, 1, 2, 16, 0, 0, 0, GMT))
-	expected.Signon.DtAcctUp = &dtacctup
+	expected.Signon.DtProfUp = ofxgo.NewDateGMT(2005, 2, 21, 9, 13, 0, 0)
+	expected.Signon.DtAcctUp = ofxgo.NewDateGMT(2006, 1, 2, 16, 0, 0, 0)
 	expected.Signon.Org = "BNK"
 	expected.Signon.Fid = "1987"
 
@@ -143,7 +140,7 @@ func TestUnmarshalAcctInfoResponse(t *testing.T) {
 			Code:     0,
 			Severity: "INFO",
 		},
-		DtAcctUp: ofxgo.Date(time.Date(2005, 2, 28, 0, 0, 0, 0, GMT)),
+		DtAcctUp: *ofxgo.NewDateGMT(2005, 2, 28, 0, 0, 0, 0),
 		AcctInfo: []ofxgo.AcctInfo{{
 			Desc:         "Personal Checking",
 			Phone:        "888-222-5827",

@@ -60,7 +60,6 @@ func TestMarshalInvStatementRequest(t *testing.T) {
 	request.Signon.Fid = "01"
 
 	EST := time.FixedZone("EST", -5*60*60)
-	dtstart := ofxgo.Date(time.Date(2016, 1, 1, 0, 0, 0, 0, EST))
 
 	statementRequest := ofxgo.InvStatementRequest{
 		TrnUID: "382827d6-e2d0-4396-bf3b-665979285420",
@@ -68,7 +67,7 @@ func TestMarshalInvStatementRequest(t *testing.T) {
 			BrokerId: "fi.example.com",
 			AcctId:   "82736664",
 		},
-		DtStart:        &dtstart,
+		DtStart:        ofxgo.NewDate(2016, 1, 1, 0, 0, 0, 0, EST),
 		Include:        true,
 		IncludeOO:      true,
 		IncludePos:     true,
@@ -78,7 +77,7 @@ func TestMarshalInvStatementRequest(t *testing.T) {
 
 	request.SetClientFields(&client)
 	// Overwrite the DtClient value set by SetClientFields to time.Now()
-	request.Signon.DtClient = ofxgo.Date(time.Date(2016, 2, 24, 13, 19, 5, 0, EST))
+	request.Signon.DtClient = *ofxgo.NewDate(2016, 2, 24, 13, 19, 5, 0, EST)
 
 	marshalCheckRequest(t, &request, expectedString)
 }
@@ -297,12 +296,11 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 	</SECLISTMSGSRSV1>
 </OFX>`)
 	var expected ofxgo.Response
-	GMT := time.FixedZone("GMT", 0)
 
 	expected.Version = "203"
 	expected.Signon.Status.Code = 0
 	expected.Signon.Status.Severity = "INFO"
-	expected.Signon.DtServer = ofxgo.Date(time.Date(2017, 4, 1, 20, 12, 44, 0, GMT))
+	expected.Signon.DtServer = *ofxgo.NewDateGMT(2017, 4, 1, 20, 12, 44, 0)
 	expected.Signon.Language = "ENG"
 	expected.Signon.Org = "INVSTRUS"
 	expected.Signon.Fid = "9999"
@@ -314,20 +312,16 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 	total1.SetFrac64(-22909, 1)
 	amount2.SetFrac64(22000, 1)
 
-	dtuser := ofxgo.Date(time.Date(2017, 1, 18, 0, 0, 0, 0, GMT))
-	dtavail := ofxgo.Date(time.Date(2017, 1, 23, 0, 0, 0, 0, GMT))
-	dtsettle := ofxgo.Date(time.Date(2017, 2, 7, 0, 0, 0, 0, GMT))
-
 	invtranlist := ofxgo.InvTranList{
-		DtStart: ofxgo.Date(time.Date(2017, 1, 1, 0, 0, 0, 0, GMT)),
-		DtEnd:   ofxgo.Date(time.Date(2017, 3, 31, 0, 0, 0, 0, GMT)),
+		DtStart: *ofxgo.NewDateGMT(2017, 1, 1, 0, 0, 0, 0),
+		DtEnd:   *ofxgo.NewDateGMT(2017, 3, 31, 0, 0, 0, 0),
 		InvTransactions: []ofxgo.InvTransaction{
 			ofxgo.BuyStock{
 				InvBuy: ofxgo.InvBuy{
 					InvTran: ofxgo.InvTran{
 						FiTId:    "729483191",
-						DtTrade:  ofxgo.Date(time.Date(2017, 2, 3, 0, 0, 0, 0, GMT)),
-						DtSettle: &dtsettle,
+						DtTrade:  *ofxgo.NewDateGMT(2017, 2, 3, 0, 0, 0, 0),
+						DtSettle: ofxgo.NewDateGMT(2017, 2, 7, 0, 0, 0, 0),
 					},
 					SecId: ofxgo.SecurityId{
 						UniqueId:     "78462F103",
@@ -348,13 +342,14 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 				Transactions: []ofxgo.Transaction{
 					ofxgo.Transaction{
 						TrnType:  "CREDIT",
-						DtPosted: ofxgo.Date(time.Date(2017, 1, 20, 0, 0, 0, 0, GMT)),
-						DtUser:   &dtuser,
-						DtAvail:  &dtavail,
-						TrnAmt:   amount2,
-						FiTId:    "993838",
-						Name:     "DEPOSIT",
-						Memo:     "CHECK 19980",
+						DtPosted: *ofxgo.NewDateGMT(2017, 1, 20, 0, 0, 0, 0),
+						DtUser:   ofxgo.NewDateGMT(2017, 1, 18, 0, 0, 0, 0),
+						DtAvail:  ofxgo.NewDateGMT(2017, 1, 23, 0, 0, 0, 0),
+
+						TrnAmt: amount2,
+						FiTId:  "993838",
+						Name:   "DEPOSIT",
+						Memo:   "CHECK 19980",
 					},
 				},
 				SubAcctFund: "CASH",
@@ -368,8 +363,6 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 	shortbalance.SetFrac64(0, 1)
 	balvalue.SetFrac64(25, 100)
 
-	baldtasof := ofxgo.Date(time.Date(2017, 4, 1, 0, 0, 0, 0, GMT))
-
 	invbalance := ofxgo.InvBalance{
 		AvailCash:     availcash,
 		MarginBalance: marginbalance,
@@ -380,7 +373,7 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 				Desc:    "Current interest rate for sweep account balances",
 				BalType: "PERCENT",
 				Value:   balvalue,
-				DtAsOf:  &baldtasof,
+				DtAsOf:  ofxgo.NewDateGMT(2017, 4, 1, 0, 0, 0, 0),
 			},
 		},
 	}
@@ -405,7 +398,7 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 			Code:     0,
 			Severity: "INFO",
 		},
-		DtAsOf: ofxgo.Date(time.Date(2017, 3, 31, 0, 0, 0, 0, GMT)),
+		DtAsOf: *ofxgo.NewDateGMT(2017, 3, 31, 0, 0, 0, 0),
 		CurDef: "USD",
 		InvAcctFrom: ofxgo.InvAcct{
 			BrokerId: "invstrus.com",
@@ -424,7 +417,7 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 					Units:       posunits1,
 					UnitPrice:   posunitprice1,
 					MktVal:      posmktval1,
-					DtPriceAsOf: ofxgo.Date(time.Date(2017, 3, 31, 16, 0, 0, 0, GMT)),
+					DtPriceAsOf: *ofxgo.NewDateGMT(2017, 3, 31, 16, 0, 0, 0),
 					Memo:        "Price as of previous close",
 				},
 			},
@@ -439,7 +432,7 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 					Units:       posunits2,
 					UnitPrice:   posunitprice2,
 					MktVal:      posmktval2,
-					DtPriceAsOf: ofxgo.Date(time.Date(2017, 3, 31, 16, 0, 0, 0, GMT)),
+					DtPriceAsOf: *ofxgo.NewDateGMT(2017, 3, 31, 16, 0, 0, 0),
 				},
 			},
 		},
@@ -452,7 +445,7 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 						UniqueId:     "922908645",
 						UniqueIdType: "CUSIP",
 					},
-					DtPlaced:    ofxgo.Date(time.Date(2017, 3, 10, 12, 44, 45, 0, GMT)),
+					DtPlaced:    *ofxgo.NewDateGMT(2017, 3, 10, 12, 44, 45, 0),
 					Units:       oounits1,
 					SubAcct:     "CASH",
 					Duration:    "GOODTILCANCEL",
@@ -469,7 +462,7 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 						UniqueId:     "899422348",
 						UniqueIdType: "CUSIP",
 					},
-					DtPlaced:    ofxgo.Date(time.Date(2017, 3, 24, 3, 19, 0, 0, GMT)),
+					DtPlaced:    *ofxgo.NewDateGMT(2017, 3, 24, 3, 19, 0, 0),
 					Units:       oounits2,
 					SubAcct:     "CASH",
 					Duration:    "GOODTILCANCEL",
@@ -514,7 +507,7 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 				},
 				OptType:     "PUT",
 				StrikePrice: strikeprice,
-				DtExpire:    ofxgo.Date(time.Date(2017, 9, 1, 0, 0, 0, 0, GMT)),
+				DtExpire:    *ofxgo.NewDateGMT(2017, 9, 1, 0, 0, 0, 0),
 				ShPerCtrct:  100,
 				SecId: &ofxgo.SecurityId{
 					UniqueId:     "983322180",
@@ -722,12 +715,11 @@ NEWFILEUID: NONE
  </SECLISTMSGSRSV1>
 </OFX>`)
 	var expected ofxgo.Response
-	GMT := time.FixedZone("GMT", 0)
 
 	expected.Version = "102"
 	expected.Signon.Status.Code = 0
 	expected.Signon.Status.Severity = "INFO"
-	expected.Signon.DtServer = ofxgo.Date(time.Date(2017, 4, 3, 12, 0, 0, 0, GMT))
+	expected.Signon.DtServer = *ofxgo.NewDateGMT(2017, 4, 3, 12, 0, 0, 0)
 	expected.Signon.Language = "ENG"
 	expected.Signon.Org = "VV"
 	expected.Signon.Fid = "1000"
@@ -742,20 +734,16 @@ NEWFILEUID: NONE
 	units2.SetFrac64(-100, 1)
 	units3.SetFrac64(1, 1)
 
-	dtsettle1 := ofxgo.Date(time.Date(2016, 12, 8, 12, 0, 0, 0, GMT))
-	dtsettle2 := ofxgo.Date(time.Date(2016, 12, 20, 12, 0, 0, 0, GMT))
-	dtsettle3 := ofxgo.Date(time.Date(2016, 12, 15, 12, 0, 0, 0, GMT))
-
 	invtranlist := ofxgo.InvTranList{
-		DtStart: ofxgo.Date(time.Date(2016, 12, 6, 12, 0, 0, 0, GMT)),
-		DtEnd:   ofxgo.Date(time.Date(2017, 4, 3, 12, 0, 0, 0, GMT)),
+		DtStart: *ofxgo.NewDateGMT(2016, 12, 6, 12, 0, 0, 0),
+		DtEnd:   *ofxgo.NewDateGMT(2017, 4, 3, 12, 0, 0, 0),
 		InvTransactions: []ofxgo.InvTransaction{
 			ofxgo.SellOpt{
 				InvSell: ofxgo.InvSell{
 					InvTran: ofxgo.InvTran{
 						FiTId:    "12341234-20161207-1",
-						DtTrade:  ofxgo.Date(time.Date(2016, 12, 7, 12, 0, 0, 0, GMT)),
-						DtSettle: &dtsettle1,
+						DtTrade:  *ofxgo.NewDateGMT(2016, 12, 7, 12, 0, 0, 0),
+						DtSettle: ofxgo.NewDateGMT(2016, 12, 8, 12, 0, 0, 0),
 					},
 					SecId: ofxgo.SecurityId{
 						UniqueId:     "SPY161216C00226000",
@@ -775,8 +763,8 @@ NEWFILEUID: NONE
 			ofxgo.ClosureOpt{
 				InvTran: ofxgo.InvTran{
 					FiTId:    "12341234-20161215-1",
-					DtTrade:  ofxgo.Date(time.Date(2016, 12, 15, 12, 0, 0, 0, GMT)),
-					DtSettle: &dtsettle2,
+					DtTrade:  *ofxgo.NewDateGMT(2016, 12, 15, 12, 0, 0, 0),
+					DtSettle: ofxgo.NewDateGMT(2016, 12, 20, 12, 0, 0, 0),
 				},
 				SecId: ofxgo.SecurityId{
 					UniqueId:     "78462F10",
@@ -790,8 +778,8 @@ NEWFILEUID: NONE
 			ofxgo.ClosureOpt{
 				InvTran: ofxgo.InvTran{
 					FiTId:    "12341234-20161215-2",
-					DtTrade:  ofxgo.Date(time.Date(2016, 12, 15, 12, 0, 0, 0, GMT)),
-					DtSettle: &dtsettle3,
+					DtTrade:  *ofxgo.NewDateGMT(2016, 12, 15, 12, 0, 0, 0),
+					DtSettle: ofxgo.NewDateGMT(2016, 12, 15, 12, 0, 0, 0),
 				},
 				SecId: ofxgo.SecurityId{
 					UniqueId:     "SPY161216C00226000",
@@ -830,7 +818,7 @@ NEWFILEUID: NONE
 			Code:     0,
 			Severity: "INFO",
 		},
-		DtAsOf: ofxgo.Date(time.Date(2017, 4, 3, 12, 0, 0, 0, GMT)),
+		DtAsOf: *ofxgo.NewDateGMT(2017, 4, 3, 12, 0, 0, 0),
 		CurDef: "USD",
 		InvAcctFrom: ofxgo.InvAcct{
 			BrokerId: "www.exampletrader.com",
@@ -849,7 +837,7 @@ NEWFILEUID: NONE
 					Units:       posunits1,
 					UnitPrice:   posunitprice1,
 					MktVal:      posmktval1,
-					DtPriceAsOf: ofxgo.Date(time.Date(2017, 4, 3, 12, 0, 0, 0, GMT)),
+					DtPriceAsOf: *ofxgo.NewDateGMT(2017, 4, 3, 12, 0, 0, 0),
 				},
 			},
 			ofxgo.StockPosition{
@@ -863,7 +851,7 @@ NEWFILEUID: NONE
 					Units:       posunits2,
 					UnitPrice:   posunitprice2,
 					MktVal:      posmktval2,
-					DtPriceAsOf: ofxgo.Date(time.Date(2017, 4, 3, 12, 0, 0, 0, GMT)),
+					DtPriceAsOf: *ofxgo.NewDateGMT(2017, 4, 3, 12, 0, 0, 0),
 				},
 			},
 		},
@@ -897,7 +885,7 @@ NEWFILEUID: NONE
 				},
 				OptType:     "CALL",
 				StrikePrice: strikeprice,
-				DtExpire:    ofxgo.Date(time.Date(2016, 12, 16, 12, 0, 0, 0, GMT)),
+				DtExpire:    *ofxgo.NewDateGMT(2016, 12, 16, 12, 0, 0, 0),
 				ShPerCtrct:  100,
 			},
 		},

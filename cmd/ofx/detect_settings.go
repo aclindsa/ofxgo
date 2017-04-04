@@ -144,7 +144,7 @@ func tryProfile(appId, appVer, version string, noindent bool) bool {
 
 	profileRequest := ofxgo.ProfileRequest{
 		TrnUID:   *uid,
-		DtProfUp: ofxgo.Date(time.Unix(0, 0)),
+		DtProfUp: ofxgo.Date{Time: time.Unix(0, 0)},
 	}
 	query.Prof = append(query.Prof, &profileRequest)
 
