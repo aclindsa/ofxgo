@@ -557,3 +557,358 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 
 	checkResponsesEqual(t, &expected, response)
 }
+
+func TestUnmarshalInvStatementResponse102(t *testing.T) {
+	responseReader := strings.NewReader(`OFXHEADER: 100
+DATA: OFXSGML
+VERSION: 102
+SECURITY: NONE
+ENCODING: USASCII
+CHARSET: 1252
+COMPRESSION: NONE
+OLDFILEUID: NONE
+NEWFILEUID: NONE
+
+<OFX>
+ <SIGNONMSGSRSV1>
+  <SONRS>
+   <STATUS>
+    <CODE>0
+    <SEVERITY>INFO
+   </STATUS>
+   <DTSERVER>20170403120000
+   <LANGUAGE>ENG
+   <FI>
+    <ORG>VV
+    <FID>1000
+   </FI>
+   <INTU.BID>1000
+  </SONRS>
+ </SIGNONMSGSRSV1>
+ <INVSTMTMSGSRSV1>
+  <INVSTMTTRNRS>
+   <TRNUID>1283719872
+   <STATUS>
+    <CODE>0
+    <SEVERITY>INFO
+   </STATUS>
+   <INVSTMTRS>
+    <DTASOF>20170403120000
+    <CURDEF>USD
+    <INVACCTFROM>
+     <BROKERID>www.exampletrader.com
+     <ACCTID>12341234
+    </INVACCTFROM>
+    <INVTRANLIST>
+     <DTSTART>20161206120000
+     <DTEND>20170403120000
+     <SELLOPT>
+      <INVSELL>
+       <INVTRAN>
+        <FITID>12341234-20161207-1
+        <DTTRADE>20161207120000
+        <DTSETTLE>20161208120000
+       </INVTRAN>
+       <SECID>
+        <UNIQUEID>SPY161216C00226000
+        <UNIQUEIDTYPE>CUSIP
+       </SECID>
+       <UNITS>-1.0000
+       <UNITPRICE>0.3500
+       <COMMISSION>8.8500
+       <FEES>0.2600
+       <TOTAL>200.8900
+       <SUBACCTSEC>CASH
+       <SUBACCTFUND>CASH
+      </INVSELL>
+      <OPTSELLTYPE>SELLTOOPEN
+      <SHPERCTRCT>100
+     </SELLOPT>
+     <CLOSUREOPT>
+      <INVTRAN>
+       <FITID>12341234-20161215-1
+       <DTTRADE>20161215120000
+       <DTSETTLE>20161220120000
+      </INVTRAN>
+      <SECID>
+       <UNIQUEID>78462F10
+       <UNIQUEIDTYPE>CUSIP
+      </SECID>
+      <OPTACTION>ASSIGN
+      <UNITS>-100.0000
+      <SHPERCTRCT>100
+      <SUBACCTSEC>CASH
+     </CLOSUREOPT>
+     <CLOSUREOPT>
+      <INVTRAN>
+       <FITID>12341234-20161215-2
+       <DTTRADE>20161215120000
+       <DTSETTLE>20161215120000
+      </INVTRAN>
+      <SECID>
+       <UNIQUEID>SPY161216C00226000
+       <UNIQUEIDTYPE>CUSIP
+      </SECID>
+      <OPTACTION>ASSIGN
+      <UNITS>1.0000
+      <SHPERCTRCT>100
+      <SUBACCTSEC>CASH
+     </CLOSUREOPT>
+    </INVTRANLIST>
+    <INVPOSLIST>
+     <POSSTOCK>
+      <INVPOS>
+       <SECID>
+        <UNIQUEID>04956010
+        <UNIQUEIDTYPE>CUSIP
+       </SECID>
+       <HELDINACCT>CASH
+       <POSTYPE>LONG
+       <UNITS>100
+       <UNITPRICE>79.0000
+       <MKTVAL>79000
+       <DTPRICEASOF>20170403120000
+      </INVPOS>
+     </POSSTOCK>
+     <POSSTOCK>
+      <INVPOS>
+       <SECID>
+        <UNIQUEID>36960410
+        <UNIQUEIDTYPE>CUSIP
+       </SECID>
+       <HELDINACCT>CASH
+       <POSTYPE>LONG
+       <UNITS>100.00
+       <UNITPRICE>29.8700
+       <MKTVAL>2987.00
+       <DTPRICEASOF>20170403120000
+      </INVPOS>
+     </POSSTOCK>
+    </INVPOSLIST>
+    <INVBAL>
+     <AVAILCASH>0.0
+     <MARGINBALANCE>-0.00
+     <SHORTBALANCE>0.00
+    </INVBAL>
+   </INVSTMTRS>
+  </INVSTMTTRNRS>
+ </INVSTMTMSGSRSV1>
+ <SECLISTMSGSRSV1>
+  <SECLIST>
+   <STOCKINFO>
+    <SECINFO>
+     <SECID>
+      <UNIQUEID>78462F10
+      <UNIQUEIDTYPE>CUSIP
+     </SECID>
+     <SECNAME>SPDR S&amp;P 500 ETF TRUST
+     <TICKER>SPY
+    </SECINFO>
+   </STOCKINFO>
+   <OPTINFO>
+    <SECINFO>
+     <SECID>
+      <UNIQUEID>SPY161216C00226000
+      <UNIQUEIDTYPE>CUSIP
+     </SECID>
+     <SECNAME>SPY Dec 16 2016 226.00 Call
+     <TICKER>SPY   161216C00226000
+    </SECINFO>
+    <OPTTYPE>CALL
+    <STRIKEPRICE>226.00
+    <DTEXPIRE>20161216120000
+    <SHPERCTRCT>100
+   </OPTINFO>
+  </SECLIST>
+ </SECLISTMSGSRSV1>
+</OFX>`)
+	var expected ofxgo.Response
+	GMT := time.FixedZone("GMT", 0)
+
+	expected.Version = "102"
+	expected.Signon.Status.Code = 0
+	expected.Signon.Status.Severity = "INFO"
+	expected.Signon.DtServer = ofxgo.Date(time.Date(2017, 4, 3, 12, 0, 0, 0, GMT))
+	expected.Signon.Language = "ENG"
+	expected.Signon.Org = "VV"
+	expected.Signon.Fid = "1000"
+	// Ignored <INTU.BID>1000
+
+	var units1, unitprice1, commission1, fees1, total1, units2, units3 big.Rat
+	units1.SetFrac64(-1, 1)
+	unitprice1.SetFrac64(35, 100)
+	commission1.SetFrac64(885, 100)
+	fees1.SetFrac64(26, 100)
+	total1.SetFrac64(20089, 100)
+	units2.SetFrac64(-100, 1)
+	units3.SetFrac64(1, 1)
+
+	dtsettle1 := ofxgo.Date(time.Date(2016, 12, 8, 12, 0, 0, 0, GMT))
+	dtsettle2 := ofxgo.Date(time.Date(2016, 12, 20, 12, 0, 0, 0, GMT))
+	dtsettle3 := ofxgo.Date(time.Date(2016, 12, 15, 12, 0, 0, 0, GMT))
+
+	invtranlist := ofxgo.InvTranList{
+		DtStart: ofxgo.Date(time.Date(2016, 12, 6, 12, 0, 0, 0, GMT)),
+		DtEnd:   ofxgo.Date(time.Date(2017, 4, 3, 12, 0, 0, 0, GMT)),
+		InvTransactions: []ofxgo.InvTransaction{
+			ofxgo.SellOpt{
+				InvSell: ofxgo.InvSell{
+					InvTran: ofxgo.InvTran{
+						FiTId:    "12341234-20161207-1",
+						DtTrade:  ofxgo.Date(time.Date(2016, 12, 7, 12, 0, 0, 0, GMT)),
+						DtSettle: &dtsettle1,
+					},
+					SecId: ofxgo.SecurityId{
+						UniqueId:     "SPY161216C00226000",
+						UniqueIdType: "CUSIP",
+					},
+					Units:       ofxgo.Amount(units1),
+					UnitPrice:   ofxgo.Amount(unitprice1),
+					Commission:  ofxgo.Amount(commission1),
+					Fees:        ofxgo.Amount(fees1),
+					Total:       ofxgo.Amount(total1),
+					SubAcctSec:  "CASH",
+					SubAcctFund: "CASH",
+				},
+				OptSellType: "SELLTOOPEN",
+				ShPerCtrct:  100,
+			},
+			ofxgo.ClosureOpt{
+				InvTran: ofxgo.InvTran{
+					FiTId:    "12341234-20161215-1",
+					DtTrade:  ofxgo.Date(time.Date(2016, 12, 15, 12, 0, 0, 0, GMT)),
+					DtSettle: &dtsettle2,
+				},
+				SecId: ofxgo.SecurityId{
+					UniqueId:     "78462F10",
+					UniqueIdType: "CUSIP",
+				},
+				OptAction:  "ASSIGN",
+				Units:      ofxgo.Amount(units2),
+				ShPerCtrct: 100,
+				SubAcctSec: "CASH",
+			},
+			ofxgo.ClosureOpt{
+				InvTran: ofxgo.InvTran{
+					FiTId:    "12341234-20161215-2",
+					DtTrade:  ofxgo.Date(time.Date(2016, 12, 15, 12, 0, 0, 0, GMT)),
+					DtSettle: &dtsettle3,
+				},
+				SecId: ofxgo.SecurityId{
+					UniqueId:     "SPY161216C00226000",
+					UniqueIdType: "CUSIP",
+				},
+				OptAction:  "ASSIGN",
+				Units:      ofxgo.Amount(units3),
+				ShPerCtrct: 100,
+				SubAcctSec: "CASH",
+			},
+		},
+	}
+
+	var availcash, marginbalance, shortbalance big.Rat
+	availcash.SetFrac64(0, 1)
+	marginbalance.SetFrac64(-0, 1)
+	shortbalance.SetFrac64(0, 1)
+
+	invbalance := ofxgo.InvBalance{
+		AvailCash:     ofxgo.Amount(availcash),
+		MarginBalance: ofxgo.Amount(marginbalance),
+		ShortBalance:  ofxgo.Amount(shortbalance),
+	}
+
+	var posunits1, posunitprice1, posmktval1, posunits2, posunitprice2, posmktval2 big.Rat
+	posunits1.SetFrac64(100, 1)
+	posunitprice1.SetFrac64(79, 1)
+	posmktval1.SetFrac64(79000, 1)
+	posunits2.SetFrac64(100, 1)
+	posunitprice2.SetFrac64(2987, 100)
+	posmktval2.SetFrac64(2987, 1)
+
+	statementResponse := ofxgo.InvStatementResponse{
+		TrnUID: "1283719872",
+		Status: ofxgo.Status{
+			Code:     0,
+			Severity: "INFO",
+		},
+		DtAsOf: ofxgo.Date(time.Date(2017, 4, 3, 12, 0, 0, 0, GMT)),
+		CurDef: "USD",
+		InvAcctFrom: ofxgo.InvAcct{
+			BrokerId: "www.exampletrader.com",
+			AcctId:   "12341234",
+		},
+		InvTranList: &invtranlist,
+		InvPosList: ofxgo.PositionList{
+			ofxgo.StockPosition{
+				InvPos: ofxgo.InvPosition{
+					SecId: ofxgo.SecurityId{
+						UniqueId:     "04956010",
+						UniqueIdType: "CUSIP",
+					},
+					HeldInAcct:  "CASH",
+					PosType:     "LONG",
+					Units:       ofxgo.Amount(posunits1),
+					UnitPrice:   ofxgo.Amount(posunitprice1),
+					MktVal:      ofxgo.Amount(posmktval1),
+					DtPriceAsOf: ofxgo.Date(time.Date(2017, 4, 3, 12, 0, 0, 0, GMT)),
+				},
+			},
+			ofxgo.StockPosition{
+				InvPos: ofxgo.InvPosition{
+					SecId: ofxgo.SecurityId{
+						UniqueId:     "36960410",
+						UniqueIdType: "CUSIP",
+					},
+					HeldInAcct:  "CASH",
+					PosType:     "LONG",
+					Units:       ofxgo.Amount(posunits2),
+					UnitPrice:   ofxgo.Amount(posunitprice2),
+					MktVal:      ofxgo.Amount(posmktval2),
+					DtPriceAsOf: ofxgo.Date(time.Date(2017, 4, 3, 12, 0, 0, 0, GMT)),
+				},
+			},
+		},
+		InvBal: &invbalance,
+	}
+	expected.InvStmt = append(expected.InvStmt, &statementResponse)
+
+	var strikeprice big.Rat
+	strikeprice.SetFrac64(226, 1)
+
+	seclist := ofxgo.SecurityList{
+		Securities: []ofxgo.Security{
+			ofxgo.StockInfo{
+				SecInfo: ofxgo.SecInfo{
+					SecId: ofxgo.SecurityId{
+						UniqueId:     "78462F10",
+						UniqueIdType: "CUSIP",
+					},
+					SecName: "SPDR S&P 500 ETF TRUST",
+					Ticker:  "SPY",
+				},
+			},
+			ofxgo.OptInfo{
+				SecInfo: ofxgo.SecInfo{
+					SecId: ofxgo.SecurityId{
+						UniqueId:     "SPY161216C00226000",
+						UniqueIdType: "CUSIP",
+					},
+					SecName: "SPY Dec 16 2016 226.00 Call",
+					Ticker:  "SPY   161216C00226000",
+				},
+				OptType:     "CALL",
+				StrikePrice: ofxgo.Amount(strikeprice),
+				DtExpire:    ofxgo.Date(time.Date(2016, 12, 16, 12, 0, 0, 0, GMT)),
+				ShPerCtrct:  100,
+			},
+		},
+	}
+	expected.SecList = append(expected.SecList, &seclist)
+
+	response, err := ofxgo.ParseResponse(responseReader)
+	if err != nil {
+		t.Fatalf("Unexpected error unmarshalling response: %s\n", err)
+	}
+
+	checkResponsesEqual(t, &expected, response)
+}
