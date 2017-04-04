@@ -226,6 +226,37 @@ func TestUnmarshalDate(t *testing.T) {
 	unmarshalHelper2(t, "20181101235958.000[-5:EST]\n", d, &overwritten, eq)
 }
 
+func TestDateEqual(t *testing.T) {
+	GMT := time.FixedZone("GMT", 0)
+	EST := time.FixedZone("EST", -5*60*60)
+
+	assertEq := func(a, b *ofxgo.Date) {
+		if !a.Equal(*b) {
+			t.Fatalf("Dates should be equal but Equal returned false: %s and %s\n", *a, *b)
+		}
+	}
+	assertNEq := func(a, b *ofxgo.Date) {
+		if a.Equal(*b) {
+			t.Fatalf("Dates should not be equal but Equal returned true: %s and %s\n", *a, *b)
+		}
+	}
+
+	// Ensure omitted fields default to the correct values
+	gmt1 := ofxgo.NewDateGMT(2017, 3, 14, 15, 9, 26, 53*1000*1000)
+	gmt2 := ofxgo.NewDate(2017, 3, 14, 15, 9, 26, 53*1000*1000, GMT)
+	est1 := ofxgo.NewDate(2017, 3, 14, 10, 9, 26, 53*1000*1000, EST)
+	est2 := ofxgo.NewDate(2017, 3, 14, 10, 9, 26, 53*1000*1000+1, EST)
+	est3 := ofxgo.NewDate(2017, 3, 14, 15, 9, 26, 53*1000*1000, EST)
+
+	assertEq(gmt1, gmt2)
+	assertEq(gmt2, gmt1)
+	assertEq(gmt1, est1)
+
+	assertNEq(gmt1, est2)
+	assertNEq(est1, est2)
+	assertNEq(gmt1, est3)
+}
+
 func TestMarshalString(t *testing.T) {
 	var s ofxgo.String = ""
 	marshalHelper(t, "", &s)
