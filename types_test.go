@@ -71,6 +71,7 @@ func TestUnmarshalInt(t *testing.T) {
 	unmarshalHelper(t, "198237198", &i, &overwritten)
 	// Make sure stray newlines are handled properly
 	unmarshalHelper(t, "198237198\n", &i, &overwritten)
+	unmarshalHelper(t, "198237198\n\t", &i, &overwritten)
 }
 
 func TestMarshalAmount(t *testing.T) {
@@ -119,6 +120,7 @@ func TestUnmarshalAmount(t *testing.T) {
 	unmarshalHelper2(t, "-19487135", &a, &overwritten, eq)
 	// Make sure stray newlines are handled properly
 	unmarshalHelper2(t, "-19487135\n", &a, &overwritten, eq)
+	unmarshalHelper2(t, "-19487135\n \t ", &a, &overwritten, eq)
 }
 
 func TestAmountEqual(t *testing.T) {
@@ -251,6 +253,7 @@ func TestUnmarshalDate(t *testing.T) {
 	// Make sure we properly handle ending newlines
 	d = ofxgo.NewDate(2018, 11, 1, 23, 59, 58, 0, EST)
 	unmarshalHelper2(t, "20181101235958.000[-5:EST]\n", d, &overwritten, eq)
+	unmarshalHelper2(t, "20181101235958.000[-5:EST]\n\t", d, &overwritten, eq)
 }
 
 func TestDateEqual(t *testing.T) {
@@ -308,6 +311,7 @@ func TestUnmarshalString(t *testing.T) {
 	unmarshalHelper(t, "Some Name", &s, &overwritten)
 	// Make sure stray newlines are handled properly
 	unmarshalHelper(t, "Some Name\n", &s, &overwritten)
+	unmarshalHelper(t, "Some Name\n  ", &s, &overwritten)
 }
 
 func TestMarshalBoolean(t *testing.T) {
@@ -324,6 +328,7 @@ func TestUnmarshalBoolean(t *testing.T) {
 	unmarshalHelper(t, "N", &b, &overwritten)
 	// Make sure stray newlines are handled properly
 	unmarshalHelper(t, "N\n", &b, &overwritten)
+	unmarshalHelper(t, "N\n \t", &b, &overwritten)
 }
 
 func TestMarshalUID(t *testing.T) {
@@ -337,6 +342,7 @@ func TestUnmarshalUID(t *testing.T) {
 	// Make sure stray newlines are handled properly
 	u = "0f94ce83-13b7-7568-e4fc-c02c7b47e7ab"
 	unmarshalHelper(t, "0f94ce83-13b7-7568-e4fc-c02c7b47e7ab\n", &u, &overwritten)
+	unmarshalHelper(t, "0f94ce83-13b7-7568-e4fc-c02c7b47e7ab\n\t", &u, &overwritten)
 }
 
 func TestUIDRecommendedFormat(t *testing.T) {
