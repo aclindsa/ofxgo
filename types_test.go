@@ -121,6 +121,33 @@ func TestUnmarshalAmount(t *testing.T) {
 	unmarshalHelper2(t, "-19487135\n", &a, &overwritten, eq)
 }
 
+func TestAmountEqual(t *testing.T) {
+	assertEq := func(a, b ofxgo.Amount) {
+		if !a.Equal(b) {
+			t.Fatalf("Amounts should be equal but Equal returned false: %s and %s\n", a, b)
+		}
+	}
+	assertNEq := func(a, b ofxgo.Amount) {
+		if a.Equal(b) {
+			t.Fatalf("Amounts should not be equal but Equal returned true: %s and %s\n", a, b)
+		}
+	}
+
+	var a, b ofxgo.Amount
+	a.SetInt64(-19487135)
+	b.SetInt64(-19487135)
+	assertEq(a, b)
+	b.SetInt64(19487135)
+	assertNEq(a, b)
+	b.SetInt64(0)
+	assertNEq(a, b)
+	a.SetInt64(-0)
+	assertEq(a, b)
+	a.SetFrac64(1, 1000000000000000000)
+	b.SetFrac64(1, 1000000000000000001)
+	assertNEq(a, b)
+}
+
 func TestMarshalDate(t *testing.T) {
 	var d *ofxgo.Date
 	UTC := time.FixedZone("UTC", 0)
