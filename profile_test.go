@@ -231,7 +231,7 @@ NEWFILEUID:NONE
 		MessageSetList: ofxgo.MessageSetList{
 			ofxgo.MessageSet{
 				Name:        "SIGNONMSGSETV1",
-				Ver:         "1",
+				Ver:         1,
 				Url:         "https://ofx.example.com/cgi-ofx/exampleofx",
 				OfxSec:      "NONE",
 				TranspSec:   true,
@@ -243,7 +243,7 @@ NEWFILEUID:NONE
 			},
 			ofxgo.MessageSet{
 				Name:        "SIGNUPMSGSETV1",
-				Ver:         "1",
+				Ver:         1,
 				Url:         "https://ofx.example.com/cgi-ofx/exampleofx",
 				OfxSec:      "NONE",
 				TranspSec:   true,
@@ -255,7 +255,7 @@ NEWFILEUID:NONE
 			},
 			ofxgo.MessageSet{
 				Name:        "INVSTMTMSGSETV1",
-				Ver:         "1",
+				Ver:         1,
 				Url:         "https://ofx.example.com/cgi-ofx/exampleofx",
 				OfxSec:      "NONE",
 				TranspSec:   true,
@@ -267,7 +267,7 @@ NEWFILEUID:NONE
 			},
 			ofxgo.MessageSet{
 				Name:        "SECLISTMSGSETV1",
-				Ver:         "1",
+				Ver:         1,
 				Url:         "https://ofx.example.com/cgi-ofx/exampleofx",
 				OfxSec:      "NONE",
 				TranspSec:   true,
@@ -279,7 +279,7 @@ NEWFILEUID:NONE
 			},
 			ofxgo.MessageSet{
 				Name:        "PROFMSGSETV1",
-				Ver:         "1",
+				Ver:         1,
 				Url:         "https://ofx.example.com/cgi-ofx/exampleofx",
 				OfxSec:      "NONE",
 				TranspSec:   true,
