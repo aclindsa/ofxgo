@@ -96,7 +96,7 @@ type InvSell struct {
 
 	LoanId          String `xml:"LOANID,omitempty"`           // For 401(k) accounts only. Indicates that the transaction was due to a loan or a loan repayment, and which loan it was
 	StateWitholding Amount `xml:"STATEWITHHOLDING,omitempty"` // State tax witholdings
-	Penalty         Amount `xml:"PENALTY,omitempty"`          // Amount witheld due to penalty
+	Penalty         Amount `xml:"PENALTY,omitempty"`          // Amount withheld due to penalty
 
 	Inv401kSource inv401kSource `xml:"INV401KSOURCE,omitempty"` // Source of money for this transaction. One of PRETAX, AFTERTAX, MATCH, PROFITSHARING, ROLLOVER, OTHERVEST, OTHERNONVEST for 401(k) accounts. Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST
 }
