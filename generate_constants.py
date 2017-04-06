@@ -39,7 +39,7 @@ enums = {
     "CouponFreq": ["Monthly", "Quarterly", "Semiannual", "Annual", "Other"],
     "CallType": ["Call", "Put", "Prefund", "Maturity"],
     "AssetClass": ["DomesticBond", "IntlBond", "LargeStock", "SmallStock", "IntlStock", "MoneyMrkt", "Other"],
-    "MfType": ["Open", "End", "CloseEnd", "Other"],
+    "MfType": ["OpenEnd", "CloseEnd", "Other"],
     "OptType": ["Put", "Call"],
     "StockType": ["Common", "Preferred", "Convertible", "Other"],
     "OfxSec": ["None", "Type 1"],

@@ -1968,16 +1968,15 @@ func NewAssetClass(s string) (assetClass, error) {
 type mfType uint
 
 const (
-	MfTypeOpen mfType = 1 + iota
-	MfTypeEnd
+	MfTypeOpenEnd mfType = 1 + iota
 	MfTypeCloseEnd
 	MfTypeOther
 )
 
-var mfTypes = [...]string{"OPEN", "END", "CLOSEEND", "OTHER"}
+var mfTypes = [...]string{"OPENEND", "CLOSEEND", "OTHER"}
 
 func (e mfType) Valid() bool {
-	return e >= MfTypeOpen && e <= MfTypeOther
+	return e >= MfTypeOpenEnd && e <= MfTypeOther
 }
 
 func (e mfType) String() string {
