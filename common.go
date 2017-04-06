@@ -1,5 +1,7 @@
 package ofxgo
 
+//go:generate ./generate_constants.py
+
 import (
 	"errors"
 	"github.com/aclindsa/go/src/encoding/xml"
@@ -261,7 +263,7 @@ type BankAcct struct {
 	BankId   String   `xml:"BANKID"`
 	BranchId String   `xml:"BRANCHID,omitempty"` // Unused in USA
 	AcctId   String   `xml:"ACCTID"`
-	AcctType String   `xml:"ACCTTYPE"`          // One of CHECKING, SAVINGS, MONEYMRKT, CREDITLINE, CD
+	AcctType acctType `xml:"ACCTTYPE"`          // One of CHECKING, SAVINGS, MONEYMRKT, CREDITLINE, CD
 	AcctKey  String   `xml:"ACCTKEY,omitempty"` // Unused in USA
 }
 

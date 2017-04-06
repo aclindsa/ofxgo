@@ -126,12 +126,12 @@ func TestUnmarshalAcctInfoResponse(t *testing.T) {
 		BankAcctFrom: ofxgo.BankAcct{
 			BankId:   "8367556009",
 			AcctId:   "000999847",
-			AcctType: "MONEYMRKT",
+			AcctType: ofxgo.AcctTypeMoneyMrkt,
 		},
 		SupTxDl:   true,
 		XferSrc:   true,
 		XferDest:  true,
-		SvcStatus: "ACTIVE",
+		SvcStatus: ofxgo.SvcStatusActive,
 	}
 
 	acctInfoResponse := ofxgo.AcctInfoResponse{

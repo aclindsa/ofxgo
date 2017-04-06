@@ -121,6 +121,10 @@ func checkEqual(t *testing.T, fieldName string, expected, actual reflect.Value) 
 		if expected.String() != actual.String() {
 			t.Fatalf("%s: %s expected to be '%s', found '%s'\n", t.Name(), fieldName, expected.String(), actual.String())
 		}
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		if expected.Uint() != actual.Uint() {
+			t.Fatalf("%s: %s expected to be '%s', found '%s'\n", t.Name(), fieldName, valueToString(expected), valueToString(actual))
+		}
 	default:
 		t.Fatalf("%s: %s has unexpected type that didn't provide an Equal() method: %s\n", t.Name(), fieldName, expected.Type().Name())
 	}

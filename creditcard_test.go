@@ -105,21 +105,21 @@ NEWFILEUID:NONE
 		DtEnd:   *ofxgo.NewDate(2017, 3, 31, 15, 46, 48, 688000000, EDT),
 		Transactions: []ofxgo.Transaction{
 			{
-				TrnType:  "DEBIT",
+				TrnType:  ofxgo.TrnTypeDebit,
 				DtPosted: *ofxgo.NewDateGMT(2017, 2, 9, 12, 0, 0, 0),
 				TrnAmt:   trnamt1,
 				FiTId:    "2017020924435657040207171600195",
 				Name:     "SLICE OF NY",
 			},
 			{
-				TrnType:  "CREDIT",
+				TrnType:  ofxgo.TrnTypeCredit,
 				DtPosted: *ofxgo.NewDateGMT(2016, 12, 28, 12, 0, 0, 0),
 				TrnAmt:   trnamt2,
 				FiTId:    "2016122823633637200000258482730",
 				Name:     "Payment Thank You Electro",
 			},
 			{
-				TrnType:  "DEBIT",
+				TrnType:  ofxgo.TrnTypeDebit,
 				DtPosted: *ofxgo.NewDateGMT(2017, 3, 27, 12, 0, 0, 0),
 				TrnAmt:   trnamt3,
 				FiTId:    "2017032724445727085300442885680",

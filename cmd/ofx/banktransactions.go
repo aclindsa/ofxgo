@@ -25,6 +25,12 @@ func init() {
 func bankTransactions() {
 	client, query := NewRequest()
 
+	acctTypeEnum, err := ofxgo.NewAcctType(acctType)
+	if err != nil {
+		fmt.Println("Error parsing accttype:", err)
+		os.Exit(1)
+	}
+
 	uid, err := ofxgo.RandomUID()
 	if err != nil {
 		fmt.Println("Error creating uid for transaction:", err)
@@ -36,10 +42,11 @@ func bankTransactions() {
 		BankAcctFrom: ofxgo.BankAcct{
 			BankId:   ofxgo.String(bankId),
 			AcctId:   ofxgo.String(acctId),
-			AcctType: ofxgo.String(acctType),
+			AcctType: acctTypeEnum,
 		},
 		Include: true,
 	}
+
 	query.Bank = append(query.Bank, &statementRequest)
 
 	response, err := client.Request(query)

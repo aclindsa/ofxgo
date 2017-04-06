@@ -29,34 +29,34 @@ func (r *AcctInfoRequest) Type() messageType {
 
 type HolderInfo struct {
 	XMLName    xml.Name
-	FirstName  String `xml:"FIRSTNAME"`
-	MiddleName String `xml:"MIDDLENAME,omitempty"`
-	LastName   String `xml:"LASTNAME"`
-	Addr1      String `xml:"ADDR1"`
-	Addr2      String `xml:"ADDR2,omitempty"`
-	Addr3      String `xml:"ADDR3,omitempty"`
-	City       String `xml:"CITY"`
-	State      String `xml:"STATE"`
-	PostalCode String `xml:"POSTALCODE"`
-	Country    String `xml:"COUNTRY,omitempty"`
-	DayPhone   String `xml:"DAYPHONE,omitempty"`
-	EvePhone   String `xml:"EVEPHONE,omitempty"`
-	Email      String `xml:"EMAIL,omitempty"`
-	HolderType String `xml:"HOLDERTYPE,omitempty"` // One of INDIVIDUAL, JOINT, CUSTODIAL, TRUST, OTHER
+	FirstName  String     `xml:"FIRSTNAME"`
+	MiddleName String     `xml:"MIDDLENAME,omitempty"`
+	LastName   String     `xml:"LASTNAME"`
+	Addr1      String     `xml:"ADDR1"`
+	Addr2      String     `xml:"ADDR2,omitempty"`
+	Addr3      String     `xml:"ADDR3,omitempty"`
+	City       String     `xml:"CITY"`
+	State      String     `xml:"STATE"`
+	PostalCode String     `xml:"POSTALCODE"`
+	Country    String     `xml:"COUNTRY,omitempty"`
+	DayPhone   String     `xml:"DAYPHONE,omitempty"`
+	EvePhone   String     `xml:"EVEPHONE,omitempty"`
+	Email      String     `xml:"EMAIL,omitempty"`
+	HolderType holderType `xml:"HOLDERTYPE,omitempty"` // One of INDIVIDUAL, JOINT, CUSTODIAL, TRUST, OTHER
 }
 
 type BankAcctInfo struct {
-	XMLName            xml.Name `xml:"BANKACCTINFO"`
-	BankAcctFrom       BankAcct `xml:"BANKACCTFROM"`
-	SupTxDl            Boolean  `xml:"SUPTXDL"`                      // Supports downloading transactions (as opposed to balance only)
-	XferSrc            Boolean  `xml:"XFERSRC"`                      // Enabled as source for intra/interbank transfer
-	XferDest           Boolean  `xml:"XFERDEST"`                     // Enabled as destination for intra/interbank transfer
-	MaturityDate       Date     `xml:"MATURITYDATE,omitempty"`       // Maturity date for CD, if CD
-	MaturityAmt        Amount   `xml:"MATURITYAMOUNT,omitempty"`     // Maturity amount for CD, if CD
-	MinBalReq          Amount   `xml:"MINBALREQ,omitempty"`          // Minimum balance required to avoid service fees
-	AcctClassification String   `xml:"ACCTCLASSIFICATION,omitempty"` // One of PERSONAL, BUSINESS, CORPORATE, OTHER
-	OverdraftLimit     Amount   `xml:"OVERDRAFTLIMIT,omitempty"`
-	SvcStatus          String   `xml:"SVCSTATUS"` // One of AVAIL (available, but not yet requested), PEND (requested, but not yet available), ACTIVE
+	XMLName            xml.Name           `xml:"BANKACCTINFO"`
+	BankAcctFrom       BankAcct           `xml:"BANKACCTFROM"`
+	SupTxDl            Boolean            `xml:"SUPTXDL"`                      // Supports downloading transactions (as opposed to balance only)
+	XferSrc            Boolean            `xml:"XFERSRC"`                      // Enabled as source for intra/interbank transfer
+	XferDest           Boolean            `xml:"XFERDEST"`                     // Enabled as destination for intra/interbank transfer
+	MaturityDate       Date               `xml:"MATURITYDATE,omitempty"`       // Maturity date for CD, if CD
+	MaturityAmt        Amount             `xml:"MATURITYAMOUNT,omitempty"`     // Maturity amount for CD, if CD
+	MinBalReq          Amount             `xml:"MINBALREQ,omitempty"`          // Minimum balance required to avoid service fees
+	AcctClassification acctClassification `xml:"ACCTCLASSIFICATION,omitempty"` // One of PERSONAL, BUSINESS, CORPORATE, OTHER
+	OverdraftLimit     Amount             `xml:"OVERDRAFTLIMIT,omitempty"`
+	SvcStatus          svcStatus          `xml:"SVCSTATUS"` // One of AVAIL (available, but not yet requested), PEND (requested, but not yet available), ACTIVE
 }
 
 // Make pointers to these structs print nicely
@@ -65,13 +65,13 @@ func (bai *BankAcctInfo) String() string {
 }
 
 type CCAcctInfo struct {
-	XMLName            xml.Name `xml:"CCACCTINFO"`
-	CCAcctFrom         CCAcct   `xml:"CCACCTFROM"`
-	SupTxDl            Boolean  `xml:"SUPTXDL"`                      // Supports downloading transactions (as opposed to balance only)
-	XferSrc            Boolean  `xml:"XFERSRC"`                      // Enabled as source for intra/interbank transfer
-	XferDest           Boolean  `xml:"XFERDEST"`                     // Enabled as destination for intra/interbank transfer
-	AcctClassification String   `xml:"ACCTCLASSIFICATION,omitempty"` // One of PERSONAL, BUSINESS, CORPORATE, OTHER
-	SvcStatus          String   `xml:"SVCSTATUS"`                    // One of AVAIL (available, but not yet requested), PEND (requested, but not yet available), ACTIVE
+	XMLName            xml.Name           `xml:"CCACCTINFO"`
+	CCAcctFrom         CCAcct             `xml:"CCACCTFROM"`
+	SupTxDl            Boolean            `xml:"SUPTXDL"`                      // Supports downloading transactions (as opposed to balance only)
+	XferSrc            Boolean            `xml:"XFERSRC"`                      // Enabled as source for intra/interbank transfer
+	XferDest           Boolean            `xml:"XFERDEST"`                     // Enabled as destination for intra/interbank transfer
+	AcctClassification acctClassification `xml:"ACCTCLASSIFICATION,omitempty"` // One of PERSONAL, BUSINESS, CORPORATE, OTHER
+	SvcStatus          svcStatus          `xml:"SVCSTATUS"`                    // One of AVAIL (available, but not yet requested), PEND (requested, but not yet available), ACTIVE
 }
 
 // Make pointers to these structs print nicely
@@ -80,13 +80,13 @@ func (ci *CCAcctInfo) String() string {
 }
 
 type InvAcctInfo struct {
-	XMLName       xml.Name `xml:"INVACCTINFO"`
-	InvAcctFrom   InvAcct  `xml:"INVACCTFROM"`
-	UsProductType String   `xml:"USPRODUCTTYPE"`         // One of 401K, 403B, IRA, KEOGH, OTHER, SARSEP, SIMPLE, NORMAL, TDA, TRUST, UGMA
-	Checking      Boolean  `xml:"CHECKING"`              // Has check-writing privileges
-	SvcStatus     String   `xml:"SVCSTATUS"`             // One of AVAIL (available, but not yet requested), PEND (requested, but not yet available), ACTIVE
-	InvAcctType   String   `xml:"INVACCTTYPE,omitempty"` // One of INDIVIDUAL, JOINT, TRUST, CORPORATE
-	OptionLevel   String   `xml:"OPTIONLEVEL,omitempty"` // Text desribing option trading privileges
+	XMLName       xml.Name           `xml:"INVACCTINFO"`
+	InvAcctFrom   InvAcct            `xml:"INVACCTFROM"`
+	UsProductType usProductType      `xml:"USPRODUCTTYPE"`         // One of 401K, 403B, IRA, KEOGH, OTHER, SARSEP, SIMPLE, NORMAL, TDA, TRUST, UGMA
+	Checking      Boolean            `xml:"CHECKING"`              // Has check-writing privileges
+	SvcStatus     svcStatus          `xml:"SVCSTATUS"`             // One of AVAIL (available, but not yet requested), PEND (requested, but not yet available), ACTIVE
+	InvAcctType   acctClassification `xml:"INVACCTTYPE,omitempty"` // One of INDIVIDUAL, JOINT, TRUST, CORPORATE
+	OptionLevel   String             `xml:"OPTIONLEVEL,omitempty"` // Text desribing option trading privileges
 }
 
 // Make pointers to these structs print nicely

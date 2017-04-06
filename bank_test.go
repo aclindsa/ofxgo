@@ -59,7 +59,7 @@ func TestMarshalBankStatementRequest(t *testing.T) {
 		BankAcctFrom: ofxgo.BankAcct{
 			BankId:   "318398732",
 			AcctId:   "78346129",
-			AcctType: "CHECKING",
+			AcctType: ofxgo.AcctTypeChecking,
 		},
 		Include: true,
 	}
@@ -158,14 +158,14 @@ func TestUnmarshalBankStatementResponse(t *testing.T) {
 		DtEnd:   *ofxgo.NewDateGMT(2006, 1, 15, 0, 0, 0, 0),
 		Transactions: []ofxgo.Transaction{
 			{
-				TrnType:  "CHECK",
+				TrnType:  ofxgo.TrnTypeCheck,
 				DtPosted: *ofxgo.NewDateGMT(2006, 1, 4, 0, 0, 0, 0),
 				TrnAmt:   trnamt1,
 				FiTId:    "00592",
 				CheckNum: "2002",
 			},
 			{
-				TrnType:  "ATM",
+				TrnType:  ofxgo.TrnTypeATM,
 				DtPosted: *ofxgo.NewDateGMT(2006, 1, 12, 0, 0, 0, 0),
 				DtUser:   ofxgo.NewDateGMT(2006, 1, 12, 0, 0, 0, 0),
 				TrnAmt:   trnamt2,
@@ -188,7 +188,7 @@ func TestUnmarshalBankStatementResponse(t *testing.T) {
 		BankAcctFrom: ofxgo.BankAcct{
 			BankId:   "318398732",
 			AcctId:   "78346129",
-			AcctType: "CHECKING",
+			AcctType: ofxgo.AcctTypeChecking,
 		},
 		BankTranList: &banktranlist,
 		BalAmt:       balamt,

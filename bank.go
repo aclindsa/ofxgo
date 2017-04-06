@@ -45,43 +45,43 @@ type Payee struct {
 }
 
 type ImageData struct {
-	XMLName      xml.Name `xml:"IMAGEDATA"`
-	ImageType    String   `xml:"IMAGETYPE"`    // One of STATEMENT, TRANSACTION, TAX
-	ImageRef     String   `xml:"IMAGEREF"`     // URL or identifier, depending on IMAGEREFTYPE
-	ImageRefType String   `xml:"IMAGEREFTYPE"` // One of OPAQUE, URL, FORMURL (see spec for more details on how to access images of each of these types)
+	XMLName      xml.Name     `xml:"IMAGEDATA"`
+	ImageType    imageType    `xml:"IMAGETYPE"`    // One of STATEMENT, TRANSACTION, TAX
+	ImageRef     String       `xml:"IMAGEREF"`     // URL or identifier, depending on IMAGEREFTYPE
+	ImageRefType imageRefType `xml:"IMAGEREFTYPE"` // One of OPAQUE, URL, FORMURL (see spec for more details on how to access images of each of these types)
 	// Only one of the next two should be valid at any given time
-	ImageDelay   Int    `xml:"IMAGEDELAY,omitempty"`   // Number of calendar days from DTSERVER (for statement images) or DTPOSTED (for transaction image) the image will become available
-	DtImageAvail *Date  `xml:"DTIMAGEAVAIL,omitempty"` // Date image will become available
-	ImageTTL     Int    `xml:"IMAGETTL,omitempty"`     // Number of days after image becomes available that it will remain available
-	CheckSup     String `xml:"CHECKSUP,omitempty"`     // What is contained in check images. One of FRONTONLY, BACKONLY, FRONTANDBACK
+	ImageDelay   Int      `xml:"IMAGEDELAY,omitempty"`   // Number of calendar days from DTSERVER (for statement images) or DTPOSTED (for transaction image) the image will become available
+	DtImageAvail *Date    `xml:"DTIMAGEAVAIL,omitempty"` // Date image will become available
+	ImageTTL     Int      `xml:"IMAGETTL,omitempty"`     // Number of days after image becomes available that it will remain available
+	CheckSup     checkSup `xml:"CHECKSUP,omitempty"`     // What is contained in check images. One of FRONTONLY, BACKONLY, FRONTANDBACK
 }
 
 type Transaction struct {
-	XMLName       xml.Name `xml:"STMTTRN"`
-	TrnType       String   `xml:"TRNTYPE"` // One of CREDIT, DEBIT, INT (interest earned or paid. Note: Depends on signage of amount), DIV, FEE, SRVCHG (service charge), DEP (deposit), ATM (Note: Depends on signage of amount), POS (Note: Depends on signage of amount), XFER, CHECK, PAYMENT, CASH, DIRECTDEP, DIRECTDEBIT, REPEATPMT, OTHER
-	DtPosted      Date     `xml:"DTPOSTED"`
-	DtUser        *Date    `xml:"DTUSER,omitempty"`
-	DtAvail       *Date    `xml:"DTAVAIL,omitempty"`
-	TrnAmt        Amount   `xml:"TRNAMT"`
-	FiTId         String   `xml:"FITID"`
-	CorrectFiTId  String   `xml:"CORRECTFITID,omitempty"`  // Transaction Id that this transaction corrects, if present
-	CorrectAction String   `xml:"CORRECTACTION,omitempty"` // One of DELETE, REPLACE
-	SrvrTId       String   `xml:"SRVRTID,omitempty"`
-	CheckNum      String   `xml:"CHECKNUM,omitempty"`
-	RefNum        String   `xml:"REFNUM,omitempty"`
-	SIC           Int      `xml:"SIC,omitempty"` // Standard Industrial Code
-	PayeeId       String   `xml:"PAYEEID,omitempty"`
+	XMLName       xml.Name      `xml:"STMTTRN"`
+	TrnType       trnType       `xml:"TRNTYPE"` // One of CREDIT, DEBIT, INT (interest earned or paid. Note: Depends on signage of amount), DIV, FEE, SRVCHG (service charge), DEP (deposit), ATM (Note: Depends on signage of amount), POS (Note: Depends on signage of amount), XFER, CHECK, PAYMENT, CASH, DIRECTDEP, DIRECTDEBIT, REPEATPMT, OTHER
+	DtPosted      Date          `xml:"DTPOSTED"`
+	DtUser        *Date         `xml:"DTUSER,omitempty"`
+	DtAvail       *Date         `xml:"DTAVAIL,omitempty"`
+	TrnAmt        Amount        `xml:"TRNAMT"`
+	FiTId         String        `xml:"FITID"`
+	CorrectFiTId  String        `xml:"CORRECTFITID,omitempty"`  // Transaction Id that this transaction corrects, if present
+	CorrectAction correctAction `xml:"CORRECTACTION,omitempty"` // One of DELETE, REPLACE
+	SrvrTId       String        `xml:"SRVRTID,omitempty"`
+	CheckNum      String        `xml:"CHECKNUM,omitempty"`
+	RefNum        String        `xml:"REFNUM,omitempty"`
+	SIC           Int           `xml:"SIC,omitempty"` // Standard Industrial Code
+	PayeeId       String        `xml:"PAYEEID,omitempty"`
 	// Note: Servers should provide NAME or PAYEE, but not both
-	Name          String      `xml:"NAME,omitempty"`
-	Payee         *Payee      `xml:"PAYEE,omitempty"`
-	ExtdName      String      `xml:"EXTDNAME,omitempty"`   // Extended name of payee or transaction description
-	BankAcctTo    *BankAcct   `xml:"BANKACCTTO,omitempty"` // If the transfer was to a bank account we have the account information for
-	CCAcctTo      *CCAcct     `xml:"CCACCTTO,omitempty"`   // If the transfer was to a credit card account we have the account information for
-	Memo          String      `xml:"MEMO,omitempty"`       // Extra information (not in NAME)
-	ImageData     []ImageData `xml:"IMAGEDATA,omitempty"`
-	Currency      String      `xml:"CURRENCY,omitempty"`      // If different from CURDEF in STMTTRS
-	OrigCurrency  String      `xml:"ORIGCURRENCY,omitempty"`  // If different from CURDEF in STMTTRS
-	Inv401kSource String      `xml:"INV401KSOURCE,omitempty"` // One of PRETAX, AFTERTAX, MATCH, PROFITSHARING, ROLLOVER, OTHERVEST, OTHERNONVEST (Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST.)
+	Name          String        `xml:"NAME,omitempty"`
+	Payee         *Payee        `xml:"PAYEE,omitempty"`
+	ExtdName      String        `xml:"EXTDNAME,omitempty"`   // Extended name of payee or transaction description
+	BankAcctTo    *BankAcct     `xml:"BANKACCTTO,omitempty"` // If the transfer was to a bank account we have the account information for
+	CCAcctTo      *CCAcct       `xml:"CCACCTTO,omitempty"`   // If the transfer was to a credit card account we have the account information for
+	Memo          String        `xml:"MEMO,omitempty"`       // Extra information (not in NAME)
+	ImageData     []ImageData   `xml:"IMAGEDATA,omitempty"`
+	Currency      String        `xml:"CURRENCY,omitempty"`      // If different from CURDEF in STMTTRS
+	OrigCurrency  String        `xml:"ORIGCURRENCY,omitempty"`  // If different from CURDEF in STMTTRS
+	Inv401kSource inv401kSource `xml:"INV401KSOURCE,omitempty"` // One of PRETAX, AFTERTAX, MATCH, PROFITSHARING, ROLLOVER, OTHERVEST, OTHERNONVEST (Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST.)
 }
 
 type TransactionList struct {
@@ -93,7 +93,7 @@ type TransactionList struct {
 
 type PendingTransaction struct {
 	XMLName      xml.Name    `xml:"STMTTRN"`
-	TrnType      String      `xml:"TRNTYPE"` // One of CREDIT, DEBIT, INT (interest earned or paid. Note: Depends on signage of amount), DIV, FEE, SRVCHG (service charge), DEP (deposit), ATM (Note: Depends on signage of amount), POS (Note: Depends on signage of amount), XFER, CHECK, PAYMENT, CASH, DIRECTDEP, DIRECTDEBIT, REPEATPMT, HOLD, OTHER
+	TrnType      trnType     `xml:"TRNTYPE"` // One of CREDIT, DEBIT, INT (interest earned or paid. Note: Depends on signage of amount), DIV, FEE, SRVCHG (service charge), DEP (deposit), ATM (Note: Depends on signage of amount), POS (Note: Depends on signage of amount), XFER, CHECK, PAYMENT, CASH, DIRECTDEP, DIRECTDEBIT, REPEATPMT, HOLD, OTHER
 	DtTran       Date        `xml:"DTTRAN"`
 	DtExpire     *Date       `xml:"DTEXPIRE,omitempty"` // only valid for TrnType==HOLD, the date the hold will expire
 	TrnAmt       Amount      `xml:"TRNAMT"`
@@ -122,7 +122,7 @@ type Balance struct {
 	// DOLLAR = dollar (value formatted DDDD.cc)
 	// PERCENT = percentage (value formatted XXXX.YYYY)
 	// NUMBER = number (value formatted as is)
-	BalType String `xml:"BALTYPE"`
+	BalType balType `xml:"BALTYPE"`
 
 	Value    Amount    `xml:"VALUE"`
 	DtAsOf   *Date     `xml:"DTASOF,omitempty"`
