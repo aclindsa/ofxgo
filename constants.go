@@ -45,6 +45,7 @@ func (e *acctType) FromString(in string) error {
 			return nil
 		}
 	}
+	*e = 0
 	return errors.New("Invalid AcctType: \"" + in + "\"")
 }
 
@@ -122,6 +123,7 @@ func (e *trnType) FromString(in string) error {
 			return nil
 		}
 	}
+	*e = 0
 	return errors.New("Invalid TrnType: \"" + in + "\"")
 }
 
@@ -184,6 +186,7 @@ func (e *imageType) FromString(in string) error {
 			return nil
 		}
 	}
+	*e = 0
 	return errors.New("Invalid ImageType: \"" + in + "\"")
 }
 
@@ -246,6 +249,7 @@ func (e *imageRefType) FromString(in string) error {
 			return nil
 		}
 	}
+	*e = 0
 	return errors.New("Invalid ImageRefType: \"" + in + "\"")
 }
 
@@ -308,6 +312,7 @@ func (e *checkSup) FromString(in string) error {
 			return nil
 		}
 	}
+	*e = 0
 	return errors.New("Invalid CheckSup: \"" + in + "\"")
 }
 
@@ -369,6 +374,7 @@ func (e *correctAction) FromString(in string) error {
 			return nil
 		}
 	}
+	*e = 0
 	return errors.New("Invalid CorrectAction: \"" + in + "\"")
 }
 
@@ -431,6 +437,7 @@ func (e *balType) FromString(in string) error {
 			return nil
 		}
 	}
+	*e = 0
 	return errors.New("Invalid BalType: \"" + in + "\"")
 }
 
@@ -497,6 +504,7 @@ func (e *inv401kSource) FromString(in string) error {
 			return nil
 		}
 	}
+	*e = 0
 	return errors.New("Invalid Inv401kSource: \"" + in + "\"")
 }
 
@@ -560,6 +568,7 @@ func (e *subAcctType) FromString(in string) error {
 			return nil
 		}
 	}
+	*e = 0
 	return errors.New("Invalid SubAcctType: \"" + in + "\"")
 }
 
@@ -621,6 +630,7 @@ func (e *buyType) FromString(in string) error {
 			return nil
 		}
 	}
+	*e = 0
 	return errors.New("Invalid BuyType: \"" + in + "\"")
 }
 
@@ -683,6 +693,7 @@ func (e *optAction) FromString(in string) error {
 			return nil
 		}
 	}
+	*e = 0
 	return errors.New("Invalid OptAction: \"" + in + "\"")
 }
 
@@ -744,6 +755,7 @@ func (e *tferAction) FromString(in string) error {
 			return nil
 		}
 	}
+	*e = 0
 	return errors.New("Invalid TferAction: \"" + in + "\"")
 }
 
@@ -805,6 +817,7 @@ func (e *posType) FromString(in string) error {
 			return nil
 		}
 	}
+	*e = 0
 	return errors.New("Invalid PosType: \"" + in + "\"")
 }
 
@@ -866,6 +879,7 @@ func (e *secured) FromString(in string) error {
 			return nil
 		}
 	}
+	*e = 0
 	return errors.New("Invalid Secured: \"" + in + "\"")
 }
 
@@ -928,6 +942,7 @@ func (e *duration) FromString(in string) error {
 			return nil
 		}
 	}
+	*e = 0
 	return errors.New("Invalid Duration: \"" + in + "\"")
 }
 
@@ -990,6 +1005,7 @@ func (e *restriction) FromString(in string) error {
 			return nil
 		}
 	}
+	*e = 0
 	return errors.New("Invalid Restriction: \"" + in + "\"")
 }
 
@@ -1051,6 +1067,7 @@ func (e *unitType) FromString(in string) error {
 			return nil
 		}
 	}
+	*e = 0
 	return errors.New("Invalid UnitType: \"" + in + "\"")
 }
 
@@ -1112,6 +1129,7 @@ func (e *optBuyType) FromString(in string) error {
 			return nil
 		}
 	}
+	*e = 0
 	return errors.New("Invalid OptBuyType: \"" + in + "\"")
 }
 
@@ -1173,6 +1191,7 @@ func (e *sellType) FromString(in string) error {
 			return nil
 		}
 	}
+	*e = 0
 	return errors.New("Invalid SellType: \"" + in + "\"")
 }
 
@@ -1242,6 +1261,7 @@ func (e *loanPmtFreq) FromString(in string) error {
 			return nil
 		}
 	}
+	*e = 0
 	return errors.New("Invalid LoanPmtFreq: \"" + in + "\"")
 }
 
@@ -1306,6 +1326,7 @@ func (e *incomeType) FromString(in string) error {
 			return nil
 		}
 	}
+	*e = 0
 	return errors.New("Invalid IncomeType: \"" + in + "\"")
 }
 
@@ -1368,6 +1389,7 @@ func (e *sellReason) FromString(in string) error {
 			return nil
 		}
 	}
+	*e = 0
 	return errors.New("Invalid SellReason: \"" + in + "\"")
 }
 
@@ -1429,6 +1451,7 @@ func (e *optSellType) FromString(in string) error {
 			return nil
 		}
 	}
+	*e = 0
 	return errors.New("Invalid OptSellType: \"" + in + "\"")
 }
 
@@ -1492,6 +1515,7 @@ func (e *relType) FromString(in string) error {
 			return nil
 		}
 	}
+	*e = 0
 	return errors.New("Invalid RelType: \"" + in + "\"")
 }
 
@@ -1555,6 +1579,7 @@ func (e *charType) FromString(in string) error {
 			return nil
 		}
 	}
+	*e = 0
 	return errors.New("Invalid CharType: \"" + in + "\"")
 }
 
@@ -1616,6 +1641,7 @@ func (e *syncMode) FromString(in string) error {
 			return nil
 		}
 	}
+	*e = 0
 	return errors.New("Invalid SyncMode: \"" + in + "\"")
 }
 
@@ -1677,6 +1703,7 @@ func (e *debtType) FromString(in string) error {
 			return nil
 		}
 	}
+	*e = 0
 	return errors.New("Invalid DebtType: \"" + in + "\"")
 }
 
@@ -1740,6 +1767,7 @@ func (e *debtClass) FromString(in string) error {
 			return nil
 		}
 	}
+	*e = 0
 	return errors.New("Invalid DebtClass: \"" + in + "\"")
 }
 
@@ -1804,6 +1832,7 @@ func (e *couponFreq) FromString(in string) error {
 			return nil
 		}
 	}
+	*e = 0
 	return errors.New("Invalid CouponFreq: \"" + in + "\"")
 }
 
@@ -1867,6 +1896,7 @@ func (e *callType) FromString(in string) error {
 			return nil
 		}
 	}
+	*e = 0
 	return errors.New("Invalid CallType: \"" + in + "\"")
 }
 
@@ -1933,6 +1963,7 @@ func (e *assetClass) FromString(in string) error {
 			return nil
 		}
 	}
+	*e = 0
 	return errors.New("Invalid AssetClass: \"" + in + "\"")
 }
 
@@ -1995,6 +2026,7 @@ func (e *mfType) FromString(in string) error {
 			return nil
 		}
 	}
+	*e = 0
 	return errors.New("Invalid MfType: \"" + in + "\"")
 }
 
@@ -2056,6 +2088,7 @@ func (e *optType) FromString(in string) error {
 			return nil
 		}
 	}
+	*e = 0
 	return errors.New("Invalid OptType: \"" + in + "\"")
 }
 
@@ -2119,6 +2152,7 @@ func (e *stockType) FromString(in string) error {
 			return nil
 		}
 	}
+	*e = 0
 	return errors.New("Invalid StockType: \"" + in + "\"")
 }
 
@@ -2180,6 +2214,7 @@ func (e *ofxSec) FromString(in string) error {
 			return nil
 		}
 	}
+	*e = 0
 	return errors.New("Invalid OfxSec: \"" + in + "\"")
 }
 
@@ -2244,6 +2279,7 @@ func (e *holderType) FromString(in string) error {
 			return nil
 		}
 	}
+	*e = 0
 	return errors.New("Invalid HolderType: \"" + in + "\"")
 }
 
@@ -2307,6 +2343,7 @@ func (e *acctClassification) FromString(in string) error {
 			return nil
 		}
 	}
+	*e = 0
 	return errors.New("Invalid AcctClassification: \"" + in + "\"")
 }
 
@@ -2369,6 +2406,7 @@ func (e *svcStatus) FromString(in string) error {
 			return nil
 		}
 	}
+	*e = 0
 	return errors.New("Invalid SvcStatus: \"" + in + "\"")
 }
 
@@ -2439,6 +2477,7 @@ func (e *usProductType) FromString(in string) error {
 			return nil
 		}
 	}
+	*e = 0
 	return errors.New("Invalid UsProductType: \"" + in + "\"")
 }
 

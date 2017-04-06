@@ -95,6 +95,7 @@ func (e *{enumLower}) FromString(in string) error {{
 			return nil
 		}}
 	}}
+	*e = 0
 	return errors.New("Invalid {enum}: \\\"" + in + "\\\"")
 }}
 
