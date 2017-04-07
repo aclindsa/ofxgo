@@ -292,6 +292,29 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 					<TICKER>VIMAX</TICKER>
 				</SECINFO>
 			</MFINFO>
+			<DEBTINFO>
+				<SECINFO>
+					<SECID>
+						<UNIQUEID>99182828</UNIQUEID>
+						<UNIQUEIDTYPE>CUSIP</UNIQUEIDTYPE>
+					</SECID>
+					<SECNAME>Someone's Class B Debt</SECNAME>
+				</SECINFO>
+				<PARVALUE>100.29</PARVALUE>
+				<DEBTTYPE>COUPON</DEBTTYPE>
+				<DTCOUPON>20170901</DTCOUPON>
+				<COUPONFREQ>QUARTERLY</COUPONFREQ>
+			</DEBTINFO>
+			<OTHERINFO>
+				<SECINFO>
+					<SECID>
+						<UNIQUEID>88181818</UNIQUEID>
+						<UNIQUEIDTYPE>CUSIP</UNIQUEIDTYPE>
+					</SECID>
+					<SECNAME>Foo Bar</SECNAME>
+				</SECINFO>
+				<TYPEDESC>Don't know what this is</TYPEDESC>
+			</OTHERINFO>
 		</SECLIST>
 	</SECLISTMSGSRSV1>
 </OFX>`)
@@ -475,10 +498,11 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 	}
 	expected.InvStmt = append(expected.InvStmt, &statementResponse)
 
-	var yield1, yield2, strikeprice ofxgo.Amount
+	var yield1, yield2, strikeprice, parvalue ofxgo.Amount
 	yield1.SetFrac64(192, 100)
 	yield2.SetFrac64(17, 1)
 	strikeprice.SetFrac64(79, 1)
+	parvalue.SetFrac64(10029, 100)
 
 	seclist := ofxgo.SecurityList{
 		Securities: []ofxgo.Security{
@@ -537,6 +561,29 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 					SecName: "Mid-Cap Index Fund Admiral Shares",
 					Ticker:  "VIMAX",
 				},
+			},
+			ofxgo.DebtInfo{
+				SecInfo: ofxgo.SecInfo{
+					SecId: ofxgo.SecurityId{
+						UniqueId:     "99182828",
+						UniqueIdType: "CUSIP",
+					},
+					SecName: "Someone's Class B Debt",
+				},
+				ParValue:   parvalue,
+				DebtType:   ofxgo.DebtTypeCoupon,
+				DtCoupon:   ofxgo.NewDateGMT(2017, 9, 1, 0, 0, 0, 0),
+				CouponFreq: ofxgo.CouponFreqQuarterly,
+			},
+			ofxgo.OtherInfo{
+				SecInfo: ofxgo.SecInfo{
+					SecId: ofxgo.SecurityId{
+						UniqueId:     "88181818",
+						UniqueIdType: "CUSIP",
+					},
+					SecName: "Foo Bar",
+				},
+				TypeDesc: "Don't know what this is",
 			},
 		},
 	}
