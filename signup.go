@@ -80,13 +80,13 @@ func (ci *CCAcctInfo) String() string {
 }
 
 type InvAcctInfo struct {
-	XMLName       xml.Name           `xml:"INVACCTINFO"`
-	InvAcctFrom   InvAcct            `xml:"INVACCTFROM"`
-	UsProductType usProductType      `xml:"USPRODUCTTYPE"`         // One of 401K, 403B, IRA, KEOGH, OTHER, SARSEP, SIMPLE, NORMAL, TDA, TRUST, UGMA
-	Checking      Boolean            `xml:"CHECKING"`              // Has check-writing privileges
-	SvcStatus     svcStatus          `xml:"SVCSTATUS"`             // One of AVAIL (available, but not yet requested), PEND (requested, but not yet available), ACTIVE
-	InvAcctType   acctClassification `xml:"INVACCTTYPE,omitempty"` // One of INDIVIDUAL, JOINT, TRUST, CORPORATE
-	OptionLevel   String             `xml:"OPTIONLEVEL,omitempty"` // Text desribing option trading privileges
+	XMLName       xml.Name      `xml:"INVACCTINFO"`
+	InvAcctFrom   InvAcct       `xml:"INVACCTFROM"`
+	UsProductType usProductType `xml:"USPRODUCTTYPE"`         // One of 401K, 403B, IRA, KEOGH, OTHER, SARSEP, SIMPLE, NORMAL, TDA, TRUST, UGMA
+	Checking      Boolean       `xml:"CHECKING"`              // Has check-writing privileges
+	SvcStatus     svcStatus     `xml:"SVCSTATUS"`             // One of AVAIL (available, but not yet requested), PEND (requested, but not yet available), ACTIVE
+	InvAcctType   holderType    `xml:"INVACCTTYPE,omitempty"` // One of INDIVIDUAL, JOINT, TRUST, CORPORATE
+	OptionLevel   String        `xml:"OPTIONLEVEL,omitempty"` // Text desribing option trading privileges
 }
 
 // Make pointers to these structs print nicely
