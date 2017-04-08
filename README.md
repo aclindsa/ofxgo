@@ -1,4 +1,6 @@
+[![Go Report Card](https://goreportcard.com/badge/github.com/aclindsa/ofxgo)](https://goreportcard.com/report/github.com/aclindsa/ofxgo)
 [![Build Status](https://travis-ci.org/aclindsa/ofxgo.svg?branch=master)](https://travis-ci.org/aclindsa/ofxgo)
+[![GoDoc](https://godoc.org/github.com/aclindsa/ofxgo?status.svg)](https://godoc.org/github.com/aclindsa/ofxgo)
 
 # ofxgo
 
