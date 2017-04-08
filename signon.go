@@ -2,6 +2,7 @@ package ofxgo
 
 import (
 	"errors"
+	"fmt"
 	"github.com/aclindsa/go/src/encoding/xml"
 )
 
@@ -39,7 +40,7 @@ func (r *SignonRequest) Valid() (bool, error) {
 	if len(r.Language) == 0 {
 		r.Language = "ENG"
 	} else if len(r.Language) != 3 {
-		return false, errors.New("SONRQ>LANGUAGE invalid length")
+		return false, fmt.Errorf("SONRQ>LANGUAGE invalid length: \"%s\"\n", r.Language)
 	}
 	if len(r.AppId) < 1 || len(r.AppId) > 5 {
 		return false, errors.New("SONRQ>APPID invalid length")
@@ -71,7 +72,7 @@ func (r *SignonResponse) Name() string {
 
 func (r *SignonResponse) Valid() (bool, error) {
 	if len(r.Language) != 3 {
-		return false, errors.New("SONRS>LANGUAGE invalid length: " + string(r.Language))
+		return false, fmt.Errorf("SONRS>LANGUAGE invalid length: \"%s\"\n", r.Language)
 	}
 	return r.Status.Valid()
 }
