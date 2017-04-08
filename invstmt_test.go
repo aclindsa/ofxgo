@@ -361,9 +361,9 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 			},
 		},
 		BankTransactions: []ofxgo.InvBankTransaction{
-			ofxgo.InvBankTransaction{
+			{
 				Transactions: []ofxgo.Transaction{
-					ofxgo.Transaction{
+					{
 						TrnType:  ofxgo.TrnTypeCredit,
 						DtPosted: *ofxgo.NewDateGMT(2017, 1, 20, 0, 0, 0, 0),
 						DtUser:   ofxgo.NewDateGMT(2017, 1, 18, 0, 0, 0, 0),
@@ -391,7 +391,7 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 		MarginBalance: marginbalance,
 		ShortBalance:  shortbalance,
 		BalList: []ofxgo.Balance{
-			ofxgo.Balance{
+			{
 				Name:    "Sweep Int Rate",
 				Desc:    "Current interest rate for sweep account balances",
 				BalType: ofxgo.BalTypePercent,

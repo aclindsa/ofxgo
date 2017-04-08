@@ -192,27 +192,27 @@ func guessVersion(r *bufio.Reader) (bool, error) {
 // Responses. Newly-implemented response transaction types *must* be added to
 // this map in order to be unmarshalled.
 var responseTypes = map[string]map[string]reflect.Type{
-	SignupRs.String(): map[string]reflect.Type{
+	SignupRs.String(): {
 		(&AcctInfoResponse{}).Name(): reflect.TypeOf(AcctInfoResponse{})},
-	BankRs.String(): map[string]reflect.Type{
+	BankRs.String(): {
 		(&StatementResponse{}).Name(): reflect.TypeOf(StatementResponse{})},
-	CreditCardRs.String(): map[string]reflect.Type{
+	CreditCardRs.String(): {
 		(&CCStatementResponse{}).Name(): reflect.TypeOf(CCStatementResponse{})},
-	LoanRs.String(): map[string]reflect.Type{},
-	InvStmtRs.String(): map[string]reflect.Type{
+	LoanRs.String(): {},
+	InvStmtRs.String(): {
 		(&InvStatementResponse{}).Name(): reflect.TypeOf(InvStatementResponse{})},
-	InterXferRs.String(): map[string]reflect.Type{},
-	WireXferRs.String():  map[string]reflect.Type{},
-	BillpayRs.String():   map[string]reflect.Type{},
-	EmailRs.String():     map[string]reflect.Type{},
-	SecListRs.String(): map[string]reflect.Type{
+	InterXferRs.String(): {},
+	WireXferRs.String():  {},
+	BillpayRs.String():   {},
+	EmailRs.String():     {},
+	SecListRs.String(): {
 		(&SecListResponse{}).Name(): reflect.TypeOf(SecListResponse{}),
 		(&SecurityList{}).Name():    reflect.TypeOf(SecurityList{})},
-	PresDirRs.String(): map[string]reflect.Type{},
-	PresDlvRs.String(): map[string]reflect.Type{},
-	ProfRs.String(): map[string]reflect.Type{
+	PresDirRs.String(): {},
+	PresDlvRs.String(): {},
+	ProfRs.String(): {
 		(&ProfileResponse{}).Name(): reflect.TypeOf(ProfileResponse{})},
-	ImageRs.String(): map[string]reflect.Type{},
+	ImageRs.String(): {},
 }
 
 func decodeMessageSet(d *xml.Decoder, start xml.StartElement, msgs *[]Message) error {

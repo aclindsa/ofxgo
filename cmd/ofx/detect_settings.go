@@ -39,10 +39,10 @@ var appIds = []string{
 }
 
 var appVersions = map[string][]string{
-	"OFXGO": []string{ // ofxgo (this library)
+	"OFXGO": { // ofxgo (this library)
 		"0001",
 	},
-	"QWIN": []string{ // Intuit Quicken Windows
+	"QWIN": { // Intuit Quicken Windows
 		"2400", // 2015
 		"2300", // 2014
 		"2200", // 2013
@@ -55,19 +55,19 @@ var appVersions = map[string][]string{
 		"1500", // 2006
 		"1400", // 2005
 	},
-	"QMOFX": []string{ // Intuit Quicken Mac
+	"QMOFX": { // Intuit Quicken Mac
 		"1700", // 2008
 		"1600", // 2007
 		"1500", // 2006
 		"1400", // 2005
 	},
-	"QB": []string{ // Intuit QuickBooks Windows
+	"QB": { // Intuit QuickBooks Windows
 		"1800", // 2008
 		"1700", // 2007
 		"1600", // 2006
 		"1500", // 2005
 	},
-	"Money": []string{ // Microsoft Money 2007
+	"Money": { // Microsoft Money 2007
 		"1600", // 2007
 		"1500", // 2006
 		"1400", // 2005

@@ -291,7 +291,7 @@ NEWFILEUID:NONE
 			},
 		},
 		SignonInfoList: []ofxgo.SignonInfo{
-			ofxgo.SignonInfo{
+			{
 				SignonRealm: "Example Trade",
 				Min:         1,
 				Max:         32,
