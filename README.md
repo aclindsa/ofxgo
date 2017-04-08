@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/aclindsa/ofxgo.svg?branch=master)](https://travis-ci.org/aclindsa/ofxgo)
+
 # ofxgo
 
 A library for querying OFX servers and parsing the responses and an example
