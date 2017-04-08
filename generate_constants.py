@@ -76,6 +76,8 @@ const (
 var {enumLower}s = [...]string{{"{upperValueString}"}}
 
 func (e {enumLower}) Valid() bool {{
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
 	return e >= {firstValue} && e <= {lastValue}
 }}
 
@@ -110,10 +112,8 @@ func (e *{enumLower}) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error
 }}
 
 func (e *{enumLower}) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {{
-	if *e == 0 {{
+	if !e.Valid() {{
 		return nil
-	}} else if !e.Valid() {{
-		return errors.New("Invalid {enum}")
 	}}
 	enc.EncodeElement({enumLower}s[*e-1], start)
 	return nil
@@ -166,6 +166,7 @@ test_header = """package ofxgo_test
 import (
 	"github.com/aclindsa/go/src/encoding/xml"
 	"github.com/aclindsa/ofxgo"
+	"strings"
 	"testing"
 )
 """
@@ -196,6 +197,9 @@ func Test{enum}(t *testing.T) {{
 	if overwritten.Valid() {{
 		t.Fatalf("{enum} created with string \\\"THISWILLNEVERBEAVALIDENUMSTRING\\\" should not be valid\\n")
 	}}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {{
+		t.Fatalf("{enum} created with string \\\"THISWILLNEVERBEAVALIDENUMSTRING\\\" should not return valid string from String()\\n")
+	}}
 
 	b, err := xml.Marshal(&overwritten)
 	if err != nil {{
@@ -206,6 +210,11 @@ func Test{enum}(t *testing.T) {{
 	}}
 
 	unmarshalHelper(t, "{lastValueUpper}", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {{
+		t.Fatalf("Expected error unmarshalling garbage value\\n")
+	}}
 }}
 """
 

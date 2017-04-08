@@ -26,6 +26,8 @@ const (
 var acctTypes = [...]string{"CHECKING", "SAVINGS", "MONEYMRKT", "CREDITLINE", "CD"}
 
 func (e acctType) Valid() bool {
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
 	return e >= AcctTypeChecking && e <= AcctTypeCD
 }
 
@@ -60,10 +62,8 @@ func (e *acctType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 }
 
 func (e *acctType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
-	if *e == 0 {
+	if !e.Valid() {
 		return nil
-	} else if !e.Valid() {
-		return errors.New("Invalid AcctType")
 	}
 	enc.EncodeElement(acctTypes[*e-1], start)
 	return nil
@@ -104,6 +104,8 @@ const (
 var trnTypes = [...]string{"CREDIT", "DEBIT", "INT", "DIV", "FEE", "SRVCHG", "DEP", "ATM", "POS", "XFER", "CHECK", "PAYMENT", "CASH", "DIRECTDEP", "DIRECTDEBIT", "REPEATPMT", "HOLD", "OTHER"}
 
 func (e trnType) Valid() bool {
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
 	return e >= TrnTypeCredit && e <= TrnTypeOther
 }
 
@@ -138,10 +140,8 @@ func (e *trnType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 }
 
 func (e *trnType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
-	if *e == 0 {
+	if !e.Valid() {
 		return nil
-	} else if !e.Valid() {
-		return errors.New("Invalid TrnType")
 	}
 	enc.EncodeElement(trnTypes[*e-1], start)
 	return nil
@@ -167,6 +167,8 @@ const (
 var imageTypes = [...]string{"STATEMENT", "TRANSACTION", "TAX"}
 
 func (e imageType) Valid() bool {
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
 	return e >= ImageTypeStatement && e <= ImageTypeTax
 }
 
@@ -201,10 +203,8 @@ func (e *imageType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 }
 
 func (e *imageType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
-	if *e == 0 {
+	if !e.Valid() {
 		return nil
-	} else if !e.Valid() {
-		return errors.New("Invalid ImageType")
 	}
 	enc.EncodeElement(imageTypes[*e-1], start)
 	return nil
@@ -230,6 +230,8 @@ const (
 var imageRefTypes = [...]string{"OPAQUE", "URL", "FORMURL"}
 
 func (e imageRefType) Valid() bool {
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
 	return e >= ImageRefTypeOpaque && e <= ImageRefTypeFormURL
 }
 
@@ -264,10 +266,8 @@ func (e *imageRefType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) erro
 }
 
 func (e *imageRefType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
-	if *e == 0 {
+	if !e.Valid() {
 		return nil
-	} else if !e.Valid() {
-		return errors.New("Invalid ImageRefType")
 	}
 	enc.EncodeElement(imageRefTypes[*e-1], start)
 	return nil
@@ -293,6 +293,8 @@ const (
 var checkSups = [...]string{"FRONTONLY", "BACKONLY", "FRONTANDBACK"}
 
 func (e checkSup) Valid() bool {
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
 	return e >= CheckSupFrontOnly && e <= CheckSupFrontAndBack
 }
 
@@ -327,10 +329,8 @@ func (e *checkSup) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 }
 
 func (e *checkSup) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
-	if *e == 0 {
+	if !e.Valid() {
 		return nil
-	} else if !e.Valid() {
-		return errors.New("Invalid CheckSup")
 	}
 	enc.EncodeElement(checkSups[*e-1], start)
 	return nil
@@ -355,6 +355,8 @@ const (
 var correctActions = [...]string{"DELETE", "REPLACE"}
 
 func (e correctAction) Valid() bool {
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
 	return e >= CorrectActionDelete && e <= CorrectActionReplace
 }
 
@@ -389,10 +391,8 @@ func (e *correctAction) UnmarshalXML(d *xml.Decoder, start xml.StartElement) err
 }
 
 func (e *correctAction) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
-	if *e == 0 {
+	if !e.Valid() {
 		return nil
-	} else if !e.Valid() {
-		return errors.New("Invalid CorrectAction")
 	}
 	enc.EncodeElement(correctActions[*e-1], start)
 	return nil
@@ -418,6 +418,8 @@ const (
 var balTypes = [...]string{"DOLLAR", "PERCENT", "NUMBER"}
 
 func (e balType) Valid() bool {
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
 	return e >= BalTypeDollar && e <= BalTypeNumber
 }
 
@@ -452,10 +454,8 @@ func (e *balType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 }
 
 func (e *balType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
-	if *e == 0 {
+	if !e.Valid() {
 		return nil
-	} else if !e.Valid() {
-		return errors.New("Invalid BalType")
 	}
 	enc.EncodeElement(balTypes[*e-1], start)
 	return nil
@@ -485,6 +485,8 @@ const (
 var inv401kSources = [...]string{"PRETAX", "AFTERTAX", "MATCH", "PROFITSHARING", "ROLLOVER", "OTHERVEST", "OTHERNONVEST"}
 
 func (e inv401kSource) Valid() bool {
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
 	return e >= Inv401kSourcePreTax && e <= Inv401kSourceOtherNonVest
 }
 
@@ -519,10 +521,8 @@ func (e *inv401kSource) UnmarshalXML(d *xml.Decoder, start xml.StartElement) err
 }
 
 func (e *inv401kSource) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
-	if *e == 0 {
+	if !e.Valid() {
 		return nil
-	} else if !e.Valid() {
-		return errors.New("Invalid Inv401kSource")
 	}
 	enc.EncodeElement(inv401kSources[*e-1], start)
 	return nil
@@ -549,6 +549,8 @@ const (
 var subAcctTypes = [...]string{"CASH", "MARGIN", "SHORT", "OTHER"}
 
 func (e subAcctType) Valid() bool {
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
 	return e >= SubAcctTypeCash && e <= SubAcctTypeOther
 }
 
@@ -583,10 +585,8 @@ func (e *subAcctType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error
 }
 
 func (e *subAcctType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
-	if *e == 0 {
+	if !e.Valid() {
 		return nil
-	} else if !e.Valid() {
-		return errors.New("Invalid SubAcctType")
 	}
 	enc.EncodeElement(subAcctTypes[*e-1], start)
 	return nil
@@ -611,6 +611,8 @@ const (
 var buyTypes = [...]string{"BUY", "BUYTOCOVER"}
 
 func (e buyType) Valid() bool {
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
 	return e >= BuyTypeBuy && e <= BuyTypeBuyToCover
 }
 
@@ -645,10 +647,8 @@ func (e *buyType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 }
 
 func (e *buyType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
-	if *e == 0 {
+	if !e.Valid() {
 		return nil
-	} else if !e.Valid() {
-		return errors.New("Invalid BuyType")
 	}
 	enc.EncodeElement(buyTypes[*e-1], start)
 	return nil
@@ -674,6 +674,8 @@ const (
 var optActions = [...]string{"EXERCISE", "ASSIGN", "EXPIRE"}
 
 func (e optAction) Valid() bool {
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
 	return e >= OptActionExercise && e <= OptActionExpire
 }
 
@@ -708,10 +710,8 @@ func (e *optAction) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 }
 
 func (e *optAction) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
-	if *e == 0 {
+	if !e.Valid() {
 		return nil
-	} else if !e.Valid() {
-		return errors.New("Invalid OptAction")
 	}
 	enc.EncodeElement(optActions[*e-1], start)
 	return nil
@@ -736,6 +736,8 @@ const (
 var tferActions = [...]string{"IN", "OUT"}
 
 func (e tferAction) Valid() bool {
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
 	return e >= TferActionIn && e <= TferActionOut
 }
 
@@ -770,10 +772,8 @@ func (e *tferAction) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error 
 }
 
 func (e *tferAction) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
-	if *e == 0 {
+	if !e.Valid() {
 		return nil
-	} else if !e.Valid() {
-		return errors.New("Invalid TferAction")
 	}
 	enc.EncodeElement(tferActions[*e-1], start)
 	return nil
@@ -798,6 +798,8 @@ const (
 var posTypes = [...]string{"LONG", "SHORT"}
 
 func (e posType) Valid() bool {
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
 	return e >= PosTypeLong && e <= PosTypeShort
 }
 
@@ -832,10 +834,8 @@ func (e *posType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 }
 
 func (e *posType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
-	if *e == 0 {
+	if !e.Valid() {
 		return nil
-	} else if !e.Valid() {
-		return errors.New("Invalid PosType")
 	}
 	enc.EncodeElement(posTypes[*e-1], start)
 	return nil
@@ -860,6 +860,8 @@ const (
 var secureds = [...]string{"NAKED", "COVERED"}
 
 func (e secured) Valid() bool {
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
 	return e >= SecuredNaked && e <= SecuredCovered
 }
 
@@ -894,10 +896,8 @@ func (e *secured) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 }
 
 func (e *secured) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
-	if *e == 0 {
+	if !e.Valid() {
 		return nil
-	} else if !e.Valid() {
-		return errors.New("Invalid Secured")
 	}
 	enc.EncodeElement(secureds[*e-1], start)
 	return nil
@@ -923,6 +923,8 @@ const (
 var durations = [...]string{"DAY", "GOODTILCANCEL", "IMMEDIATE"}
 
 func (e duration) Valid() bool {
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
 	return e >= DurationDay && e <= DurationImmediate
 }
 
@@ -957,10 +959,8 @@ func (e *duration) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 }
 
 func (e *duration) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
-	if *e == 0 {
+	if !e.Valid() {
 		return nil
-	} else if !e.Valid() {
-		return errors.New("Invalid Duration")
 	}
 	enc.EncodeElement(durations[*e-1], start)
 	return nil
@@ -986,6 +986,8 @@ const (
 var restrictions = [...]string{"ALLORNONE", "MINUNITS", "NONE"}
 
 func (e restriction) Valid() bool {
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
 	return e >= RestrictionAllOrNone && e <= RestrictionNone
 }
 
@@ -1020,10 +1022,8 @@ func (e *restriction) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error
 }
 
 func (e *restriction) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
-	if *e == 0 {
+	if !e.Valid() {
 		return nil
-	} else if !e.Valid() {
-		return errors.New("Invalid Restriction")
 	}
 	enc.EncodeElement(restrictions[*e-1], start)
 	return nil
@@ -1048,6 +1048,8 @@ const (
 var unitTypes = [...]string{"SHARES", "CURRENCY"}
 
 func (e unitType) Valid() bool {
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
 	return e >= UnitTypeShares && e <= UnitTypeCurrency
 }
 
@@ -1082,10 +1084,8 @@ func (e *unitType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 }
 
 func (e *unitType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
-	if *e == 0 {
+	if !e.Valid() {
 		return nil
-	} else if !e.Valid() {
-		return errors.New("Invalid UnitType")
 	}
 	enc.EncodeElement(unitTypes[*e-1], start)
 	return nil
@@ -1110,6 +1110,8 @@ const (
 var optBuyTypes = [...]string{"BUYTOOPEN", "BUYTOCLOSE"}
 
 func (e optBuyType) Valid() bool {
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
 	return e >= OptBuyTypeBuyToOpen && e <= OptBuyTypeBuyToClose
 }
 
@@ -1144,10 +1146,8 @@ func (e *optBuyType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error 
 }
 
 func (e *optBuyType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
-	if *e == 0 {
+	if !e.Valid() {
 		return nil
-	} else if !e.Valid() {
-		return errors.New("Invalid OptBuyType")
 	}
 	enc.EncodeElement(optBuyTypes[*e-1], start)
 	return nil
@@ -1172,6 +1172,8 @@ const (
 var sellTypes = [...]string{"SELL", "SELLSHORT"}
 
 func (e sellType) Valid() bool {
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
 	return e >= SellTypeSell && e <= SellTypeSellShort
 }
 
@@ -1206,10 +1208,8 @@ func (e *sellType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 }
 
 func (e *sellType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
-	if *e == 0 {
+	if !e.Valid() {
 		return nil
-	} else if !e.Valid() {
-		return errors.New("Invalid SellType")
 	}
 	enc.EncodeElement(sellTypes[*e-1], start)
 	return nil
@@ -1242,6 +1242,8 @@ const (
 var loanPmtFreqs = [...]string{"WEEKLY", "BIWEEKLY", "TWICEMONTHLY", "MONTHLY", "FOURWEEKS", "BIMONTHLY", "QUARTERLY", "SEMIANNUALLY", "ANNUALLY", "OTHER"}
 
 func (e loanPmtFreq) Valid() bool {
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
 	return e >= LoanPmtFreqWeekly && e <= LoanPmtFreqOther
 }
 
@@ -1276,10 +1278,8 @@ func (e *loanPmtFreq) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error
 }
 
 func (e *loanPmtFreq) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
-	if *e == 0 {
+	if !e.Valid() {
 		return nil
-	} else if !e.Valid() {
-		return errors.New("Invalid LoanPmtFreq")
 	}
 	enc.EncodeElement(loanPmtFreqs[*e-1], start)
 	return nil
@@ -1307,6 +1307,8 @@ const (
 var incomeTypes = [...]string{"CGLONG", "CGSHORT", "DIV", "INTEREST", "MISC"}
 
 func (e incomeType) Valid() bool {
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
 	return e >= IncomeTypeCGLong && e <= IncomeTypeMisc
 }
 
@@ -1341,10 +1343,8 @@ func (e *incomeType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error 
 }
 
 func (e *incomeType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
-	if *e == 0 {
+	if !e.Valid() {
 		return nil
-	} else if !e.Valid() {
-		return errors.New("Invalid IncomeType")
 	}
 	enc.EncodeElement(incomeTypes[*e-1], start)
 	return nil
@@ -1370,6 +1370,8 @@ const (
 var sellReasons = [...]string{"CALL", "SELL", "MATURITY"}
 
 func (e sellReason) Valid() bool {
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
 	return e >= SellReasonCall && e <= SellReasonMaturity
 }
 
@@ -1404,10 +1406,8 @@ func (e *sellReason) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error 
 }
 
 func (e *sellReason) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
-	if *e == 0 {
+	if !e.Valid() {
 		return nil
-	} else if !e.Valid() {
-		return errors.New("Invalid SellReason")
 	}
 	enc.EncodeElement(sellReasons[*e-1], start)
 	return nil
@@ -1432,6 +1432,8 @@ const (
 var optSellTypes = [...]string{"SELLTOCLOSE", "SELLTOOPEN"}
 
 func (e optSellType) Valid() bool {
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
 	return e >= OptSellTypeSellToClose && e <= OptSellTypeSellToOpen
 }
 
@@ -1466,10 +1468,8 @@ func (e *optSellType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error
 }
 
 func (e *optSellType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
-	if *e == 0 {
+	if !e.Valid() {
 		return nil
-	} else if !e.Valid() {
-		return errors.New("Invalid OptSellType")
 	}
 	enc.EncodeElement(optSellTypes[*e-1], start)
 	return nil
@@ -1496,6 +1496,8 @@ const (
 var relTypes = [...]string{"SPREAD", "STRADDLE", "NONE", "OTHER"}
 
 func (e relType) Valid() bool {
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
 	return e >= RelTypeSpread && e <= RelTypeOther
 }
 
@@ -1530,10 +1532,8 @@ func (e *relType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 }
 
 func (e *relType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
-	if *e == 0 {
+	if !e.Valid() {
 		return nil
-	} else if !e.Valid() {
-		return errors.New("Invalid RelType")
 	}
 	enc.EncodeElement(relTypes[*e-1], start)
 	return nil
@@ -1560,6 +1560,8 @@ const (
 var charTypes = [...]string{"ALPHAONLY", "NUMERICONLY", "ALPHAORNUMERIC", "ALPHAANDNUMERIC"}
 
 func (e charType) Valid() bool {
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
 	return e >= CharTypeAlphaOnly && e <= CharTypeAlphaAndNumeric
 }
 
@@ -1594,10 +1596,8 @@ func (e *charType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 }
 
 func (e *charType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
-	if *e == 0 {
+	if !e.Valid() {
 		return nil
-	} else if !e.Valid() {
-		return errors.New("Invalid CharType")
 	}
 	enc.EncodeElement(charTypes[*e-1], start)
 	return nil
@@ -1622,6 +1622,8 @@ const (
 var syncModes = [...]string{"FULL", "LITE"}
 
 func (e syncMode) Valid() bool {
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
 	return e >= SyncModeFull && e <= SyncModeLite
 }
 
@@ -1656,10 +1658,8 @@ func (e *syncMode) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 }
 
 func (e *syncMode) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
-	if *e == 0 {
+	if !e.Valid() {
 		return nil
-	} else if !e.Valid() {
-		return errors.New("Invalid SyncMode")
 	}
 	enc.EncodeElement(syncModes[*e-1], start)
 	return nil
@@ -1684,6 +1684,8 @@ const (
 var debtTypes = [...]string{"COUPON", "ZERO"}
 
 func (e debtType) Valid() bool {
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
 	return e >= DebtTypeCoupon && e <= DebtTypeZero
 }
 
@@ -1718,10 +1720,8 @@ func (e *debtType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 }
 
 func (e *debtType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
-	if *e == 0 {
+	if !e.Valid() {
 		return nil
-	} else if !e.Valid() {
-		return errors.New("Invalid DebtType")
 	}
 	enc.EncodeElement(debtTypes[*e-1], start)
 	return nil
@@ -1748,6 +1748,8 @@ const (
 var debtClasss = [...]string{"TREASURY", "MUNICIPAL", "CORPORATE", "OTHER"}
 
 func (e debtClass) Valid() bool {
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
 	return e >= DebtClassTreasury && e <= DebtClassOther
 }
 
@@ -1782,10 +1784,8 @@ func (e *debtClass) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 }
 
 func (e *debtClass) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
-	if *e == 0 {
+	if !e.Valid() {
 		return nil
-	} else if !e.Valid() {
-		return errors.New("Invalid DebtClass")
 	}
 	enc.EncodeElement(debtClasss[*e-1], start)
 	return nil
@@ -1813,6 +1813,8 @@ const (
 var couponFreqs = [...]string{"MONTHLY", "QUARTERLY", "SEMIANNUAL", "ANNUAL", "OTHER"}
 
 func (e couponFreq) Valid() bool {
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
 	return e >= CouponFreqMonthly && e <= CouponFreqOther
 }
 
@@ -1847,10 +1849,8 @@ func (e *couponFreq) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error 
 }
 
 func (e *couponFreq) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
-	if *e == 0 {
+	if !e.Valid() {
 		return nil
-	} else if !e.Valid() {
-		return errors.New("Invalid CouponFreq")
 	}
 	enc.EncodeElement(couponFreqs[*e-1], start)
 	return nil
@@ -1877,6 +1877,8 @@ const (
 var callTypes = [...]string{"CALL", "PUT", "PREFUND", "MATURITY"}
 
 func (e callType) Valid() bool {
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
 	return e >= CallTypeCall && e <= CallTypeMaturity
 }
 
@@ -1911,10 +1913,8 @@ func (e *callType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 }
 
 func (e *callType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
-	if *e == 0 {
+	if !e.Valid() {
 		return nil
-	} else if !e.Valid() {
-		return errors.New("Invalid CallType")
 	}
 	enc.EncodeElement(callTypes[*e-1], start)
 	return nil
@@ -1944,6 +1944,8 @@ const (
 var assetClasss = [...]string{"DOMESTICBOND", "INTLBOND", "LARGESTOCK", "SMALLSTOCK", "INTLSTOCK", "MONEYMRKT", "OTHER"}
 
 func (e assetClass) Valid() bool {
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
 	return e >= AssetClassDomesticBond && e <= AssetClassOther
 }
 
@@ -1978,10 +1980,8 @@ func (e *assetClass) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error 
 }
 
 func (e *assetClass) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
-	if *e == 0 {
+	if !e.Valid() {
 		return nil
-	} else if !e.Valid() {
-		return errors.New("Invalid AssetClass")
 	}
 	enc.EncodeElement(assetClasss[*e-1], start)
 	return nil
@@ -2007,6 +2007,8 @@ const (
 var mfTypes = [...]string{"OPENEND", "CLOSEEND", "OTHER"}
 
 func (e mfType) Valid() bool {
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
 	return e >= MfTypeOpenEnd && e <= MfTypeOther
 }
 
@@ -2041,10 +2043,8 @@ func (e *mfType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 }
 
 func (e *mfType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
-	if *e == 0 {
+	if !e.Valid() {
 		return nil
-	} else if !e.Valid() {
-		return errors.New("Invalid MfType")
 	}
 	enc.EncodeElement(mfTypes[*e-1], start)
 	return nil
@@ -2069,6 +2069,8 @@ const (
 var optTypes = [...]string{"PUT", "CALL"}
 
 func (e optType) Valid() bool {
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
 	return e >= OptTypePut && e <= OptTypeCall
 }
 
@@ -2103,10 +2105,8 @@ func (e *optType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 }
 
 func (e *optType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
-	if *e == 0 {
+	if !e.Valid() {
 		return nil
-	} else if !e.Valid() {
-		return errors.New("Invalid OptType")
 	}
 	enc.EncodeElement(optTypes[*e-1], start)
 	return nil
@@ -2133,6 +2133,8 @@ const (
 var stockTypes = [...]string{"COMMON", "PREFERRED", "CONVERTIBLE", "OTHER"}
 
 func (e stockType) Valid() bool {
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
 	return e >= StockTypeCommon && e <= StockTypeOther
 }
 
@@ -2167,10 +2169,8 @@ func (e *stockType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 }
 
 func (e *stockType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
-	if *e == 0 {
+	if !e.Valid() {
 		return nil
-	} else if !e.Valid() {
-		return errors.New("Invalid StockType")
 	}
 	enc.EncodeElement(stockTypes[*e-1], start)
 	return nil
@@ -2195,6 +2195,8 @@ const (
 var ofxSecs = [...]string{"NONE", "TYPE 1"}
 
 func (e ofxSec) Valid() bool {
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
 	return e >= OfxSecNone && e <= OfxSecType1
 }
 
@@ -2229,10 +2231,8 @@ func (e *ofxSec) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 }
 
 func (e *ofxSec) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
-	if *e == 0 {
+	if !e.Valid() {
 		return nil
-	} else if !e.Valid() {
-		return errors.New("Invalid OfxSec")
 	}
 	enc.EncodeElement(ofxSecs[*e-1], start)
 	return nil
@@ -2260,6 +2260,8 @@ const (
 var holderTypes = [...]string{"INDIVIDUAL", "JOINT", "CUSTODIAL", "TRUST", "OTHER"}
 
 func (e holderType) Valid() bool {
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
 	return e >= HolderTypeIndividual && e <= HolderTypeOther
 }
 
@@ -2294,10 +2296,8 @@ func (e *holderType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error 
 }
 
 func (e *holderType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
-	if *e == 0 {
+	if !e.Valid() {
 		return nil
-	} else if !e.Valid() {
-		return errors.New("Invalid HolderType")
 	}
 	enc.EncodeElement(holderTypes[*e-1], start)
 	return nil
@@ -2324,6 +2324,8 @@ const (
 var acctClassifications = [...]string{"PERSONAL", "BUSINESS", "CORPORATE", "OTHER"}
 
 func (e acctClassification) Valid() bool {
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
 	return e >= AcctClassificationPersonal && e <= AcctClassificationOther
 }
 
@@ -2358,10 +2360,8 @@ func (e *acctClassification) UnmarshalXML(d *xml.Decoder, start xml.StartElement
 }
 
 func (e *acctClassification) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
-	if *e == 0 {
+	if !e.Valid() {
 		return nil
-	} else if !e.Valid() {
-		return errors.New("Invalid AcctClassification")
 	}
 	enc.EncodeElement(acctClassifications[*e-1], start)
 	return nil
@@ -2387,6 +2387,8 @@ const (
 var svcStatuss = [...]string{"AVAIL", "PEND", "ACTIVE"}
 
 func (e svcStatus) Valid() bool {
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
 	return e >= SvcStatusAvail && e <= SvcStatusActive
 }
 
@@ -2421,10 +2423,8 @@ func (e *svcStatus) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 }
 
 func (e *svcStatus) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
-	if *e == 0 {
+	if !e.Valid() {
 		return nil
-	} else if !e.Valid() {
-		return errors.New("Invalid SvcStatus")
 	}
 	enc.EncodeElement(svcStatuss[*e-1], start)
 	return nil
@@ -2458,6 +2458,8 @@ const (
 var usProductTypes = [...]string{"401K", "403B", "IRA", "KEOGH", "OTHER", "SARSEP", "SIMPLE", "NORMAL", "TDA", "TRUST", "UGMA"}
 
 func (e usProductType) Valid() bool {
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
 	return e >= UsProductType401K && e <= UsProductTypeUGMA
 }
 
@@ -2492,10 +2494,8 @@ func (e *usProductType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) err
 }
 
 func (e *usProductType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
-	if *e == 0 {
+	if !e.Valid() {
 		return nil
-	} else if !e.Valid() {
-		return errors.New("Invalid UsProductType")
 	}
 	enc.EncodeElement(usProductTypes[*e-1], start)
 	return nil

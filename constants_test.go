@@ -9,6 +9,7 @@ package ofxgo_test
 import (
 	"github.com/aclindsa/go/src/encoding/xml"
 	"github.com/aclindsa/ofxgo"
+	"strings"
 	"testing"
 )
 
@@ -37,6 +38,9 @@ func TestAcctType(t *testing.T) {
 	if overwritten.Valid() {
 		t.Fatalf("AcctType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
 	}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
+		t.Fatalf("AcctType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
+	}
 
 	b, err := xml.Marshal(&overwritten)
 	if err != nil {
@@ -47,6 +51,11 @@ func TestAcctType(t *testing.T) {
 	}
 
 	unmarshalHelper(t, "CD", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {
+		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
 }
 
 func TestTrnType(t *testing.T) {
@@ -74,6 +83,9 @@ func TestTrnType(t *testing.T) {
 	if overwritten.Valid() {
 		t.Fatalf("TrnType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
 	}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
+		t.Fatalf("TrnType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
+	}
 
 	b, err := xml.Marshal(&overwritten)
 	if err != nil {
@@ -84,6 +96,11 @@ func TestTrnType(t *testing.T) {
 	}
 
 	unmarshalHelper(t, "OTHER", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {
+		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
 }
 
 func TestImageType(t *testing.T) {
@@ -111,6 +128,9 @@ func TestImageType(t *testing.T) {
 	if overwritten.Valid() {
 		t.Fatalf("ImageType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
 	}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
+		t.Fatalf("ImageType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
+	}
 
 	b, err := xml.Marshal(&overwritten)
 	if err != nil {
@@ -121,6 +141,11 @@ func TestImageType(t *testing.T) {
 	}
 
 	unmarshalHelper(t, "TAX", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {
+		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
 }
 
 func TestImageRefType(t *testing.T) {
@@ -148,6 +173,9 @@ func TestImageRefType(t *testing.T) {
 	if overwritten.Valid() {
 		t.Fatalf("ImageRefType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
 	}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
+		t.Fatalf("ImageRefType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
+	}
 
 	b, err := xml.Marshal(&overwritten)
 	if err != nil {
@@ -158,6 +186,11 @@ func TestImageRefType(t *testing.T) {
 	}
 
 	unmarshalHelper(t, "FORMURL", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {
+		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
 }
 
 func TestCheckSup(t *testing.T) {
@@ -185,6 +218,9 @@ func TestCheckSup(t *testing.T) {
 	if overwritten.Valid() {
 		t.Fatalf("CheckSup created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
 	}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
+		t.Fatalf("CheckSup created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
+	}
 
 	b, err := xml.Marshal(&overwritten)
 	if err != nil {
@@ -195,6 +231,11 @@ func TestCheckSup(t *testing.T) {
 	}
 
 	unmarshalHelper(t, "FRONTANDBACK", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {
+		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
 }
 
 func TestCorrectAction(t *testing.T) {
@@ -222,6 +263,9 @@ func TestCorrectAction(t *testing.T) {
 	if overwritten.Valid() {
 		t.Fatalf("CorrectAction created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
 	}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
+		t.Fatalf("CorrectAction created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
+	}
 
 	b, err := xml.Marshal(&overwritten)
 	if err != nil {
@@ -232,6 +276,11 @@ func TestCorrectAction(t *testing.T) {
 	}
 
 	unmarshalHelper(t, "REPLACE", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {
+		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
 }
 
 func TestBalType(t *testing.T) {
@@ -259,6 +308,9 @@ func TestBalType(t *testing.T) {
 	if overwritten.Valid() {
 		t.Fatalf("BalType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
 	}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
+		t.Fatalf("BalType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
+	}
 
 	b, err := xml.Marshal(&overwritten)
 	if err != nil {
@@ -269,6 +321,11 @@ func TestBalType(t *testing.T) {
 	}
 
 	unmarshalHelper(t, "NUMBER", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {
+		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
 }
 
 func TestInv401kSource(t *testing.T) {
@@ -296,6 +353,9 @@ func TestInv401kSource(t *testing.T) {
 	if overwritten.Valid() {
 		t.Fatalf("Inv401kSource created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
 	}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
+		t.Fatalf("Inv401kSource created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
+	}
 
 	b, err := xml.Marshal(&overwritten)
 	if err != nil {
@@ -306,6 +366,11 @@ func TestInv401kSource(t *testing.T) {
 	}
 
 	unmarshalHelper(t, "OTHERNONVEST", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {
+		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
 }
 
 func TestSubAcctType(t *testing.T) {
@@ -333,6 +398,9 @@ func TestSubAcctType(t *testing.T) {
 	if overwritten.Valid() {
 		t.Fatalf("SubAcctType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
 	}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
+		t.Fatalf("SubAcctType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
+	}
 
 	b, err := xml.Marshal(&overwritten)
 	if err != nil {
@@ -343,6 +411,11 @@ func TestSubAcctType(t *testing.T) {
 	}
 
 	unmarshalHelper(t, "OTHER", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {
+		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
 }
 
 func TestBuyType(t *testing.T) {
@@ -370,6 +443,9 @@ func TestBuyType(t *testing.T) {
 	if overwritten.Valid() {
 		t.Fatalf("BuyType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
 	}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
+		t.Fatalf("BuyType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
+	}
 
 	b, err := xml.Marshal(&overwritten)
 	if err != nil {
@@ -380,6 +456,11 @@ func TestBuyType(t *testing.T) {
 	}
 
 	unmarshalHelper(t, "BUYTOCOVER", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {
+		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
 }
 
 func TestOptAction(t *testing.T) {
@@ -407,6 +488,9 @@ func TestOptAction(t *testing.T) {
 	if overwritten.Valid() {
 		t.Fatalf("OptAction created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
 	}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
+		t.Fatalf("OptAction created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
+	}
 
 	b, err := xml.Marshal(&overwritten)
 	if err != nil {
@@ -417,6 +501,11 @@ func TestOptAction(t *testing.T) {
 	}
 
 	unmarshalHelper(t, "EXPIRE", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {
+		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
 }
 
 func TestTferAction(t *testing.T) {
@@ -444,6 +533,9 @@ func TestTferAction(t *testing.T) {
 	if overwritten.Valid() {
 		t.Fatalf("TferAction created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
 	}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
+		t.Fatalf("TferAction created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
+	}
 
 	b, err := xml.Marshal(&overwritten)
 	if err != nil {
@@ -454,6 +546,11 @@ func TestTferAction(t *testing.T) {
 	}
 
 	unmarshalHelper(t, "OUT", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {
+		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
 }
 
 func TestPosType(t *testing.T) {
@@ -481,6 +578,9 @@ func TestPosType(t *testing.T) {
 	if overwritten.Valid() {
 		t.Fatalf("PosType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
 	}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
+		t.Fatalf("PosType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
+	}
 
 	b, err := xml.Marshal(&overwritten)
 	if err != nil {
@@ -491,6 +591,11 @@ func TestPosType(t *testing.T) {
 	}
 
 	unmarshalHelper(t, "SHORT", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {
+		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
 }
 
 func TestSecured(t *testing.T) {
@@ -518,6 +623,9 @@ func TestSecured(t *testing.T) {
 	if overwritten.Valid() {
 		t.Fatalf("Secured created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
 	}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
+		t.Fatalf("Secured created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
+	}
 
 	b, err := xml.Marshal(&overwritten)
 	if err != nil {
@@ -528,6 +636,11 @@ func TestSecured(t *testing.T) {
 	}
 
 	unmarshalHelper(t, "COVERED", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {
+		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
 }
 
 func TestDuration(t *testing.T) {
@@ -555,6 +668,9 @@ func TestDuration(t *testing.T) {
 	if overwritten.Valid() {
 		t.Fatalf("Duration created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
 	}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
+		t.Fatalf("Duration created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
+	}
 
 	b, err := xml.Marshal(&overwritten)
 	if err != nil {
@@ -565,6 +681,11 @@ func TestDuration(t *testing.T) {
 	}
 
 	unmarshalHelper(t, "IMMEDIATE", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {
+		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
 }
 
 func TestRestriction(t *testing.T) {
@@ -592,6 +713,9 @@ func TestRestriction(t *testing.T) {
 	if overwritten.Valid() {
 		t.Fatalf("Restriction created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
 	}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
+		t.Fatalf("Restriction created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
+	}
 
 	b, err := xml.Marshal(&overwritten)
 	if err != nil {
@@ -602,6 +726,11 @@ func TestRestriction(t *testing.T) {
 	}
 
 	unmarshalHelper(t, "NONE", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {
+		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
 }
 
 func TestUnitType(t *testing.T) {
@@ -629,6 +758,9 @@ func TestUnitType(t *testing.T) {
 	if overwritten.Valid() {
 		t.Fatalf("UnitType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
 	}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
+		t.Fatalf("UnitType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
+	}
 
 	b, err := xml.Marshal(&overwritten)
 	if err != nil {
@@ -639,6 +771,11 @@ func TestUnitType(t *testing.T) {
 	}
 
 	unmarshalHelper(t, "CURRENCY", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {
+		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
 }
 
 func TestOptBuyType(t *testing.T) {
@@ -666,6 +803,9 @@ func TestOptBuyType(t *testing.T) {
 	if overwritten.Valid() {
 		t.Fatalf("OptBuyType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
 	}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
+		t.Fatalf("OptBuyType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
+	}
 
 	b, err := xml.Marshal(&overwritten)
 	if err != nil {
@@ -676,6 +816,11 @@ func TestOptBuyType(t *testing.T) {
 	}
 
 	unmarshalHelper(t, "BUYTOCLOSE", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {
+		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
 }
 
 func TestSellType(t *testing.T) {
@@ -703,6 +848,9 @@ func TestSellType(t *testing.T) {
 	if overwritten.Valid() {
 		t.Fatalf("SellType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
 	}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
+		t.Fatalf("SellType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
+	}
 
 	b, err := xml.Marshal(&overwritten)
 	if err != nil {
@@ -713,6 +861,11 @@ func TestSellType(t *testing.T) {
 	}
 
 	unmarshalHelper(t, "SELLSHORT", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {
+		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
 }
 
 func TestLoanPmtFreq(t *testing.T) {
@@ -740,6 +893,9 @@ func TestLoanPmtFreq(t *testing.T) {
 	if overwritten.Valid() {
 		t.Fatalf("LoanPmtFreq created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
 	}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
+		t.Fatalf("LoanPmtFreq created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
+	}
 
 	b, err := xml.Marshal(&overwritten)
 	if err != nil {
@@ -750,6 +906,11 @@ func TestLoanPmtFreq(t *testing.T) {
 	}
 
 	unmarshalHelper(t, "OTHER", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {
+		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
 }
 
 func TestIncomeType(t *testing.T) {
@@ -777,6 +938,9 @@ func TestIncomeType(t *testing.T) {
 	if overwritten.Valid() {
 		t.Fatalf("IncomeType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
 	}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
+		t.Fatalf("IncomeType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
+	}
 
 	b, err := xml.Marshal(&overwritten)
 	if err != nil {
@@ -787,6 +951,11 @@ func TestIncomeType(t *testing.T) {
 	}
 
 	unmarshalHelper(t, "MISC", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {
+		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
 }
 
 func TestSellReason(t *testing.T) {
@@ -814,6 +983,9 @@ func TestSellReason(t *testing.T) {
 	if overwritten.Valid() {
 		t.Fatalf("SellReason created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
 	}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
+		t.Fatalf("SellReason created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
+	}
 
 	b, err := xml.Marshal(&overwritten)
 	if err != nil {
@@ -824,6 +996,11 @@ func TestSellReason(t *testing.T) {
 	}
 
 	unmarshalHelper(t, "MATURITY", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {
+		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
 }
 
 func TestOptSellType(t *testing.T) {
@@ -851,6 +1028,9 @@ func TestOptSellType(t *testing.T) {
 	if overwritten.Valid() {
 		t.Fatalf("OptSellType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
 	}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
+		t.Fatalf("OptSellType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
+	}
 
 	b, err := xml.Marshal(&overwritten)
 	if err != nil {
@@ -861,6 +1041,11 @@ func TestOptSellType(t *testing.T) {
 	}
 
 	unmarshalHelper(t, "SELLTOOPEN", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {
+		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
 }
 
 func TestRelType(t *testing.T) {
@@ -888,6 +1073,9 @@ func TestRelType(t *testing.T) {
 	if overwritten.Valid() {
 		t.Fatalf("RelType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
 	}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
+		t.Fatalf("RelType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
+	}
 
 	b, err := xml.Marshal(&overwritten)
 	if err != nil {
@@ -898,6 +1086,11 @@ func TestRelType(t *testing.T) {
 	}
 
 	unmarshalHelper(t, "OTHER", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {
+		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
 }
 
 func TestCharType(t *testing.T) {
@@ -925,6 +1118,9 @@ func TestCharType(t *testing.T) {
 	if overwritten.Valid() {
 		t.Fatalf("CharType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
 	}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
+		t.Fatalf("CharType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
+	}
 
 	b, err := xml.Marshal(&overwritten)
 	if err != nil {
@@ -935,6 +1131,11 @@ func TestCharType(t *testing.T) {
 	}
 
 	unmarshalHelper(t, "ALPHAANDNUMERIC", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {
+		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
 }
 
 func TestSyncMode(t *testing.T) {
@@ -962,6 +1163,9 @@ func TestSyncMode(t *testing.T) {
 	if overwritten.Valid() {
 		t.Fatalf("SyncMode created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
 	}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
+		t.Fatalf("SyncMode created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
+	}
 
 	b, err := xml.Marshal(&overwritten)
 	if err != nil {
@@ -972,6 +1176,11 @@ func TestSyncMode(t *testing.T) {
 	}
 
 	unmarshalHelper(t, "LITE", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {
+		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
 }
 
 func TestDebtType(t *testing.T) {
@@ -999,6 +1208,9 @@ func TestDebtType(t *testing.T) {
 	if overwritten.Valid() {
 		t.Fatalf("DebtType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
 	}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
+		t.Fatalf("DebtType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
+	}
 
 	b, err := xml.Marshal(&overwritten)
 	if err != nil {
@@ -1009,6 +1221,11 @@ func TestDebtType(t *testing.T) {
 	}
 
 	unmarshalHelper(t, "ZERO", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {
+		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
 }
 
 func TestDebtClass(t *testing.T) {
@@ -1036,6 +1253,9 @@ func TestDebtClass(t *testing.T) {
 	if overwritten.Valid() {
 		t.Fatalf("DebtClass created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
 	}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
+		t.Fatalf("DebtClass created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
+	}
 
 	b, err := xml.Marshal(&overwritten)
 	if err != nil {
@@ -1046,6 +1266,11 @@ func TestDebtClass(t *testing.T) {
 	}
 
 	unmarshalHelper(t, "OTHER", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {
+		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
 }
 
 func TestCouponFreq(t *testing.T) {
@@ -1073,6 +1298,9 @@ func TestCouponFreq(t *testing.T) {
 	if overwritten.Valid() {
 		t.Fatalf("CouponFreq created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
 	}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
+		t.Fatalf("CouponFreq created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
+	}
 
 	b, err := xml.Marshal(&overwritten)
 	if err != nil {
@@ -1083,6 +1311,11 @@ func TestCouponFreq(t *testing.T) {
 	}
 
 	unmarshalHelper(t, "OTHER", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {
+		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
 }
 
 func TestCallType(t *testing.T) {
@@ -1110,6 +1343,9 @@ func TestCallType(t *testing.T) {
 	if overwritten.Valid() {
 		t.Fatalf("CallType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
 	}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
+		t.Fatalf("CallType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
+	}
 
 	b, err := xml.Marshal(&overwritten)
 	if err != nil {
@@ -1120,6 +1356,11 @@ func TestCallType(t *testing.T) {
 	}
 
 	unmarshalHelper(t, "MATURITY", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {
+		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
 }
 
 func TestAssetClass(t *testing.T) {
@@ -1147,6 +1388,9 @@ func TestAssetClass(t *testing.T) {
 	if overwritten.Valid() {
 		t.Fatalf("AssetClass created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
 	}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
+		t.Fatalf("AssetClass created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
+	}
 
 	b, err := xml.Marshal(&overwritten)
 	if err != nil {
@@ -1157,6 +1401,11 @@ func TestAssetClass(t *testing.T) {
 	}
 
 	unmarshalHelper(t, "OTHER", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {
+		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
 }
 
 func TestMfType(t *testing.T) {
@@ -1184,6 +1433,9 @@ func TestMfType(t *testing.T) {
 	if overwritten.Valid() {
 		t.Fatalf("MfType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
 	}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
+		t.Fatalf("MfType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
+	}
 
 	b, err := xml.Marshal(&overwritten)
 	if err != nil {
@@ -1194,6 +1446,11 @@ func TestMfType(t *testing.T) {
 	}
 
 	unmarshalHelper(t, "OTHER", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {
+		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
 }
 
 func TestOptType(t *testing.T) {
@@ -1221,6 +1478,9 @@ func TestOptType(t *testing.T) {
 	if overwritten.Valid() {
 		t.Fatalf("OptType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
 	}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
+		t.Fatalf("OptType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
+	}
 
 	b, err := xml.Marshal(&overwritten)
 	if err != nil {
@@ -1231,6 +1491,11 @@ func TestOptType(t *testing.T) {
 	}
 
 	unmarshalHelper(t, "CALL", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {
+		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
 }
 
 func TestStockType(t *testing.T) {
@@ -1258,6 +1523,9 @@ func TestStockType(t *testing.T) {
 	if overwritten.Valid() {
 		t.Fatalf("StockType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
 	}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
+		t.Fatalf("StockType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
+	}
 
 	b, err := xml.Marshal(&overwritten)
 	if err != nil {
@@ -1268,6 +1536,11 @@ func TestStockType(t *testing.T) {
 	}
 
 	unmarshalHelper(t, "OTHER", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {
+		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
 }
 
 func TestOfxSec(t *testing.T) {
@@ -1295,6 +1568,9 @@ func TestOfxSec(t *testing.T) {
 	if overwritten.Valid() {
 		t.Fatalf("OfxSec created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
 	}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
+		t.Fatalf("OfxSec created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
+	}
 
 	b, err := xml.Marshal(&overwritten)
 	if err != nil {
@@ -1305,6 +1581,11 @@ func TestOfxSec(t *testing.T) {
 	}
 
 	unmarshalHelper(t, "TYPE 1", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {
+		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
 }
 
 func TestHolderType(t *testing.T) {
@@ -1332,6 +1613,9 @@ func TestHolderType(t *testing.T) {
 	if overwritten.Valid() {
 		t.Fatalf("HolderType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
 	}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
+		t.Fatalf("HolderType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
+	}
 
 	b, err := xml.Marshal(&overwritten)
 	if err != nil {
@@ -1342,6 +1626,11 @@ func TestHolderType(t *testing.T) {
 	}
 
 	unmarshalHelper(t, "OTHER", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {
+		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
 }
 
 func TestAcctClassification(t *testing.T) {
@@ -1369,6 +1658,9 @@ func TestAcctClassification(t *testing.T) {
 	if overwritten.Valid() {
 		t.Fatalf("AcctClassification created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
 	}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
+		t.Fatalf("AcctClassification created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
+	}
 
 	b, err := xml.Marshal(&overwritten)
 	if err != nil {
@@ -1379,6 +1671,11 @@ func TestAcctClassification(t *testing.T) {
 	}
 
 	unmarshalHelper(t, "OTHER", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {
+		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
 }
 
 func TestSvcStatus(t *testing.T) {
@@ -1406,6 +1703,9 @@ func TestSvcStatus(t *testing.T) {
 	if overwritten.Valid() {
 		t.Fatalf("SvcStatus created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
 	}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
+		t.Fatalf("SvcStatus created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
+	}
 
 	b, err := xml.Marshal(&overwritten)
 	if err != nil {
@@ -1416,6 +1716,11 @@ func TestSvcStatus(t *testing.T) {
 	}
 
 	unmarshalHelper(t, "ACTIVE", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {
+		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
 }
 
 func TestUsProductType(t *testing.T) {
@@ -1443,6 +1748,9 @@ func TestUsProductType(t *testing.T) {
 	if overwritten.Valid() {
 		t.Fatalf("UsProductType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
 	}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
+		t.Fatalf("UsProductType created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
+	}
 
 	b, err := xml.Marshal(&overwritten)
 	if err != nil {
@@ -1453,4 +1761,9 @@ func TestUsProductType(t *testing.T) {
 	}
 
 	unmarshalHelper(t, "UGMA", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {
+		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
 }
