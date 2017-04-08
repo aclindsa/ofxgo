@@ -363,3 +363,13 @@ func TestUIDRecommendedFormat(t *testing.T) {
 		t.Fatalf("UID should have failed validation because its hyphens have been replaced\n")
 	}
 }
+
+func TestRandomUID(t *testing.T) {
+	uid, err := ofxgo.RandomUID()
+	if err != nil {
+		t.Fatalf("Unexpected error when calling RandomUID: %s\n", err)
+	}
+	if ok, err := uid.RecommendedFormat(); !ok || err != nil {
+		t.Fatalf("UID generated with RandomUID() doesn't match recommended format: %s\n", err)
+	}
+}
