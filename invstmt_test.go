@@ -1,7 +1,9 @@
 package ofxgo_test
 
 import (
+	"github.com/aclindsa/go/src/encoding/xml"
 	"github.com/aclindsa/ofxgo"
+	"reflect"
 	"strings"
 	"testing"
 	"time"
@@ -945,4 +947,364 @@ NEWFILEUID: NONE
 	}
 
 	checkResponsesEqual(t, &expected, response)
+}
+
+func TestUnmarshalInvTranList(t *testing.T) {
+	input := `<INVTRANLIST>
+	<DTSTART>20170101000000</DTSTART>
+	<DTEND>20170331000000</DTEND>
+	<BUYDEBT>
+		<INVBUY>
+			<INVTRAN>
+				<FITID>81818</FITID>
+				<DTTRADE>20170203</DTTRADE>
+				<DTSETTLE>20170207</DTSETTLE>
+			</INVTRAN>
+			<SECID>
+				<UNIQUEID>78462F103</UNIQUEID>
+				<UNIQUEIDTYPE>CUSIP</UNIQUEIDTYPE>
+			</SECID>
+			<UNITS>100</UNITS>
+			<UNITPRICE>229.00</UNITPRICE>
+			<COMMISSION>9.00</COMMISSION>
+			<FEES>.26</FEES>
+			<TOTAL>-22090.26</TOTAL>
+			<SUBACCTSEC>CASH</SUBACCTSEC>
+			<SUBACCTFUND>CASH</SUBACCTFUND>
+		</INVBUY>
+		<ACCRDINT>101.2</ACCRDINT>
+	</BUYDEBT>
+	<BUYOPT>
+		<INVBUY>
+			<INVTRAN>
+				<FITID>81818</FITID>
+				<DTTRADE>20170203</DTTRADE>
+				<MEMO>Something to make a memo about</MEMO>
+			</INVTRAN>
+			<SECID>
+				<UNIQUEID>78462F103</UNIQUEID>
+				<UNIQUEIDTYPE>CUSIP</UNIQUEIDTYPE>
+			</SECID>
+			<UNITS>100</UNITS>
+			<UNITPRICE>229.00</UNITPRICE>
+			<TOTAL>-22090.26</TOTAL>
+			<SUBACCTSEC>CASH</SUBACCTSEC>
+			<SUBACCTFUND>CASH</SUBACCTFUND>
+		</INVBUY>
+		<OPTBUYTYPE>BUYTOOPEN</OPTBUYTYPE>
+		<SHPERCTRCT>100</SHPERCTRCT>
+	</BUYOPT>
+	<INVEXPENSE>
+		<INVTRAN>
+			<FITID>129837-1111</FITID>
+			<DTTRADE>20170203</DTTRADE>
+		</INVTRAN>
+		<SECID>
+			<UNIQUEID>78462F103</UNIQUEID>
+			<UNIQUEIDTYPE>CUSIP</UNIQUEIDTYPE>
+		</SECID>
+		<TOTAL>0.26</TOTAL>
+		<SUBACCTSEC>CASH</SUBACCTSEC>
+		<SUBACCTFUND>CASH</SUBACCTFUND>
+	</INVEXPENSE>
+	<JRNLSEC>
+		<INVTRAN>
+			<FITID>129837-1112</FITID>
+			<DTTRADE>20170203</DTTRADE>
+		</INVTRAN>
+		<SECID>
+			<UNIQUEID>78462F103</UNIQUEID>
+			<UNIQUEIDTYPE>CUSIP</UNIQUEIDTYPE>
+		</SECID>
+		<UNITS>2300</UNITS>
+		<SUBACCTTO>CASH</SUBACCTTO>
+		<SUBACCTFROM>CASH</SUBACCTFROM>
+	</JRNLSEC>
+	<JRNLFUND>
+		<INVTRAN>
+			<FITID>129837-1112</FITID>
+			<DTTRADE>20170203</DTTRADE>
+		</INVTRAN>
+		<TOTAL>2300</TOTAL>
+		<SUBACCTTO>CASH</SUBACCTTO>
+		<SUBACCTFROM>CASH</SUBACCTFROM>
+	</JRNLFUND>
+	<BUYOTHER>
+		<INVBUY>
+			<INVTRAN>
+				<FITID>81818</FITID>
+				<DTTRADE>20170203</DTTRADE>
+			</INVTRAN>
+			<SECID>
+				<UNIQUEID>78462F103</UNIQUEID>
+				<UNIQUEIDTYPE>CUSIP</UNIQUEIDTYPE>
+			</SECID>
+			<UNITS>100</UNITS>
+			<UNITPRICE>229.00</UNITPRICE>
+			<TOTAL>-22090.26</TOTAL>
+			<SUBACCTSEC>CASH</SUBACCTSEC>
+			<SUBACCTFUND>CASH</SUBACCTFUND>
+		</INVBUY>
+	</BUYOTHER>
+	<MARGININTEREST>
+		<INVTRAN>
+			<FITID>129837-1112</FITID>
+			<DTTRADE>20170203</DTTRADE>
+		</INVTRAN>
+		<TOTAL>2300</TOTAL>
+		<SUBACCTFUND>CASH</SUBACCTFUND>
+	</MARGININTEREST>
+	<SELLDEBT>
+		<INVSELL>
+			<INVTRAN>
+				<FITID>129837-1111</FITID>
+				<DTTRADE>20170203</DTTRADE>
+			</INVTRAN>
+			<SECID>
+				<UNIQUEID>78462F103</UNIQUEID>
+				<UNIQUEIDTYPE>CUSIP</UNIQUEIDTYPE>
+			</SECID>
+			<UNITS>100</UNITS>
+			<UNITPRICE>229.00</UNITPRICE>
+			<TOTAL>-22090.26</TOTAL>
+			<SUBACCTSEC>CASH</SUBACCTSEC>
+			<SUBACCTFUND>CASH</SUBACCTFUND>
+		</INVSELL>
+		<SELLREASON>SELL</SELLREASON>
+	</SELLDEBT>
+	<RETOFCAP>
+		<INVTRAN>
+			<FITID>129837-1111</FITID>
+			<DTTRADE>20170203</DTTRADE>
+		</INVTRAN>
+		<SECID>
+			<UNIQUEID>78462F103</UNIQUEID>
+			<UNIQUEIDTYPE>CUSIP</UNIQUEIDTYPE>
+		</SECID>
+		<TOTAL>2300.00</TOTAL>
+		<SUBACCTSEC>CASH</SUBACCTSEC>
+		<SUBACCTFUND>CASH</SUBACCTFUND>
+	</RETOFCAP>
+	<SPLIT>
+		<INVTRAN>
+			<FITID>129837-1111</FITID>
+			<DTTRADE>20170203</DTTRADE>
+		</INVTRAN>
+		<SECID>
+			<UNIQUEID>78462F103</UNIQUEID>
+			<UNIQUEIDTYPE>CUSIP</UNIQUEIDTYPE>
+		</SECID>
+		<SUBACCTSEC>CASH</SUBACCTSEC>
+		<OLDUNITS>100</OLDUNITS>
+		<NEWUNITS>200</NEWUNITS>
+		<NUMERATOR>2</NUMERATOR>
+		<DENOMINATOR>1</DENOMINATOR>
+	</SPLIT>
+	<SELLOTHER>
+		<INVSELL>
+			<INVTRAN>
+				<FITID>129837-1111</FITID>
+				<DTTRADE>20170203</DTTRADE>
+			</INVTRAN>
+			<SECID>
+				<UNIQUEID>78462F103</UNIQUEID>
+				<UNIQUEIDTYPE>CUSIP</UNIQUEIDTYPE>
+			</SECID>
+			<UNITS>100</UNITS>
+			<UNITPRICE>229.00</UNITPRICE>
+			<TOTAL>-22090.26</TOTAL>
+			<SUBACCTSEC>CASH</SUBACCTSEC>
+			<SUBACCTFUND>CASH</SUBACCTFUND>
+		</INVSELL>
+	</SELLOTHER>
+</INVTRANLIST>`
+
+	var units1, unitprice1, commission1, fees1, total1, accrdint, total2, oldunits1, newunits1 ofxgo.Amount
+	units1.SetFrac64(100, 1)
+	unitprice1.SetFrac64(229, 1)
+	commission1.SetFrac64(9, 1)
+	fees1.SetFrac64(26, 100)
+	total1.SetFrac64(-2209026, 100)
+	accrdint.SetFrac64(1012, 10)
+	total2.SetFrac64(2300, 1)
+	oldunits1.SetFrac64(100, 1)
+	newunits1.SetFrac64(200, 1)
+
+	expected := ofxgo.InvTranList{
+		DtStart: *ofxgo.NewDateGMT(2017, 1, 1, 0, 0, 0, 0),
+		DtEnd:   *ofxgo.NewDateGMT(2017, 3, 31, 0, 0, 0, 0),
+		InvTransactions: []ofxgo.InvTransaction{
+			ofxgo.BuyDebt{
+				InvBuy: ofxgo.InvBuy{
+					InvTran: ofxgo.InvTran{
+						FiTId:    "81818",
+						DtTrade:  *ofxgo.NewDateGMT(2017, 2, 3, 0, 0, 0, 0),
+						DtSettle: ofxgo.NewDateGMT(2017, 2, 7, 0, 0, 0, 0),
+					},
+					SecId: ofxgo.SecurityId{
+						UniqueId:     "78462F103",
+						UniqueIdType: "CUSIP",
+					},
+					Units:       units1,
+					UnitPrice:   unitprice1,
+					Commission:  commission1,
+					Fees:        fees1,
+					Total:       total1,
+					SubAcctSec:  ofxgo.SubAcctTypeCash,
+					SubAcctFund: ofxgo.SubAcctTypeCash,
+				},
+				AccrdInt: accrdint,
+			},
+			ofxgo.BuyOpt{
+				InvBuy: ofxgo.InvBuy{
+					InvTran: ofxgo.InvTran{
+						FiTId:   "81818",
+						DtTrade: *ofxgo.NewDateGMT(2017, 2, 3, 0, 0, 0, 0),
+						Memo:    "Something to make a memo about",
+					},
+					SecId: ofxgo.SecurityId{
+						UniqueId:     "78462F103",
+						UniqueIdType: "CUSIP",
+					},
+					Units:       units1,
+					UnitPrice:   unitprice1,
+					Total:       total1,
+					SubAcctSec:  ofxgo.SubAcctTypeCash,
+					SubAcctFund: ofxgo.SubAcctTypeCash,
+				},
+				OptBuyType: ofxgo.OptBuyTypeBuyToOpen,
+				ShPerCtrct: 100,
+			},
+			ofxgo.InvExpense{
+				InvTran: ofxgo.InvTran{
+					FiTId:   "129837-1111",
+					DtTrade: *ofxgo.NewDateGMT(2017, 2, 3, 0, 0, 0, 0),
+				},
+				SecId: ofxgo.SecurityId{
+					UniqueId:     "78462F103",
+					UniqueIdType: "CUSIP",
+				},
+				Total:       fees1,
+				SubAcctSec:  ofxgo.SubAcctTypeCash,
+				SubAcctFund: ofxgo.SubAcctTypeCash,
+			},
+			ofxgo.JrnlSec{
+				InvTran: ofxgo.InvTran{
+					FiTId:   "129837-1112",
+					DtTrade: *ofxgo.NewDateGMT(2017, 2, 3, 0, 0, 0, 0),
+				},
+				SecId: ofxgo.SecurityId{
+					UniqueId:     "78462F103",
+					UniqueIdType: "CUSIP",
+				},
+				Units:       total2,
+				SubAcctTo:   ofxgo.SubAcctTypeCash,
+				SubAcctFrom: ofxgo.SubAcctTypeCash,
+			},
+			ofxgo.JrnlFund{
+				InvTran: ofxgo.InvTran{
+					FiTId:   "129837-1112",
+					DtTrade: *ofxgo.NewDateGMT(2017, 2, 3, 0, 0, 0, 0),
+				},
+				Total:       total2,
+				SubAcctTo:   ofxgo.SubAcctTypeCash,
+				SubAcctFrom: ofxgo.SubAcctTypeCash,
+			},
+			ofxgo.BuyOther{
+				InvBuy: ofxgo.InvBuy{
+					InvTran: ofxgo.InvTran{
+						FiTId:   "81818",
+						DtTrade: *ofxgo.NewDateGMT(2017, 2, 3, 0, 0, 0, 0),
+					},
+					SecId: ofxgo.SecurityId{
+						UniqueId:     "78462F103",
+						UniqueIdType: "CUSIP",
+					},
+					Units:       units1,
+					UnitPrice:   unitprice1,
+					Total:       total1,
+					SubAcctSec:  ofxgo.SubAcctTypeCash,
+					SubAcctFund: ofxgo.SubAcctTypeCash,
+				},
+			},
+			ofxgo.MarginInterest{
+				InvTran: ofxgo.InvTran{
+					FiTId:   "129837-1112",
+					DtTrade: *ofxgo.NewDateGMT(2017, 2, 3, 0, 0, 0, 0),
+				},
+				Total:       total2,
+				SubAcctFund: ofxgo.SubAcctTypeCash,
+			},
+			ofxgo.SellDebt{
+				InvSell: ofxgo.InvSell{
+					InvTran: ofxgo.InvTran{
+						FiTId:   "129837-1111",
+						DtTrade: *ofxgo.NewDateGMT(2017, 2, 3, 0, 0, 0, 0),
+					},
+					SecId: ofxgo.SecurityId{
+						UniqueId:     "78462F103",
+						UniqueIdType: "CUSIP",
+					},
+					Units:       units1,
+					UnitPrice:   unitprice1,
+					Total:       total1,
+					SubAcctSec:  ofxgo.SubAcctTypeCash,
+					SubAcctFund: ofxgo.SubAcctTypeCash,
+				},
+				SellReason: ofxgo.SellReasonSell,
+			},
+			ofxgo.RetOfCap{
+				InvTran: ofxgo.InvTran{
+					FiTId:   "129837-1111",
+					DtTrade: *ofxgo.NewDateGMT(2017, 2, 3, 0, 0, 0, 0),
+				},
+				SecId: ofxgo.SecurityId{
+					UniqueId:     "78462F103",
+					UniqueIdType: "CUSIP",
+				},
+				Total:       total2,
+				SubAcctSec:  ofxgo.SubAcctTypeCash,
+				SubAcctFund: ofxgo.SubAcctTypeCash,
+			},
+			ofxgo.Split{
+				InvTran: ofxgo.InvTran{
+					FiTId:   "129837-1111",
+					DtTrade: *ofxgo.NewDateGMT(2017, 2, 3, 0, 0, 0, 0),
+				},
+				SecId: ofxgo.SecurityId{
+					UniqueId:     "78462F103",
+					UniqueIdType: "CUSIP",
+				},
+				SubAcctSec:  ofxgo.SubAcctTypeCash,
+				OldUnits:    oldunits1,
+				NewUnits:    newunits1,
+				Numerator:   2,
+				Denominator: 1,
+			},
+			ofxgo.SellOther{
+				InvSell: ofxgo.InvSell{
+					InvTran: ofxgo.InvTran{
+						FiTId:   "129837-1111",
+						DtTrade: *ofxgo.NewDateGMT(2017, 2, 3, 0, 0, 0, 0),
+					},
+					SecId: ofxgo.SecurityId{
+						UniqueId:     "78462F103",
+						UniqueIdType: "CUSIP",
+					},
+					Units:       units1,
+					UnitPrice:   unitprice1,
+					Total:       total1,
+					SubAcctSec:  ofxgo.SubAcctTypeCash,
+					SubAcctFund: ofxgo.SubAcctTypeCash,
+				},
+			},
+		},
+	}
+
+	var actual ofxgo.InvTranList
+	err := xml.Unmarshal([]byte(input), &actual)
+	if err != nil {
+		t.Fatalf("Unexpected error unmarshalling InvTranList: %s\n", err)
+	}
+	checkEqual(t, "InvTranList", reflect.ValueOf(&expected), reflect.ValueOf(&actual))
 }
