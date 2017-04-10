@@ -46,7 +46,7 @@ func TestStatusCodeMeaning(t *testing.T) {
 
 	s.Code = 999
 	if meaning, err := s.CodeMeaning(); len(meaning) != 0 || err == nil {
-		t.Fatalf("Status.CodeMeaning unexpectedly succeeded with invalid Code\n", err)
+		t.Fatalf("Status.CodeMeaning unexpectedly succeeded with invalid Code\n")
 	}
 }
 
@@ -61,6 +61,6 @@ func TestStatusCodeConditions(t *testing.T) {
 
 	s.Code = 999
 	if conditions, err := s.CodeConditions(); len(conditions) != 0 || err == nil {
-		t.Fatalf("Status.CodeConditions unexpectedly succeeded with invalid Code\n", err)
+		t.Fatalf("Status.CodeConditions unexpectedly succeeded with invalid Code\n")
 	}
 }
