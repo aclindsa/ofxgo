@@ -1481,3 +1481,377 @@ func TestUnmarshalPositionList(t *testing.T) {
 	}
 	checkEqual(t, "PositionList", reflect.ValueOf(&expected), reflect.ValueOf(&actual))
 }
+
+func TestUnmarshalOOList(t *testing.T) {
+	input := `<INVOOLIST>
+	<OOBUYDEBT>
+		<OO>
+			<FITID>76464632</FITID>
+			<SECID>
+				<UNIQUEID>922908645</UNIQUEID>
+				<UNIQUEIDTYPE>CUSIP</UNIQUEIDTYPE>
+			</SECID>
+			<DTPLACED>20170310124445</DTPLACED>
+			<UNITS>10</UNITS>
+			<SUBACCT>CASH</SUBACCT>
+			<DURATION>DAY</DURATION>
+			<RESTRICTION>NONE</RESTRICTION>
+		</OO>
+		<AUCTION>Y</AUCTION>
+	</OOBUYDEBT>
+	<OOBUYMF>
+		<OO>
+			<FITID>76464632</FITID>
+			<SECID>
+				<UNIQUEID>922908645</UNIQUEID>
+				<UNIQUEIDTYPE>CUSIP</UNIQUEIDTYPE>
+			</SECID>
+			<DTPLACED>20170310124445</DTPLACED>
+			<UNITS>10</UNITS>
+			<SUBACCT>CASH</SUBACCT>
+			<DURATION>GOODTILCANCEL</DURATION>
+			<RESTRICTION>NONE</RESTRICTION>
+			<LIMITPRICE>168.50</LIMITPRICE>
+		</OO>
+		<BUYTYPE>BUY</BUYTYPE>
+		<UNITTYPE>SHARES</UNITTYPE>
+	</OOBUYMF>
+	<OOBUYOPT>
+		<OO>
+			<FITID>999387423</FITID>
+			<SECID>
+				<UNIQUEID>899422348</UNIQUEID>
+				<UNIQUEIDTYPE>CUSIP</UNIQUEIDTYPE>
+			</SECID>
+			<DTPLACED>20170324031900</DTPLACED>
+			<UNITS>25</UNITS>
+			<SUBACCT>CASH</SUBACCT>
+			<DURATION>GOODTILCANCEL</DURATION>
+			<RESTRICTION>ALLORNONE</RESTRICTION>
+			<LIMITPRICE>19.75</LIMITPRICE>
+		</OO>
+		<OPTBUYTYPE>BUYTOCLOSE</OPTBUYTYPE>
+	</OOBUYOPT>
+	<OOBUYSTOCK>
+		<OO>
+			<FITID>999387423</FITID>
+			<SECID>
+				<UNIQUEID>899422348</UNIQUEID>
+				<UNIQUEIDTYPE>CUSIP</UNIQUEIDTYPE>
+			</SECID>
+			<DTPLACED>20170324031900</DTPLACED>
+			<UNITS>25</UNITS>
+			<SUBACCT>CASH</SUBACCT>
+			<DURATION>GOODTILCANCEL</DURATION>
+			<RESTRICTION>ALLORNONE</RESTRICTION>
+			<LIMITPRICE>19.75</LIMITPRICE>
+		</OO>
+		<BUYTYPE>BUY</BUYTYPE>
+	</OOBUYSTOCK>
+	<OOBUYOTHER>
+		<OO>
+			<FITID>999387423</FITID>
+			<SECID>
+				<UNIQUEID>899422348</UNIQUEID>
+				<UNIQUEIDTYPE>CUSIP</UNIQUEIDTYPE>
+			</SECID>
+			<DTPLACED>20170324031900</DTPLACED>
+			<UNITS>25</UNITS>
+			<SUBACCT>CASH</SUBACCT>
+			<DURATION>GOODTILCANCEL</DURATION>
+			<RESTRICTION>ALLORNONE</RESTRICTION>
+			<LIMITPRICE>19.75</LIMITPRICE>
+		</OO>
+		<UNITTYPE>CURRENCY</UNITTYPE>
+	</OOBUYOTHER>
+	<OOSELLDEBT>
+		<OO>
+			<FITID>999387423</FITID>
+			<SECID>
+				<UNIQUEID>899422348</UNIQUEID>
+				<UNIQUEIDTYPE>CUSIP</UNIQUEIDTYPE>
+			</SECID>
+			<DTPLACED>20170324031900</DTPLACED>
+			<UNITS>25</UNITS>
+			<SUBACCT>CASH</SUBACCT>
+			<DURATION>GOODTILCANCEL</DURATION>
+			<RESTRICTION>ALLORNONE</RESTRICTION>
+		</OO>
+	</OOSELLDEBT>
+	<OOSELLMF>
+		<OO>
+			<FITID>999387423</FITID>
+			<SECID>
+				<UNIQUEID>899422348</UNIQUEID>
+				<UNIQUEIDTYPE>CUSIP</UNIQUEIDTYPE>
+			</SECID>
+			<DTPLACED>20170324031900</DTPLACED>
+			<UNITS>25</UNITS>
+			<SUBACCT>CASH</SUBACCT>
+			<DURATION>GOODTILCANCEL</DURATION>
+			<RESTRICTION>ALLORNONE</RESTRICTION>
+		</OO>
+		<SELLTYPE>SELLSHORT</SELLTYPE>
+		<UNITTYPE>SHARES
+		</UNITTYPE>
+		<SELLALL>Y</SELLALL>
+	</OOSELLMF>
+	<OOSELLOPT>
+		<OO>
+			<FITID>999387423</FITID>
+			<SECID>
+				<UNIQUEID>899422348</UNIQUEID>
+				<UNIQUEIDTYPE>CUSIP</UNIQUEIDTYPE>
+			</SECID>
+			<DTPLACED>20170324031900</DTPLACED>
+			<UNITS>25</UNITS>
+			<SUBACCT>CASH</SUBACCT>
+			<DURATION>GOODTILCANCEL</DURATION>
+			<RESTRICTION>ALLORNONE</RESTRICTION>
+		</OO>
+		<OPTSELLTYPE>SELLTOOPEN</OPTSELLTYPE>
+	</OOSELLOPT>
+	<OOSELLOTHER>
+		<OO>
+			<FITID>999387423</FITID>
+			<SECID>
+				<UNIQUEID>899422348</UNIQUEID>
+				<UNIQUEIDTYPE>CUSIP</UNIQUEIDTYPE>
+			</SECID>
+			<DTPLACED>20170324031900</DTPLACED>
+			<UNITS>25</UNITS>
+			<SUBACCT>CASH</SUBACCT>
+			<DURATION>GOODTILCANCEL</DURATION>
+			<RESTRICTION>ALLORNONE</RESTRICTION>
+		</OO>
+		<UNITTYPE>SHARES</UNITTYPE>
+	</OOSELLOTHER>
+	<OOSELLSTOCK>
+		<OO>
+			<FITID>999387423</FITID>
+			<SECID>
+				<UNIQUEID>899422348</UNIQUEID>
+				<UNIQUEIDTYPE>CUSIP</UNIQUEIDTYPE>
+			</SECID>
+			<DTPLACED>20170324031900</DTPLACED>
+			<UNITS>25</UNITS>
+			<SUBACCT>CASH</SUBACCT>
+			<DURATION>GOODTILCANCEL</DURATION>
+			<RESTRICTION>ALLORNONE</RESTRICTION>
+		</OO>
+		<SELLTYPE>SELL</SELLTYPE>
+	</OOSELLSTOCK>
+	<SWITCHMF>
+		<OO>
+			<FITID>999387423</FITID>
+			<SECID>
+				<UNIQUEID>899422348</UNIQUEID>
+				<UNIQUEIDTYPE>CUSIP</UNIQUEIDTYPE>
+			</SECID>
+			<DTPLACED>20170324031900</DTPLACED>
+			<UNITS>25</UNITS>
+			<SUBACCT>CASH</SUBACCT>
+			<DURATION>GOODTILCANCEL</DURATION>
+			<RESTRICTION>ALLORNONE</RESTRICTION>
+		</OO>
+		<SECID>
+			<UNIQUEID>899422389</UNIQUEID>
+			<UNIQUEIDTYPE>CUSIP</UNIQUEIDTYPE>
+		</SECID>
+		<UNITTYPE>CURRENCY</UNITTYPE>
+		<SWITCHALL>N</SWITCHALL>
+	</SWITCHMF>
+</INVOOLIST>`
+
+	var oounits1, oolimitprice1, oounits2, oolimitprice2 ofxgo.Amount
+	oounits1.SetFrac64(10, 1)
+	oolimitprice1.SetFrac64(16850, 100)
+	oounits2.SetFrac64(25, 1)
+	oolimitprice2.SetFrac64(1975, 100)
+
+	expected := ofxgo.OOList{
+		ofxgo.OOBuyDebt{
+			OO: ofxgo.OO{
+				FiTId: "76464632",
+				SecId: ofxgo.SecurityId{
+					UniqueId:     "922908645",
+					UniqueIdType: "CUSIP",
+				},
+				DtPlaced:    *ofxgo.NewDateGMT(2017, 3, 10, 12, 44, 45, 0),
+				Units:       oounits1,
+				SubAcct:     ofxgo.SubAcctTypeCash,
+				Duration:    ofxgo.DurationDay,
+				Restriction: ofxgo.RestrictionNone,
+			},
+			Auction: true,
+		},
+		ofxgo.OOBuyMF{
+			OO: ofxgo.OO{
+				FiTId: "76464632",
+				SecId: ofxgo.SecurityId{
+					UniqueId:     "922908645",
+					UniqueIdType: "CUSIP",
+				},
+				DtPlaced:    *ofxgo.NewDateGMT(2017, 3, 10, 12, 44, 45, 0),
+				Units:       oounits1,
+				SubAcct:     ofxgo.SubAcctTypeCash,
+				Duration:    ofxgo.DurationGoodTilCancel,
+				Restriction: ofxgo.RestrictionNone,
+				LimitPrice:  oolimitprice1,
+			},
+			BuyType:  ofxgo.BuyTypeBuy,
+			UnitType: ofxgo.UnitTypeShares,
+		},
+		ofxgo.OOBuyOpt{
+			OO: ofxgo.OO{
+				FiTId: "999387423",
+				SecId: ofxgo.SecurityId{
+					UniqueId:     "899422348",
+					UniqueIdType: "CUSIP",
+				},
+				DtPlaced:    *ofxgo.NewDateGMT(2017, 3, 24, 3, 19, 0, 0),
+				Units:       oounits2,
+				SubAcct:     ofxgo.SubAcctTypeCash,
+				Duration:    ofxgo.DurationGoodTilCancel,
+				Restriction: ofxgo.RestrictionAllOrNone,
+				LimitPrice:  oolimitprice2,
+			},
+			OptBuyType: ofxgo.OptBuyTypeBuyToClose,
+		},
+		ofxgo.OOBuyStock{
+			OO: ofxgo.OO{
+				FiTId: "999387423",
+				SecId: ofxgo.SecurityId{
+					UniqueId:     "899422348",
+					UniqueIdType: "CUSIP",
+				},
+				DtPlaced:    *ofxgo.NewDateGMT(2017, 3, 24, 3, 19, 0, 0),
+				Units:       oounits2,
+				SubAcct:     ofxgo.SubAcctTypeCash,
+				Duration:    ofxgo.DurationGoodTilCancel,
+				Restriction: ofxgo.RestrictionAllOrNone,
+				LimitPrice:  oolimitprice2,
+			},
+			BuyType: ofxgo.BuyTypeBuy,
+		},
+		ofxgo.OOBuyOther{
+			OO: ofxgo.OO{
+				FiTId: "999387423",
+				SecId: ofxgo.SecurityId{
+					UniqueId:     "899422348",
+					UniqueIdType: "CUSIP",
+				},
+				DtPlaced:    *ofxgo.NewDateGMT(2017, 3, 24, 3, 19, 0, 0),
+				Units:       oounits2,
+				SubAcct:     ofxgo.SubAcctTypeCash,
+				Duration:    ofxgo.DurationGoodTilCancel,
+				Restriction: ofxgo.RestrictionAllOrNone,
+				LimitPrice:  oolimitprice2,
+			},
+			UnitType: ofxgo.UnitTypeCurrency,
+		},
+		ofxgo.OOSellDebt{
+			OO: ofxgo.OO{
+				FiTId: "999387423",
+				SecId: ofxgo.SecurityId{
+					UniqueId:     "899422348",
+					UniqueIdType: "CUSIP",
+				},
+				DtPlaced:    *ofxgo.NewDateGMT(2017, 3, 24, 3, 19, 0, 0),
+				Units:       oounits2,
+				SubAcct:     ofxgo.SubAcctTypeCash,
+				Duration:    ofxgo.DurationGoodTilCancel,
+				Restriction: ofxgo.RestrictionAllOrNone,
+			},
+		},
+		ofxgo.OOSellMF{
+			OO: ofxgo.OO{
+				FiTId: "999387423",
+				SecId: ofxgo.SecurityId{
+					UniqueId:     "899422348",
+					UniqueIdType: "CUSIP",
+				},
+				DtPlaced:    *ofxgo.NewDateGMT(2017, 3, 24, 3, 19, 0, 0),
+				Units:       oounits2,
+				SubAcct:     ofxgo.SubAcctTypeCash,
+				Duration:    ofxgo.DurationGoodTilCancel,
+				Restriction: ofxgo.RestrictionAllOrNone,
+			},
+			SellType: ofxgo.SellTypeSellShort,
+			UnitType: ofxgo.UnitTypeShares,
+			SellAll:  true,
+		},
+		ofxgo.OOSellOpt{
+			OO: ofxgo.OO{
+				FiTId: "999387423",
+				SecId: ofxgo.SecurityId{
+					UniqueId:     "899422348",
+					UniqueIdType: "CUSIP",
+				},
+				DtPlaced:    *ofxgo.NewDateGMT(2017, 3, 24, 3, 19, 0, 0),
+				Units:       oounits2,
+				SubAcct:     ofxgo.SubAcctTypeCash,
+				Duration:    ofxgo.DurationGoodTilCancel,
+				Restriction: ofxgo.RestrictionAllOrNone,
+			},
+			OptSellType: ofxgo.OptSellTypeSellToOpen,
+		},
+		ofxgo.OOSellOther{
+			OO: ofxgo.OO{
+				FiTId: "999387423",
+				SecId: ofxgo.SecurityId{
+					UniqueId:     "899422348",
+					UniqueIdType: "CUSIP",
+				},
+				DtPlaced:    *ofxgo.NewDateGMT(2017, 3, 24, 3, 19, 0, 0),
+				Units:       oounits2,
+				SubAcct:     ofxgo.SubAcctTypeCash,
+				Duration:    ofxgo.DurationGoodTilCancel,
+				Restriction: ofxgo.RestrictionAllOrNone,
+			},
+			UnitType: ofxgo.UnitTypeShares,
+		},
+		ofxgo.OOSellStock{
+			OO: ofxgo.OO{
+				FiTId: "999387423",
+				SecId: ofxgo.SecurityId{
+					UniqueId:     "899422348",
+					UniqueIdType: "CUSIP",
+				},
+				DtPlaced:    *ofxgo.NewDateGMT(2017, 3, 24, 3, 19, 0, 0),
+				Units:       oounits2,
+				SubAcct:     ofxgo.SubAcctTypeCash,
+				Duration:    ofxgo.DurationGoodTilCancel,
+				Restriction: ofxgo.RestrictionAllOrNone,
+			},
+			SellType: ofxgo.SellTypeSell,
+		},
+		ofxgo.OOSwitchMF{
+			OO: ofxgo.OO{
+				FiTId: "999387423",
+				SecId: ofxgo.SecurityId{
+					UniqueId:     "899422348",
+					UniqueIdType: "CUSIP",
+				},
+				DtPlaced:    *ofxgo.NewDateGMT(2017, 3, 24, 3, 19, 0, 0),
+				Units:       oounits2,
+				SubAcct:     ofxgo.SubAcctTypeCash,
+				Duration:    ofxgo.DurationGoodTilCancel,
+				Restriction: ofxgo.RestrictionAllOrNone,
+			},
+			SecId: ofxgo.SecurityId{
+				UniqueId:     "899422389",
+				UniqueIdType: "CUSIP",
+			},
+			UnitType:  ofxgo.UnitTypeCurrency,
+			SwitchAll: false,
+		},
+	}
+
+	var actual ofxgo.OOList
+	err := xml.Unmarshal([]byte(input), &actual)
+	if err != nil {
+		t.Fatalf("Unexpected error unmarshalling OOList: %s\n", err)
+	}
+	checkEqual(t, "OOList", reflect.ValueOf(&expected), reflect.ValueOf(&actual))
+}
