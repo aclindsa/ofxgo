@@ -590,7 +590,7 @@ type MFPosition struct {
 	UnitsStreet Amount      `xml:"UNITSSTREET,omitempty"` // Units in the FI’s street name
 	UnitsUser   Amount      `xml:"UNITSUSER,omitempty"`   // Units in the user's name directly
 	ReinvDiv    Boolean     `xml:"REINVDIV,omitempty"`    // Reinvest dividends
-	ReinCG      Boolean     `xml:"REINVCG,omitempty"`     // Reinvest capital gains
+	ReinvCG     Boolean     `xml:"REINVCG,omitempty"`     // Reinvest capital gains
 }
 
 func (p MFPosition) PositionType() string {

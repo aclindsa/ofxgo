@@ -1308,3 +1308,176 @@ func TestUnmarshalInvTranList(t *testing.T) {
 	}
 	checkEqual(t, "InvTranList", reflect.ValueOf(&expected), reflect.ValueOf(&actual))
 }
+
+func TestUnmarshalPositionList(t *testing.T) {
+	input := `<INVPOSLIST>
+	<POSOTHER>
+		<INVPOS>
+			<SECID>
+				<UNIQUEID>78462F103</UNIQUEID>
+				<UNIQUEIDTYPE>CUSIP</UNIQUEIDTYPE>
+			</SECID>
+			<HELDINACCT>CASH</HELDINACCT>
+			<POSTYPE>LONG</POSTYPE>
+			<UNITS>1</UNITS>
+			<UNITPRICE>3</UNITPRICE>
+			<MKTVAL>300</MKTVAL>
+			<DTPRICEASOF>20170331160000</DTPRICEASOF>
+		</INVPOS>
+	</POSOTHER>
+	<POSSTOCK>
+		<INVPOS>
+			<SECID>
+				<UNIQUEID>78462F103</UNIQUEID>
+				<UNIQUEIDTYPE>CUSIP</UNIQUEIDTYPE>
+			</SECID>
+			<HELDINACCT>CASH</HELDINACCT>
+			<POSTYPE>SHORT</POSTYPE>
+			<UNITS>200</UNITS>
+			<UNITPRICE>235.74</UNITPRICE>
+			<MKTVAL>47148.00</MKTVAL>
+			<DTPRICEASOF>20170331160000</DTPRICEASOF>
+			<MEMO>Price as of previous close</MEMO>
+		</INVPOS>
+		<REINVDIV>Y</REINVDIV>
+	</POSSTOCK>
+	<POSDEBT>
+		<INVPOS>
+			<SECID>
+				<UNIQUEID>129887339</UNIQUEID>
+				<UNIQUEIDTYPE>CUSIP</UNIQUEIDTYPE>
+			</SECID>
+			<HELDINACCT>CASH</HELDINACCT>
+			<POSTYPE>LONG</POSTYPE>
+			<UNITS>1</UNITS>
+			<UNITPRICE>3</UNITPRICE>
+			<MKTVAL>300</MKTVAL>
+			<DTPRICEASOF>20170331160000</DTPRICEASOF>
+		</INVPOS>
+	</POSDEBT>
+	<POSOPT>
+		<INVPOS>
+			<SECID>
+				<UNIQUEID>129887339</UNIQUEID>
+				<UNIQUEIDTYPE>CUSIP</UNIQUEIDTYPE>
+			</SECID>
+			<HELDINACCT>CASH</HELDINACCT>
+			<POSTYPE>LONG</POSTYPE>
+			<UNITS>1</UNITS>
+			<UNITPRICE>3</UNITPRICE>
+			<MKTVAL>300</MKTVAL>
+			<DTPRICEASOF>20170331160000</DTPRICEASOF>
+		</INVPOS>
+	</POSOPT>
+	<POSMF>
+		<INVPOS>
+			<SECID>
+				<UNIQUEID>78462F103</UNIQUEID>
+				<UNIQUEIDTYPE>CUSIP</UNIQUEIDTYPE>
+			</SECID>
+			<HELDINACCT>CASH</HELDINACCT>
+			<POSTYPE>LONG</POSTYPE>
+			<UNITS>200</UNITS>
+			<UNITPRICE>235.74</UNITPRICE>
+			<MKTVAL>47148.00</MKTVAL>
+			<DTPRICEASOF>20170331160000</DTPRICEASOF>
+			<MEMO>Price as of previous close</MEMO>
+		</INVPOS>
+		<REINVDIV>Y</REINVDIV>
+		<REINVCG>N</REINVCG>
+	</POSMF>
+</INVPOSLIST>`
+
+	var posunits1, posunitprice1, posmktval1, posunits2, posunitprice2, posmktval2 ofxgo.Amount
+	posunits1.SetFrac64(200, 1)
+	posunitprice1.SetFrac64(23574, 100)
+	posmktval1.SetFrac64(47148, 1)
+	posunits2.SetFrac64(1, 1)
+	posunitprice2.SetFrac64(3, 1)
+	posmktval2.SetFrac64(300, 1)
+
+	expected := ofxgo.PositionList{
+		ofxgo.OtherPosition{
+			InvPos: ofxgo.InvPosition{
+				SecId: ofxgo.SecurityId{
+					UniqueId:     "78462F103",
+					UniqueIdType: "CUSIP",
+				},
+				HeldInAcct:  ofxgo.SubAcctTypeCash,
+				PosType:     ofxgo.PosTypeLong,
+				Units:       posunits2,
+				UnitPrice:   posunitprice2,
+				MktVal:      posmktval2,
+				DtPriceAsOf: *ofxgo.NewDateGMT(2017, 3, 31, 16, 0, 0, 0),
+			},
+		},
+		ofxgo.StockPosition{
+			InvPos: ofxgo.InvPosition{
+				SecId: ofxgo.SecurityId{
+					UniqueId:     "78462F103",
+					UniqueIdType: "CUSIP",
+				},
+				HeldInAcct:  ofxgo.SubAcctTypeCash,
+				PosType:     ofxgo.PosTypeShort,
+				Units:       posunits1,
+				UnitPrice:   posunitprice1,
+				MktVal:      posmktval1,
+				DtPriceAsOf: *ofxgo.NewDateGMT(2017, 3, 31, 16, 0, 0, 0),
+				Memo:        "Price as of previous close",
+			},
+			ReinvDiv: true,
+		},
+		ofxgo.DebtPosition{
+			InvPos: ofxgo.InvPosition{
+				SecId: ofxgo.SecurityId{
+					UniqueId:     "129887339",
+					UniqueIdType: "CUSIP",
+				},
+				HeldInAcct:  ofxgo.SubAcctTypeCash,
+				PosType:     ofxgo.PosTypeLong,
+				Units:       posunits2,
+				UnitPrice:   posunitprice2,
+				MktVal:      posmktval2,
+				DtPriceAsOf: *ofxgo.NewDateGMT(2017, 3, 31, 16, 0, 0, 0),
+			},
+		},
+		ofxgo.OptPosition{
+			InvPos: ofxgo.InvPosition{
+				SecId: ofxgo.SecurityId{
+					UniqueId:     "129887339",
+					UniqueIdType: "CUSIP",
+				},
+				HeldInAcct:  ofxgo.SubAcctTypeCash,
+				PosType:     ofxgo.PosTypeLong,
+				Units:       posunits2,
+				UnitPrice:   posunitprice2,
+				MktVal:      posmktval2,
+				DtPriceAsOf: *ofxgo.NewDateGMT(2017, 3, 31, 16, 0, 0, 0),
+			},
+		},
+		ofxgo.MFPosition{
+			InvPos: ofxgo.InvPosition{
+				SecId: ofxgo.SecurityId{
+					UniqueId:     "78462F103",
+					UniqueIdType: "CUSIP",
+				},
+				HeldInAcct:  ofxgo.SubAcctTypeCash,
+				PosType:     ofxgo.PosTypeLong,
+				Units:       posunits1,
+				UnitPrice:   posunitprice1,
+				MktVal:      posmktval1,
+				DtPriceAsOf: *ofxgo.NewDateGMT(2017, 3, 31, 16, 0, 0, 0),
+				Memo:        "Price as of previous close",
+			},
+			ReinvDiv: true,
+			ReinvCG:  false,
+		},
+	}
+
+	var actual ofxgo.PositionList
+	err := xml.Unmarshal([]byte(input), &actual)
+	if err != nil {
+		t.Fatalf("Unexpected error unmarshalling PositionList: %s\n", err)
+	}
+	checkEqual(t, "PositionList", reflect.ValueOf(&expected), reflect.ValueOf(&actual))
+}
