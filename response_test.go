@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"github.com/aclindsa/go/src/encoding/xml"
 	"github.com/aclindsa/ofxgo"
+	"os"
+	"path/filepath"
 	"reflect"
 	"testing"
 )
@@ -132,4 +134,25 @@ func checkEqual(t *testing.T, fieldName string, expected, actual reflect.Value) 
 
 func checkResponsesEqual(t *testing.T, expected, actual *ofxgo.Response) {
 	checkEqual(t, "", reflect.ValueOf(expected), reflect.ValueOf(actual))
+}
+
+func TestValidSamples(t *testing.T) {
+	fn := func(path string, info os.FileInfo, err error) error {
+		if info.IsDir() {
+			return nil
+		} else if filepath.Ext(path) != ".ofx" {
+			return nil
+		}
+
+		file, err := os.Open(path)
+		if err != nil {
+			t.Fatalf("Unexpected error opening %s: %s\n", path, err)
+		}
+		_, err = ofxgo.ParseResponse(file)
+		if err != nil {
+			t.Fatalf("Unexpected error parsing OFX response in %s: %s\n", path, err)
+		}
+		return nil
+	}
+	filepath.Walk("samples/valid_responses", fn)
 }
