@@ -69,6 +69,8 @@ func (e *acctType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	return nil
 }
 
+// NewAcctType returns returns an 'enum' value of type acctType given its
+// string representation
 func NewAcctType(s string) (acctType, error) {
 	var e acctType
 	err := e.FromString(s)
@@ -147,6 +149,8 @@ func (e *trnType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	return nil
 }
 
+// NewTrnType returns returns an 'enum' value of type trnType given its
+// string representation
 func NewTrnType(s string) (trnType, error) {
 	var e trnType
 	err := e.FromString(s)
@@ -210,6 +214,8 @@ func (e *imageType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	return nil
 }
 
+// NewImageType returns returns an 'enum' value of type imageType given its
+// string representation
 func NewImageType(s string) (imageType, error) {
 	var e imageType
 	err := e.FromString(s)
@@ -273,6 +279,8 @@ func (e *imageRefType) MarshalXML(enc *xml.Encoder, start xml.StartElement) erro
 	return nil
 }
 
+// NewImageRefType returns returns an 'enum' value of type imageRefType given its
+// string representation
 func NewImageRefType(s string) (imageRefType, error) {
 	var e imageRefType
 	err := e.FromString(s)
@@ -336,6 +344,8 @@ func (e *checkSup) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	return nil
 }
 
+// NewCheckSup returns returns an 'enum' value of type checkSup given its
+// string representation
 func NewCheckSup(s string) (checkSup, error) {
 	var e checkSup
 	err := e.FromString(s)
@@ -398,6 +408,8 @@ func (e *correctAction) MarshalXML(enc *xml.Encoder, start xml.StartElement) err
 	return nil
 }
 
+// NewCorrectAction returns returns an 'enum' value of type correctAction given its
+// string representation
 func NewCorrectAction(s string) (correctAction, error) {
 	var e correctAction
 	err := e.FromString(s)
@@ -461,6 +473,8 @@ func (e *balType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	return nil
 }
 
+// NewBalType returns returns an 'enum' value of type balType given its
+// string representation
 func NewBalType(s string) (balType, error) {
 	var e balType
 	err := e.FromString(s)
@@ -528,6 +542,8 @@ func (e *inv401kSource) MarshalXML(enc *xml.Encoder, start xml.StartElement) err
 	return nil
 }
 
+// NewInv401kSource returns returns an 'enum' value of type inv401kSource given its
+// string representation
 func NewInv401kSource(s string) (inv401kSource, error) {
 	var e inv401kSource
 	err := e.FromString(s)
@@ -592,6 +608,8 @@ func (e *subAcctType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error
 	return nil
 }
 
+// NewSubAcctType returns returns an 'enum' value of type subAcctType given its
+// string representation
 func NewSubAcctType(s string) (subAcctType, error) {
 	var e subAcctType
 	err := e.FromString(s)
@@ -654,6 +672,8 @@ func (e *buyType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	return nil
 }
 
+// NewBuyType returns returns an 'enum' value of type buyType given its
+// string representation
 func NewBuyType(s string) (buyType, error) {
 	var e buyType
 	err := e.FromString(s)
@@ -717,6 +737,8 @@ func (e *optAction) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	return nil
 }
 
+// NewOptAction returns returns an 'enum' value of type optAction given its
+// string representation
 func NewOptAction(s string) (optAction, error) {
 	var e optAction
 	err := e.FromString(s)
@@ -779,6 +801,8 @@ func (e *tferAction) MarshalXML(enc *xml.Encoder, start xml.StartElement) error 
 	return nil
 }
 
+// NewTferAction returns returns an 'enum' value of type tferAction given its
+// string representation
 func NewTferAction(s string) (tferAction, error) {
 	var e tferAction
 	err := e.FromString(s)
@@ -841,6 +865,8 @@ func (e *posType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	return nil
 }
 
+// NewPosType returns returns an 'enum' value of type posType given its
+// string representation
 func NewPosType(s string) (posType, error) {
 	var e posType
 	err := e.FromString(s)
@@ -903,6 +929,8 @@ func (e *secured) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	return nil
 }
 
+// NewSecured returns returns an 'enum' value of type secured given its
+// string representation
 func NewSecured(s string) (secured, error) {
 	var e secured
 	err := e.FromString(s)
@@ -966,6 +994,8 @@ func (e *duration) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	return nil
 }
 
+// NewDuration returns returns an 'enum' value of type duration given its
+// string representation
 func NewDuration(s string) (duration, error) {
 	var e duration
 	err := e.FromString(s)
@@ -1029,6 +1059,8 @@ func (e *restriction) MarshalXML(enc *xml.Encoder, start xml.StartElement) error
 	return nil
 }
 
+// NewRestriction returns returns an 'enum' value of type restriction given its
+// string representation
 func NewRestriction(s string) (restriction, error) {
 	var e restriction
 	err := e.FromString(s)
@@ -1091,6 +1123,8 @@ func (e *unitType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	return nil
 }
 
+// NewUnitType returns returns an 'enum' value of type unitType given its
+// string representation
 func NewUnitType(s string) (unitType, error) {
 	var e unitType
 	err := e.FromString(s)
@@ -1153,6 +1187,8 @@ func (e *optBuyType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error 
 	return nil
 }
 
+// NewOptBuyType returns returns an 'enum' value of type optBuyType given its
+// string representation
 func NewOptBuyType(s string) (optBuyType, error) {
 	var e optBuyType
 	err := e.FromString(s)
@@ -1215,6 +1251,8 @@ func (e *sellType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	return nil
 }
 
+// NewSellType returns returns an 'enum' value of type sellType given its
+// string representation
 func NewSellType(s string) (sellType, error) {
 	var e sellType
 	err := e.FromString(s)
@@ -1285,6 +1323,8 @@ func (e *loanPmtFreq) MarshalXML(enc *xml.Encoder, start xml.StartElement) error
 	return nil
 }
 
+// NewLoanPmtFreq returns returns an 'enum' value of type loanPmtFreq given its
+// string representation
 func NewLoanPmtFreq(s string) (loanPmtFreq, error) {
 	var e loanPmtFreq
 	err := e.FromString(s)
@@ -1350,6 +1390,8 @@ func (e *incomeType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error 
 	return nil
 }
 
+// NewIncomeType returns returns an 'enum' value of type incomeType given its
+// string representation
 func NewIncomeType(s string) (incomeType, error) {
 	var e incomeType
 	err := e.FromString(s)
@@ -1413,6 +1455,8 @@ func (e *sellReason) MarshalXML(enc *xml.Encoder, start xml.StartElement) error 
 	return nil
 }
 
+// NewSellReason returns returns an 'enum' value of type sellReason given its
+// string representation
 func NewSellReason(s string) (sellReason, error) {
 	var e sellReason
 	err := e.FromString(s)
@@ -1475,6 +1519,8 @@ func (e *optSellType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error
 	return nil
 }
 
+// NewOptSellType returns returns an 'enum' value of type optSellType given its
+// string representation
 func NewOptSellType(s string) (optSellType, error) {
 	var e optSellType
 	err := e.FromString(s)
@@ -1539,6 +1585,8 @@ func (e *relType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	return nil
 }
 
+// NewRelType returns returns an 'enum' value of type relType given its
+// string representation
 func NewRelType(s string) (relType, error) {
 	var e relType
 	err := e.FromString(s)
@@ -1603,6 +1651,8 @@ func (e *charType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	return nil
 }
 
+// NewCharType returns returns an 'enum' value of type charType given its
+// string representation
 func NewCharType(s string) (charType, error) {
 	var e charType
 	err := e.FromString(s)
@@ -1665,6 +1715,8 @@ func (e *syncMode) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	return nil
 }
 
+// NewSyncMode returns returns an 'enum' value of type syncMode given its
+// string representation
 func NewSyncMode(s string) (syncMode, error) {
 	var e syncMode
 	err := e.FromString(s)
@@ -1727,6 +1779,8 @@ func (e *debtType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	return nil
 }
 
+// NewDebtType returns returns an 'enum' value of type debtType given its
+// string representation
 func NewDebtType(s string) (debtType, error) {
 	var e debtType
 	err := e.FromString(s)
@@ -1791,6 +1845,8 @@ func (e *debtClass) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	return nil
 }
 
+// NewDebtClass returns returns an 'enum' value of type debtClass given its
+// string representation
 func NewDebtClass(s string) (debtClass, error) {
 	var e debtClass
 	err := e.FromString(s)
@@ -1856,6 +1912,8 @@ func (e *couponFreq) MarshalXML(enc *xml.Encoder, start xml.StartElement) error 
 	return nil
 }
 
+// NewCouponFreq returns returns an 'enum' value of type couponFreq given its
+// string representation
 func NewCouponFreq(s string) (couponFreq, error) {
 	var e couponFreq
 	err := e.FromString(s)
@@ -1920,6 +1978,8 @@ func (e *callType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	return nil
 }
 
+// NewCallType returns returns an 'enum' value of type callType given its
+// string representation
 func NewCallType(s string) (callType, error) {
 	var e callType
 	err := e.FromString(s)
@@ -1987,6 +2047,8 @@ func (e *assetClass) MarshalXML(enc *xml.Encoder, start xml.StartElement) error 
 	return nil
 }
 
+// NewAssetClass returns returns an 'enum' value of type assetClass given its
+// string representation
 func NewAssetClass(s string) (assetClass, error) {
 	var e assetClass
 	err := e.FromString(s)
@@ -2050,6 +2112,8 @@ func (e *mfType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	return nil
 }
 
+// NewMfType returns returns an 'enum' value of type mfType given its
+// string representation
 func NewMfType(s string) (mfType, error) {
 	var e mfType
 	err := e.FromString(s)
@@ -2112,6 +2176,8 @@ func (e *optType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	return nil
 }
 
+// NewOptType returns returns an 'enum' value of type optType given its
+// string representation
 func NewOptType(s string) (optType, error) {
 	var e optType
 	err := e.FromString(s)
@@ -2176,6 +2242,8 @@ func (e *stockType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	return nil
 }
 
+// NewStockType returns returns an 'enum' value of type stockType given its
+// string representation
 func NewStockType(s string) (stockType, error) {
 	var e stockType
 	err := e.FromString(s)
@@ -2238,6 +2306,8 @@ func (e *ofxSec) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	return nil
 }
 
+// NewOfxSec returns returns an 'enum' value of type ofxSec given its
+// string representation
 func NewOfxSec(s string) (ofxSec, error) {
 	var e ofxSec
 	err := e.FromString(s)
@@ -2303,6 +2373,8 @@ func (e *holderType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error 
 	return nil
 }
 
+// NewHolderType returns returns an 'enum' value of type holderType given its
+// string representation
 func NewHolderType(s string) (holderType, error) {
 	var e holderType
 	err := e.FromString(s)
@@ -2367,6 +2439,8 @@ func (e *acctClassification) MarshalXML(enc *xml.Encoder, start xml.StartElement
 	return nil
 }
 
+// NewAcctClassification returns returns an 'enum' value of type acctClassification given its
+// string representation
 func NewAcctClassification(s string) (acctClassification, error) {
 	var e acctClassification
 	err := e.FromString(s)
@@ -2430,6 +2504,8 @@ func (e *svcStatus) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	return nil
 }
 
+// NewSvcStatus returns returns an 'enum' value of type svcStatus given its
+// string representation
 func NewSvcStatus(s string) (svcStatus, error) {
 	var e svcStatus
 	err := e.FromString(s)
@@ -2501,6 +2577,8 @@ func (e *usProductType) MarshalXML(enc *xml.Encoder, start xml.StartElement) err
 	return nil
 }
 
+// NewUsProductType returns returns an 'enum' value of type usProductType given its
+// string representation
 func NewUsProductType(s string) (usProductType, error) {
 	var e usProductType
 	err := e.FromString(s)

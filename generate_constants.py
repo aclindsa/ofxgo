@@ -119,6 +119,8 @@ func (e *{enumLower}) MarshalXML(enc *xml.Encoder, start xml.StartElement) error
 	return nil
 }}
 
+// New{enum} returns returns an 'enum' value of type {enumLower} given its
+// string representation
 func New{enum}(s string) ({enumLower}, error) {{
 	var e {enumLower}
 	err := e.FromString(s)

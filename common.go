@@ -216,6 +216,8 @@ var statusMeanings = map[Int][3]string{
 	16503: {"Unable to get URL", "ERROR", "The server was unable to retrieve the information at this URL (e.g., an HTTP 400 or 500 series error)."},
 }
 
+// Status represents the status of a Response (both top-level Request objects,
+// and *Response objects)
 type Status struct {
 	XMLName  xml.Name `xml:"STATUS"`
 	Code     Int      `xml:"CODE"`
@@ -223,6 +225,7 @@ type Status struct {
 	Message  String   `xml:"MESSAGE,omitempty"`
 }
 
+// Valid returns whether the Status is valid according to the OFX spec
 func (s *Status) Valid() (bool, error) {
 	switch s.Severity {
 	case "INFO", "WARN", "ERROR":
@@ -241,7 +244,7 @@ func (s *Status) Valid() (bool, error) {
 	return true, nil
 }
 
-// Return the meaning of the current status Code
+// CodeMeaning returns the meaning of the current status Code
 func (s *Status) CodeMeaning() (string, error) {
 	if arr, ok := statusMeanings[s.Code]; ok {
 		return arr[0], nil
@@ -249,8 +252,8 @@ func (s *Status) CodeMeaning() (string, error) {
 	return "", errors.New("Unknown OFX status code")
 }
 
-// Return the conditions under which an OFX server is expected to return the
-// current status Code
+// CodeConditions returns the conditions under which an OFX server is expected
+// to return the current status Code
 func (s *Status) CodeConditions() (string, error) {
 	if arr, ok := statusMeanings[s.Code]; ok {
 		return arr[2], nil
@@ -258,6 +261,7 @@ func (s *Status) CodeConditions() (string, error) {
 	return "", errors.New("Unknown OFX status code")
 }
 
+// BankAcct represents the identifying information for one bank account
 type BankAcct struct {
 	XMLName  xml.Name // BANKACCTTO or BANKACCTFROM
 	BankId   String   `xml:"BANKID"`
@@ -267,18 +271,21 @@ type BankAcct struct {
 	AcctKey  String   `xml:"ACCTKEY,omitempty"` // Unused in USA
 }
 
+// CCAcct represents the identifying information for one checking account
 type CCAcct struct {
 	XMLName xml.Name // CCACCTTO or CCACCTFROM
 	AcctId  String   `xml:"ACCTID"`
 	AcctKey String   `xml:"ACCTKEY,omitempty"` // Unused in USA
 }
 
+// InvAcct represents the identifying information for one investment account
 type InvAcct struct {
 	XMLName  xml.Name // INVACCTTO or INVACCTFROM
 	BrokerId String   `xml:"BROKERID"`
 	AcctId   String   `xml:"ACCTID"`
 }
 
+// Currency represents one ISO-4217 currency
 type Currency struct {
 	XMLName xml.Name // CURRENCY or ORIGCURRENCY
 	CurRate Amount   `xml:"CURRATE"` // Ratio of <CURDEF> currency to <CURSYM> currency
