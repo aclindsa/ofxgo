@@ -1,21 +1,22 @@
+# OFXGo
+
 [![Go Report Card](https://goreportcard.com/badge/github.com/aclindsa/ofxgo)](https://goreportcard.com/report/github.com/aclindsa/ofxgo)
 [![Build Status](https://travis-ci.org/aclindsa/ofxgo.svg?branch=master)](https://travis-ci.org/aclindsa/ofxgo)
 [![Coverage Status](https://coveralls.io/repos/github/aclindsa/ofxgo/badge.svg?branch=master)](https://coveralls.io/github/aclindsa/ofxgo?branch=master)
 [![GoDoc](https://godoc.org/github.com/aclindsa/ofxgo?status.svg)](https://godoc.org/github.com/aclindsa/ofxgo)
 
-# ofxgo
-
-A library for querying OFX servers and parsing the responses and an example
-command-line client.
+**OFXGo** is a library for querying OFX servers and/or parsing the responses. It
+also provides an example command-line client to demonstrate the use of the
+library.
 
 ## Goals
 
 The main purpose of this project is to provide a library to make it easier to
 query financial information with OFX from the comfort of Golang, without having
 to marshal/unmarshal to SGML or XML. The library does *not* intend to abstract
-away all of the details of the OFX specification, which would be very difficult
-to do well. Instead, it exposes the OFX SGML/XML hierarchy as structs which
-mostly resemble it.
+away all of the details of the OFX specification, which would be difficult to do
+well. Instead, it exposes the OFX SGML/XML hierarchy as structs which mostly
+resemble it.
 
 Because the OFX specification is rather... 'comprehensive,' it can be difficult
 for those unfamiliar with it to figure out where to start. To that end, I have
