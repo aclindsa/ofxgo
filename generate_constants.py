@@ -2,53 +2,53 @@
 
 enums = {
     # Bank/general
-    "AcctType": ["Checking", "Savings", "MoneyMrkt", "CreditLine", "CD"],
-    "TrnType": ["Credit", "Debit", "Int", "Div", "Fee", "SrvChg", "Dep", "ATM", "POS", "Xfer", "Check", "Payment", "Cash", "DirectDep", "DirectDebit", "RepeatPmt", "Hold", "Other"],
-    "ImageType": ["Statement", "Transaction", "Tax"],
-    "ImageRefType": ["Opaque", "URL", "FormURL"],
-    "CheckSup": ["FrontOnly", "BackOnly", "FrontAndBack"],
-    "CorrectAction": ["Delete", "Replace"],
-    "BalType": ["Dollar", "Percent", "Number"],
+    "AcctType": (["Checking", "Savings", "MoneyMrkt", "CreditLine", "CD"], "types of bank accounts"),
+    "TrnType": (["Credit", "Debit", "Int", "Div", "Fee", "SrvChg", "Dep", "ATM", "POS", "Xfer", "Check", "Payment", "Cash", "DirectDep", "DirectDebit", "RepeatPmt", "Hold", "Other"], "types of transactions. INT, ATM, and POS depend on the signage of the account."),
+    "ImageType": (["Statement", "Transaction", "Tax"], "what this image contains"),
+    "ImageRefType": (["Opaque", "URL", "FormURL"], "the type of reference to the image"),
+    "CheckSup": (["FrontOnly", "BackOnly", "FrontAndBack"], "what portions of the check this image contains"),
+    "CorrectAction": (["Delete", "Replace"], "whether this transaction correction replaces or deletes the transaction matching its CORRECTFITID"),
+    "BalType": (["Dollar", "Percent", "Number"], "how this BAL's VALUE field should be interpreted"),
 
     # InvStmt
-    "Inv401kSource": ["PreTax", "AfterTax", "Match", "ProfitSharing", "Rollover", "OtherVest", "OtherNonVest"],
-    "SubAcctType": ["Cash", "Margin", "Short", "Other"], # used in fields named: SubAcctSec, HeldInAcct, SubAcctFund
-    "BuyType": ["Buy", "BuyToCover"],
-    "OptAction": ["Exercise", "Assign", "Expire"],
-    "TferAction": ["In", "Out"],
-    "PosType": ["Long", "Short"],
-    "Secured": ["Naked", "Covered"],
-    "Duration": ["Day", "GoodTilCancel", "Immediate"],
-    "Restriction": ["AllOrNone", "MinUnits", "None"],
-    "UnitType": ["Shares", "Currency"],
-    "OptBuyType": ["BuyToOpen", "BuyToClose"],
-    "SellType": ["Sell", "SellShort"],
-    "LoanPmtFreq": ["Weekly", "Biweekly", "TwiceMonthly", "Monthly", "FourWeeks", "BiMonthly", "Quarterly", "Semiannually", "Annually", "Other"],
-    "IncomeType": ["CGLong", "CGShort", "Div", "Interest", "Misc"],
-    "SellReason": ["Call", "Sell", "Maturity"],
-    "OptSellType": ["SellToClose", "SellToOpen"],
-    "RelType": ["Spread", "Straddle", "None", "Other"],
+    "Inv401kSource": (["PreTax", "AfterTax", "Match", "ProfitSharing", "Rollover", "OtherVest", "OtherNonVest"], "the source of money used for this security in a 401(k) account. Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST."),
+    "SubAcctType": (["Cash", "Margin", "Short", "Other"], "the sub-account type for a source and/or destination of a transaction. Used in fields named SubAcctFrom, SubAcctTo, SubAcctSec, SubAcctFund, HeldInAcct."),
+    "BuyType": (["Buy", "BuyToCover"], "types of purchases"),
+    "OptAction": (["Exercise", "Assign", "Expire"], "types of actions for options"),
+    "TferAction": (["In", "Out"], "whether the transfer is into or out of this account"),
+    "PosType": (["Long", "Short"], "position type"),
+    "Secured": (["Naked", "Covered"], "how an option is secured"),
+    "Duration": (["Day", "GoodTilCancel", "Immediate"], "how long the investment order is good for"),
+    "Restriction": (["AllOrNone", "MinUnits", "None"], "a special restriction on an investment order"),
+    "UnitType": (["Shares", "Currency"], "type of the UNITS value"),
+    "OptBuyType": (["BuyToOpen", "BuyToClose"], "types of purchases for options"),
+    "SellType": (["Sell", "SellShort"], "types of sales"),
+    "LoanPmtFreq": (["Weekly", "Biweekly", "TwiceMonthly", "Monthly", "FourWeeks", "BiMonthly", "Quarterly", "Semiannually", "Annually", "Other"], "the frequency of loan payments"),
+    "IncomeType": (["CGLong", "CGShort", "Div", "Interest", "Misc"], "types of investment income"),
+ "SellReason": (["Call", "Sell", "Maturity"], "the reason the sell of a debt security was generated: CALL (the debt was called), SELL (the debt was sold), MATURITY (the debt reached maturity)"),
+    "OptSellType": (["SellToClose", "SellToOpen"], "types of sales for options"),
+    "RelType": (["Spread", "Straddle", "None", "Other"], "related option transaction types"),
 
     # Prof
-    "CharType": ["AlphaOnly", "NumericOnly", "AlphaOrNumeric", "AlphaAndNumeric"],
-    "SyncMode": ["Full", "Lite"],
+    "CharType": (["AlphaOnly", "NumericOnly", "AlphaOrNumeric", "AlphaAndNumeric"], "types of characters allowed in password"),
+    "SyncMode": (["Full", "Lite"], "data synchronization mode supported (see OFX spec for more details)"),
+    "OfxSec": (["None", "Type 1"], "the type of application-level security required for the message set"),
 
     # SecList
-    "DebtType": ["Coupon", "Zero"],
-    "DebtClass": ["Treasury", "Municipal", "Corporate", "Other"],
-    "CouponFreq": ["Monthly", "Quarterly", "Semiannual", "Annual", "Other"],
-    "CallType": ["Call", "Put", "Prefund", "Maturity"],
-    "AssetClass": ["DomesticBond", "IntlBond", "LargeStock", "SmallStock", "IntlStock", "MoneyMrkt", "Other"],
-    "MfType": ["OpenEnd", "CloseEnd", "Other"],
-    "OptType": ["Put", "Call"],
-    "StockType": ["Common", "Preferred", "Convertible", "Other"],
-    "OfxSec": ["None", "Type 1"],
+    "DebtType": (["Coupon", "Zero"], "debt type"),
+    "DebtClass": (["Treasury", "Municipal", "Corporate", "Other"], "the class of debt"),
+    "CouponFreq": (["Monthly", "Quarterly", "Semiannual", "Annual", "Other"], "when debt coupons mature"),
+    "CallType": (["Call", "Put", "Prefund", "Maturity"], "type of next call (for a debt)"),
+    "AssetClass": (["DomesticBond", "IntlBond", "LargeStock", "SmallStock", "IntlStock", "MoneyMrkt", "Other"], "type of asset classes"),
+    "MfType": (["OpenEnd", "CloseEnd", "Other"], "types of mutual funds"),
+    "OptType": (["Put", "Call"], "whether the option is a PUT or a CALL"),
+    "StockType": (["Common", "Preferred", "Convertible", "Other"], "types of stock"),
 
     # Signup
-    "HolderType": ["Individual", "Joint", "Custodial", "Trust", "Other"],
-    "AcctClassification": ["Personal", "Business", "Corporate", "Other"],
-    "SvcStatus": ["Avail", "Pend", "Active"],
-    "UsProductType": ["401K", "403B", "IRA", "KEOGH", "Other", "SARSEP", "Simple", "Normal", "TDA", "Trust", "UGMA"],
+    "HolderType": (["Individual", "Joint", "Custodial", "Trust", "Other"], "how the account is held"),
+    "AcctClassification": (["Personal", "Business", "Corporate", "Other"], "the type of an account"),
+    "SvcStatus": (["Avail", "Pend", "Active"], "the status of the account: AVAIL = Available, but not yet requested, PEND = Requested, but not yet available, ACTIVE = In use"),
+    "UsProductType": (["401K", "403B", "IRA", "KEOGH", "Other", "SARSEP", "Simple", "Normal", "TDA", "Trust", "UGMA"], "type of investment account (in the US)"),
 }
 
 header = """package ofxgo
@@ -70,6 +70,7 @@ import (
 template = """
 type {enumLower} uint
 
+// {enum}* constants represent {comment}
 const (
 {constNames})
 
@@ -136,22 +137,25 @@ with open("constants.go", 'w') as f:
 
     for enum in enums:
         enumLower = enum[:1].lower() + enum[1:].replace(" ", "")
-        firstValue = enum+enums[enum][0].replace(" ", "")
-        lastValue = enum+enums[enum][-1].replace(" ", "")
+        firstValue = enum+enums[enum][0][0].replace(" ", "")
+        lastValue = enum+enums[enum][0][-1].replace(" ", "")
+
+        comment = enums[enum][1]
 
         constNames = "\t{firstValue} {enumLower} = 1 + iota\n".format(
             enum=enum,
             firstValue=firstValue,
             enumLower=enumLower)
-        for value in enums[enum][1:]:
+        for value in enums[enum][0][1:]:
             constNames += "\t{enum}{value}\n".format(
                 enum=enum,
                 value=value.replace(" ", ""))
 
-        upperValueString = "\", \"".join([s.upper() for s in enums[enum]])
+        upperValueString = "\", \"".join([s.upper() for s in enums[enum][0]])
 
         f.write(template.format(enum=enum,
                               enumLower=enumLower,
+                              comment=comment,
                               firstValue=firstValue,
                               lastValue=lastValue,
                               constNames=constNames,
@@ -224,8 +228,8 @@ with open("constants_test.go", 'w') as f:
     f.write(test_header)
 
     for enum in enums:
-        firstValueUpper = enums[enum][0].upper()
-        lastValueUpper = enums[enum][-1].upper()
+        firstValueUpper = enums[enum][0][0].upper()
+        lastValueUpper = enums[enum][0][-1].upper()
         f.write(test_template.format(enum=enum,
                               firstValueUpper=firstValueUpper,
                               lastValueUpper=lastValueUpper))

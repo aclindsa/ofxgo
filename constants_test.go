@@ -1183,6 +1183,51 @@ func TestSyncMode(t *testing.T) {
 	}
 }
 
+func TestOfxSec(t *testing.T) {
+	e, err := ofxgo.NewOfxSec("NONE")
+	if err != nil {
+		t.Fatalf("Unexpected error creating new OfxSec from string \"NONE\"\n")
+	}
+	if !e.Valid() {
+		t.Fatalf("OfxSec unexpectedly invalid\n")
+	}
+	err = e.FromString("TYPE 1")
+	if err != nil {
+		t.Fatalf("Unexpected error on OfxSec.FromString(\"TYPE 1\")\n")
+	}
+	if e.String() != "TYPE 1" {
+		t.Fatalf("OfxSec.String() expected to be \"TYPE 1\"\n")
+	}
+
+	marshalHelper(t, "TYPE 1", &e)
+
+	overwritten, err := ofxgo.NewOfxSec("THISWILLNEVERBEAVALIDENUMSTRING")
+	if err == nil {
+		t.Fatalf("Expected error creating new OfxSec from string \"THISWILLNEVERBEAVALIDENUMSTRING\"\n")
+	}
+	if overwritten.Valid() {
+		t.Fatalf("OfxSec created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
+	}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
+		t.Fatalf("OfxSec created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
+	}
+
+	b, err := xml.Marshal(&overwritten)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(OfxSec): %s\n", err)
+	}
+	if string(b) != "" {
+		t.Fatalf("Expected empty string, got '%s'\n", string(b))
+	}
+
+	unmarshalHelper(t, "TYPE 1", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {
+		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
+}
+
 func TestDebtType(t *testing.T) {
 	e, err := ofxgo.NewDebtType("COUPON")
 	if err != nil {
@@ -1536,51 +1581,6 @@ func TestStockType(t *testing.T) {
 	}
 
 	unmarshalHelper(t, "OTHER", &e, &overwritten)
-
-	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
-	if err == nil {
-		t.Fatalf("Expected error unmarshalling garbage value\n")
-	}
-}
-
-func TestOfxSec(t *testing.T) {
-	e, err := ofxgo.NewOfxSec("NONE")
-	if err != nil {
-		t.Fatalf("Unexpected error creating new OfxSec from string \"NONE\"\n")
-	}
-	if !e.Valid() {
-		t.Fatalf("OfxSec unexpectedly invalid\n")
-	}
-	err = e.FromString("TYPE 1")
-	if err != nil {
-		t.Fatalf("Unexpected error on OfxSec.FromString(\"TYPE 1\")\n")
-	}
-	if e.String() != "TYPE 1" {
-		t.Fatalf("OfxSec.String() expected to be \"TYPE 1\"\n")
-	}
-
-	marshalHelper(t, "TYPE 1", &e)
-
-	overwritten, err := ofxgo.NewOfxSec("THISWILLNEVERBEAVALIDENUMSTRING")
-	if err == nil {
-		t.Fatalf("Expected error creating new OfxSec from string \"THISWILLNEVERBEAVALIDENUMSTRING\"\n")
-	}
-	if overwritten.Valid() {
-		t.Fatalf("OfxSec created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
-	}
-	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
-		t.Fatalf("OfxSec created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
-	}
-
-	b, err := xml.Marshal(&overwritten)
-	if err != nil {
-		t.Fatalf("Unexpected error on xml.Marshal(OfxSec): %s\n", err)
-	}
-	if string(b) != "" {
-		t.Fatalf("Expected empty string, got '%s'\n", string(b))
-	}
-
-	unmarshalHelper(t, "TYPE 1", &e, &overwritten)
 
 	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
 	if err == nil {

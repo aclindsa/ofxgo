@@ -15,6 +15,7 @@ import (
 
 type acctType uint
 
+// AcctType* constants represent types of bank accounts
 const (
 	AcctTypeChecking acctType = 1 + iota
 	AcctTypeSavings
@@ -82,6 +83,7 @@ func NewAcctType(s string) (acctType, error) {
 
 type trnType uint
 
+// TrnType* constants represent types of transactions. INT, ATM, and POS depend on the signage of the account.
 const (
 	TrnTypeCredit trnType = 1 + iota
 	TrnTypeDebit
@@ -162,6 +164,7 @@ func NewTrnType(s string) (trnType, error) {
 
 type imageType uint
 
+// ImageType* constants represent what this image contains
 const (
 	ImageTypeStatement imageType = 1 + iota
 	ImageTypeTransaction
@@ -227,6 +230,7 @@ func NewImageType(s string) (imageType, error) {
 
 type imageRefType uint
 
+// ImageRefType* constants represent the type of reference to the image
 const (
 	ImageRefTypeOpaque imageRefType = 1 + iota
 	ImageRefTypeURL
@@ -292,6 +296,7 @@ func NewImageRefType(s string) (imageRefType, error) {
 
 type checkSup uint
 
+// CheckSup* constants represent what portions of the check this image contains
 const (
 	CheckSupFrontOnly checkSup = 1 + iota
 	CheckSupBackOnly
@@ -357,6 +362,7 @@ func NewCheckSup(s string) (checkSup, error) {
 
 type correctAction uint
 
+// CorrectAction* constants represent whether this transaction correction replaces or deletes the transaction matching its CORRECTFITID
 const (
 	CorrectActionDelete correctAction = 1 + iota
 	CorrectActionReplace
@@ -421,6 +427,7 @@ func NewCorrectAction(s string) (correctAction, error) {
 
 type balType uint
 
+// BalType* constants represent how this BAL's VALUE field should be interpreted
 const (
 	BalTypeDollar balType = 1 + iota
 	BalTypePercent
@@ -486,6 +493,7 @@ func NewBalType(s string) (balType, error) {
 
 type inv401kSource uint
 
+// Inv401kSource* constants represent the source of money used for this security in a 401(k) account. Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST.
 const (
 	Inv401kSourcePreTax inv401kSource = 1 + iota
 	Inv401kSourceAfterTax
@@ -555,6 +563,7 @@ func NewInv401kSource(s string) (inv401kSource, error) {
 
 type subAcctType uint
 
+// SubAcctType* constants represent the sub-account type for a source and/or destination of a transaction. Used in fields named SubAcctFrom, SubAcctTo, SubAcctSec, SubAcctFund, HeldInAcct.
 const (
 	SubAcctTypeCash subAcctType = 1 + iota
 	SubAcctTypeMargin
@@ -621,6 +630,7 @@ func NewSubAcctType(s string) (subAcctType, error) {
 
 type buyType uint
 
+// BuyType* constants represent types of purchases
 const (
 	BuyTypeBuy buyType = 1 + iota
 	BuyTypeBuyToCover
@@ -685,6 +695,7 @@ func NewBuyType(s string) (buyType, error) {
 
 type optAction uint
 
+// OptAction* constants represent types of actions for options
 const (
 	OptActionExercise optAction = 1 + iota
 	OptActionAssign
@@ -750,6 +761,7 @@ func NewOptAction(s string) (optAction, error) {
 
 type tferAction uint
 
+// TferAction* constants represent whether the transfer is into or out of this account
 const (
 	TferActionIn tferAction = 1 + iota
 	TferActionOut
@@ -814,6 +826,7 @@ func NewTferAction(s string) (tferAction, error) {
 
 type posType uint
 
+// PosType* constants represent position type
 const (
 	PosTypeLong posType = 1 + iota
 	PosTypeShort
@@ -878,6 +891,7 @@ func NewPosType(s string) (posType, error) {
 
 type secured uint
 
+// Secured* constants represent how an option is secured
 const (
 	SecuredNaked secured = 1 + iota
 	SecuredCovered
@@ -942,6 +956,7 @@ func NewSecured(s string) (secured, error) {
 
 type duration uint
 
+// Duration* constants represent how long the investment order is good for
 const (
 	DurationDay duration = 1 + iota
 	DurationGoodTilCancel
@@ -1007,6 +1022,7 @@ func NewDuration(s string) (duration, error) {
 
 type restriction uint
 
+// Restriction* constants represent a special restriction on an investment order
 const (
 	RestrictionAllOrNone restriction = 1 + iota
 	RestrictionMinUnits
@@ -1072,6 +1088,7 @@ func NewRestriction(s string) (restriction, error) {
 
 type unitType uint
 
+// UnitType* constants represent type of the UNITS value
 const (
 	UnitTypeShares unitType = 1 + iota
 	UnitTypeCurrency
@@ -1136,6 +1153,7 @@ func NewUnitType(s string) (unitType, error) {
 
 type optBuyType uint
 
+// OptBuyType* constants represent types of purchases for options
 const (
 	OptBuyTypeBuyToOpen optBuyType = 1 + iota
 	OptBuyTypeBuyToClose
@@ -1200,6 +1218,7 @@ func NewOptBuyType(s string) (optBuyType, error) {
 
 type sellType uint
 
+// SellType* constants represent types of sales
 const (
 	SellTypeSell sellType = 1 + iota
 	SellTypeSellShort
@@ -1264,6 +1283,7 @@ func NewSellType(s string) (sellType, error) {
 
 type loanPmtFreq uint
 
+// LoanPmtFreq* constants represent the frequency of loan payments
 const (
 	LoanPmtFreqWeekly loanPmtFreq = 1 + iota
 	LoanPmtFreqBiweekly
@@ -1336,6 +1356,7 @@ func NewLoanPmtFreq(s string) (loanPmtFreq, error) {
 
 type incomeType uint
 
+// IncomeType* constants represent types of investment income
 const (
 	IncomeTypeCGLong incomeType = 1 + iota
 	IncomeTypeCGShort
@@ -1403,6 +1424,7 @@ func NewIncomeType(s string) (incomeType, error) {
 
 type sellReason uint
 
+// SellReason* constants represent the reason the sell of a debt security was generated: CALL (the debt was called), SELL (the debt was sold), MATURITY (the debt reached maturity)
 const (
 	SellReasonCall sellReason = 1 + iota
 	SellReasonSell
@@ -1468,6 +1490,7 @@ func NewSellReason(s string) (sellReason, error) {
 
 type optSellType uint
 
+// OptSellType* constants represent types of sales for options
 const (
 	OptSellTypeSellToClose optSellType = 1 + iota
 	OptSellTypeSellToOpen
@@ -1532,6 +1555,7 @@ func NewOptSellType(s string) (optSellType, error) {
 
 type relType uint
 
+// RelType* constants represent related option transaction types
 const (
 	RelTypeSpread relType = 1 + iota
 	RelTypeStraddle
@@ -1598,6 +1622,7 @@ func NewRelType(s string) (relType, error) {
 
 type charType uint
 
+// CharType* constants represent types of characters allowed in password
 const (
 	CharTypeAlphaOnly charType = 1 + iota
 	CharTypeNumericOnly
@@ -1664,6 +1689,7 @@ func NewCharType(s string) (charType, error) {
 
 type syncMode uint
 
+// SyncMode* constants represent data synchronization mode supported (see OFX spec for more details)
 const (
 	SyncModeFull syncMode = 1 + iota
 	SyncModeLite
@@ -1726,8 +1752,74 @@ func NewSyncMode(s string) (syncMode, error) {
 	return e, nil
 }
 
+type ofxSec uint
+
+// OfxSec* constants represent the type of application-level security required for the message set
+const (
+	OfxSecNone ofxSec = 1 + iota
+	OfxSecType1
+)
+
+var ofxSecs = [...]string{"NONE", "TYPE 1"}
+
+func (e ofxSec) Valid() bool {
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
+	return e >= OfxSecNone && e <= OfxSecType1
+}
+
+func (e ofxSec) String() string {
+	if e.Valid() {
+		return ofxSecs[e-1]
+	}
+	return fmt.Sprintf("invalid ofxSec (%d)", e)
+}
+
+func (e *ofxSec) FromString(in string) error {
+	value := strings.TrimSpace(in)
+
+	for i, s := range ofxSecs {
+		if s == value {
+			*e = ofxSec(i + 1)
+			return nil
+		}
+	}
+	*e = 0
+	return errors.New("Invalid OfxSec: \"" + in + "\"")
+}
+
+func (e *ofxSec) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	var value string
+	err := d.DecodeElement(&value, &start)
+	if err != nil {
+		return err
+	}
+
+	return e.FromString(value)
+}
+
+func (e *ofxSec) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+	if !e.Valid() {
+		return nil
+	}
+	enc.EncodeElement(ofxSecs[*e-1], start)
+	return nil
+}
+
+// NewOfxSec returns returns an 'enum' value of type ofxSec given its
+// string representation
+func NewOfxSec(s string) (ofxSec, error) {
+	var e ofxSec
+	err := e.FromString(s)
+	if err != nil {
+		return 0, err
+	}
+	return e, nil
+}
+
 type debtType uint
 
+// DebtType* constants represent debt type
 const (
 	DebtTypeCoupon debtType = 1 + iota
 	DebtTypeZero
@@ -1792,6 +1884,7 @@ func NewDebtType(s string) (debtType, error) {
 
 type debtClass uint
 
+// DebtClass* constants represent the class of debt
 const (
 	DebtClassTreasury debtClass = 1 + iota
 	DebtClassMunicipal
@@ -1858,6 +1951,7 @@ func NewDebtClass(s string) (debtClass, error) {
 
 type couponFreq uint
 
+// CouponFreq* constants represent when debt coupons mature
 const (
 	CouponFreqMonthly couponFreq = 1 + iota
 	CouponFreqQuarterly
@@ -1925,6 +2019,7 @@ func NewCouponFreq(s string) (couponFreq, error) {
 
 type callType uint
 
+// CallType* constants represent type of next call (for a debt)
 const (
 	CallTypeCall callType = 1 + iota
 	CallTypePut
@@ -1991,6 +2086,7 @@ func NewCallType(s string) (callType, error) {
 
 type assetClass uint
 
+// AssetClass* constants represent type of asset classes
 const (
 	AssetClassDomesticBond assetClass = 1 + iota
 	AssetClassIntlBond
@@ -2060,6 +2156,7 @@ func NewAssetClass(s string) (assetClass, error) {
 
 type mfType uint
 
+// MfType* constants represent types of mutual funds
 const (
 	MfTypeOpenEnd mfType = 1 + iota
 	MfTypeCloseEnd
@@ -2125,6 +2222,7 @@ func NewMfType(s string) (mfType, error) {
 
 type optType uint
 
+// OptType* constants represent whether the option is a PUT or a CALL
 const (
 	OptTypePut optType = 1 + iota
 	OptTypeCall
@@ -2189,6 +2287,7 @@ func NewOptType(s string) (optType, error) {
 
 type stockType uint
 
+// StockType* constants represent types of stock
 const (
 	StockTypeCommon stockType = 1 + iota
 	StockTypePreferred
@@ -2253,72 +2352,9 @@ func NewStockType(s string) (stockType, error) {
 	return e, nil
 }
 
-type ofxSec uint
-
-const (
-	OfxSecNone ofxSec = 1 + iota
-	OfxSecType1
-)
-
-var ofxSecs = [...]string{"NONE", "TYPE 1"}
-
-func (e ofxSec) Valid() bool {
-	// This check is mostly out of paranoia, ensuring e != 0 should be
-	// sufficient
-	return e >= OfxSecNone && e <= OfxSecType1
-}
-
-func (e ofxSec) String() string {
-	if e.Valid() {
-		return ofxSecs[e-1]
-	}
-	return fmt.Sprintf("invalid ofxSec (%d)", e)
-}
-
-func (e *ofxSec) FromString(in string) error {
-	value := strings.TrimSpace(in)
-
-	for i, s := range ofxSecs {
-		if s == value {
-			*e = ofxSec(i + 1)
-			return nil
-		}
-	}
-	*e = 0
-	return errors.New("Invalid OfxSec: \"" + in + "\"")
-}
-
-func (e *ofxSec) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-	var value string
-	err := d.DecodeElement(&value, &start)
-	if err != nil {
-		return err
-	}
-
-	return e.FromString(value)
-}
-
-func (e *ofxSec) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
-	if !e.Valid() {
-		return nil
-	}
-	enc.EncodeElement(ofxSecs[*e-1], start)
-	return nil
-}
-
-// NewOfxSec returns returns an 'enum' value of type ofxSec given its
-// string representation
-func NewOfxSec(s string) (ofxSec, error) {
-	var e ofxSec
-	err := e.FromString(s)
-	if err != nil {
-		return 0, err
-	}
-	return e, nil
-}
-
 type holderType uint
 
+// HolderType* constants represent how the account is held
 const (
 	HolderTypeIndividual holderType = 1 + iota
 	HolderTypeJoint
@@ -2386,6 +2422,7 @@ func NewHolderType(s string) (holderType, error) {
 
 type acctClassification uint
 
+// AcctClassification* constants represent the type of an account
 const (
 	AcctClassificationPersonal acctClassification = 1 + iota
 	AcctClassificationBusiness
@@ -2452,6 +2489,7 @@ func NewAcctClassification(s string) (acctClassification, error) {
 
 type svcStatus uint
 
+// SvcStatus* constants represent the status of the account: AVAIL = Available, but not yet requested, PEND = Requested, but not yet available, ACTIVE = In use
 const (
 	SvcStatusAvail svcStatus = 1 + iota
 	SvcStatusPend
@@ -2517,6 +2555,7 @@ func NewSvcStatus(s string) (svcStatus, error) {
 
 type usProductType uint
 
+// UsProductType* constants represent type of investment account (in the US)
 const (
 	UsProductType401K usProductType = 1 + iota
 	UsProductType403B
