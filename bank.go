@@ -4,6 +4,10 @@ import (
 	"github.com/aclindsa/go/src/encoding/xml"
 )
 
+// StatementRequest represents a request for a bank statement. It is used to
+// request balances and/or transactions for checking, savings, money market,
+// and line of credit accounts. See CCStatementRequest for the analog for
+// credit card accounts.
 type StatementRequest struct {
 	XMLName   xml.Name `xml:"STMTTRNRQ"`
 	TrnUID    UID      `xml:"TRNUID"`
@@ -18,19 +22,25 @@ type StatementRequest struct {
 	IncTranImg     Boolean  `xml:"STMTRQ>INCTRANIMG,omitempty"`     // Include transaction images
 }
 
+// Name returns the name of the top-level transaction XML/SGML element
 func (r *StatementRequest) Name() string {
 	return "STMTTRNRQ"
 }
 
+// Valid returns (true, nil) if this struct would be valid OFX if marshalled
+// into XML/SGML
 func (r *StatementRequest) Valid() (bool, error) {
 	// TODO implement
 	return true, nil
 }
 
+// Type returns which message set this message belongs to (which Request
+// element of type []Message it should appended to)
 func (r *StatementRequest) Type() messageType {
 	return BankRq
 }
 
+// Payee specifies a complete billing address for a payee
 type Payee struct {
 	XMLName    xml.Name `xml:"PAYEE"`
 	Name       String   `xml:"NAME"`
@@ -44,6 +54,8 @@ type Payee struct {
 	Phone      String   `xml:"PHONE"`
 }
 
+// ImageData represents the metadata surrounding a check or other image file,
+// including how to retrieve the image
 type ImageData struct {
 	XMLName      xml.Name     `xml:"IMAGEDATA"`
 	ImageType    imageType    `xml:"IMAGETYPE"`    // One of STATEMENT, TRANSACTION, TAX
@@ -56,6 +68,10 @@ type ImageData struct {
 	CheckSup     checkSup `xml:"CHECKSUP,omitempty"`     // What is contained in check images. One of FRONTONLY, BACKONLY, FRONTANDBACK
 }
 
+// Transaction represents a single banking transaction. At a minimum, it
+// identifies the type of transaction (TrnType) and the date it was posted
+// (DtPosted). Ideally it also provides metadata to help the user recognize
+// this transaction (i.e. CheckNum, Name or Payee, Memo, etc.)
 type Transaction struct {
 	XMLName       xml.Name      `xml:"STMTTRN"`
 	TrnType       trnType       `xml:"TRNTYPE"` // One of CREDIT, DEBIT, INT (interest earned or paid. Note: Depends on signage of amount), DIV, FEE, SRVCHG (service charge), DEP (deposit), ATM (Note: Depends on signage of amount), POS (Note: Depends on signage of amount), XFER, CHECK, PAYMENT, CASH, DIRECTDEP, DIRECTDEBIT, REPEATPMT, OTHER
@@ -63,14 +79,14 @@ type Transaction struct {
 	DtUser        *Date         `xml:"DTUSER,omitempty"`
 	DtAvail       *Date         `xml:"DTAVAIL,omitempty"`
 	TrnAmt        Amount        `xml:"TRNAMT"`
-	FiTId         String        `xml:"FITID"`
+	FiTId         String        `xml:"FITID"`                   // Client uses FITID to detect whether it has previously downloaded the transaction
 	CorrectFiTId  String        `xml:"CORRECTFITID,omitempty"`  // Transaction Id that this transaction corrects, if present
 	CorrectAction correctAction `xml:"CORRECTACTION,omitempty"` // One of DELETE, REPLACE
 	SrvrTId       String        `xml:"SRVRTID,omitempty"`
 	CheckNum      String        `xml:"CHECKNUM,omitempty"`
 	RefNum        String        `xml:"REFNUM,omitempty"`
 	SIC           Int           `xml:"SIC,omitempty"` // Standard Industrial Code
-	PayeeId       String        `xml:"PAYEEID,omitempty"`
+	PayeeID       String        `xml:"PAYEEID,omitempty"`
 	// Note: Servers should provide NAME or PAYEE, but not both
 	Name          String        `xml:"NAME,omitempty"`
 	Payee         *Payee        `xml:"PAYEE,omitempty"`
@@ -84,15 +100,20 @@ type Transaction struct {
 	Inv401kSource inv401kSource `xml:"INV401KSOURCE,omitempty"` // One of PRETAX, AFTERTAX, MATCH, PROFITSHARING, ROLLOVER, OTHERVEST, OTHERNONVEST (Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST.)
 }
 
+// TransactionList represents a list of bank transactions, and also includes
+// the date range its transactions cover.
 type TransactionList struct {
 	XMLName      xml.Name      `xml:"BANKTRANLIST"`
-	DtStart      Date          `xml:"DTSTART"`
-	DtEnd        Date          `xml:"DTEND"`
+	DtStart      Date          `xml:"DTSTART"` // Start date for transaction data
+	DtEnd        Date          `xml:"DTEND"`   // Value that client should send in next <DTSTART> request to ensure that it does not miss any transactions
 	Transactions []Transaction `xml:"STMTTRN,omitempty"`
 }
 
+// PendingTransaction represents a single pending transaction. It is similar to
+// Transaction, but is not finalized (and may never be). For instance, it lacks
+// FiTId and DtPosted fields.
 type PendingTransaction struct {
-	XMLName      xml.Name    `xml:"STMTTRN"`
+	XMLName      xml.Name    `xml:"STMTTRNP"`
 	TrnType      trnType     `xml:"TRNTYPE"` // One of CREDIT, DEBIT, INT (interest earned or paid. Note: Depends on signage of amount), DIV, FEE, SRVCHG (service charge), DEP (deposit), ATM (Note: Depends on signage of amount), POS (Note: Depends on signage of amount), XFER, CHECK, PAYMENT, CASH, DIRECTDEP, DIRECTDEBIT, REPEATPMT, HOLD, OTHER
 	DtTran       Date        `xml:"DTTRAN"`
 	DtExpire     *Date       `xml:"DTEXPIRE,omitempty"` // only valid for TrnType==HOLD, the date the hold will expire
@@ -106,13 +127,15 @@ type PendingTransaction struct {
 	OrigCurrency String      `xml:"ORIGCURRENCY,omitempty"` // If different from CURDEF in STMTTRS
 }
 
-// List of pending transactions
+// PendingTransactionList represents a list of pending transactions, along with
+// the date they were generated
 type PendingTransactionList struct {
 	XMLName      xml.Name             `xml:"BANKTRANLISTP"`
-	DtAsOf       Date                 `xml:"DTASOF"`
+	DtAsOf       Date                 `xml:"DTASOF"` // Date and time this set of pending transactions was generated
 	Transactions []PendingTransaction `xml:"STMTTRNP,omitempty"`
 }
 
+// Balance represents a generic (free-form) balance defined by an FI.
 type Balance struct {
 	XMLName xml.Name `xml:"BAL"`
 	Name    String   `xml:"NAME"`
@@ -129,6 +152,9 @@ type Balance struct {
 	Currency *Currency `xml:"CURRENCY,omitempty"` // if BALTYPE is DOLLAR
 }
 
+// StatementResponse represents a bank account statement, including its
+// balances and possibly transactions. It is a response to StatementRequest, or
+// sometimes provided as part of an OFX file downloaded manually from an FI.
 type StatementResponse struct {
 	XMLName   xml.Name `xml:"STMTTRNRS"`
 	TrnUID    UID      `xml:"TRNUID"`
@@ -149,15 +175,20 @@ type StatementResponse struct {
 	MktgInfo      String                  `xml:"STMTRS>MKTGINFO,omitempty"` // Marketing information
 }
 
+// Name returns the name of the top-level transaction XML/SGML element
 func (sr *StatementResponse) Name() string {
 	return "STMTTRNRS"
 }
 
+// Valid returns (true, nil) if this struct would be valid OFX if marshalled
+// into XML/SGML
 func (sr *StatementResponse) Valid() (bool, error) {
 	//TODO implement
 	return true, nil
 }
 
+// Type returns which message set this message belongs to (which Response
+// element of type []Message it belongs to)
 func (sr *StatementResponse) Type() messageType {
 	return BankRs
 }
