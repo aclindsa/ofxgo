@@ -5,6 +5,9 @@ import (
 	"github.com/aclindsa/go/src/encoding/xml"
 )
 
+// InvStatementRequest allows a customer to request transactions, positions,
+// open orders, and balances. It specifies what types of information to include
+// in hte InvStatementResponse and which account to include it for.
 type InvStatementRequest struct {
 	XMLName   xml.Name `xml:"INVSTMTTRNRQ"`
 	TrnUID    UID      `xml:"TRNUID"`
@@ -24,29 +27,39 @@ type InvStatementRequest struct {
 	IncludeTranImage Boolean `xml:"INVSTMTRQ>INCTRANIMAGE,omitempty"`  // Include transaction images
 }
 
+// Name returns the name of the top-level transaction XML/SGML element
 func (r *InvStatementRequest) Name() string {
 	return "INVSTMTTRNRQ"
 }
 
+// Valid returns (true, nil) if this struct would be valid OFX if marshalled
+// into XML/SGML
 func (r *InvStatementRequest) Valid() (bool, error) {
 	// TODO implement
 	return true, nil
 }
 
+// Type returns which message set this message belongs to (which Request
+// element of type []Message it should appended to)
 func (r *InvStatementRequest) Type() messageType {
 	return InvStmtRq
 }
 
+// InvTran represents generic investment transaction. It is included in both
+// InvBuy and InvSell as well as many of the more specific transaction
+// aggregates.
 type InvTran struct {
 	XMLName       xml.Name `xml:"INVTRAN"`
-	FiTID         String   `xml:"FITID"`
-	SrvrTID       String   `xml:"SRVRTID,omitempty"`
+	FiTID         String   `xml:"FITID"`                   // Unique FI-assigned transaction ID. This ID is used to detect duplicate downloads
+	SrvrTID       String   `xml:"SRVRTID,omitempty"`       // Server assigned transaction ID
 	DtTrade       Date     `xml:"DTTRADE"`                 // trade date; for stock splits, day of record
 	DtSettle      *Date    `xml:"DTSETTLE,omitempty"`      // settlement date; for stock splits, execution date
 	ReversalFiTID String   `xml:"REVERSALFITID,omitempty"` // For a reversal transaction, the FITID of the transaction that is being reversed.
 	Memo          String   `xml:"MEMO,omitempty"`
 }
 
+// InvBuy represents generic investment purchase transaction. It is included
+// in many of the more specific transaction Buy* aggregates below.
 type InvBuy struct {
 	XMLName      xml.Name    `xml:"INVBUY"`
 	InvTran      InvTran     `xml:"INVTRAN"`
@@ -74,6 +87,8 @@ type InvBuy struct {
 	PriorYearContrib Boolean       `xml:"PRIORYEARCONTRIB,omitempty"` // For 401(k) accounts, indicates that this Buy was made with a prior year contribution
 }
 
+// InvSell represents generic investment sale transaction. It is included in
+// many of the more specific transaction Sell* aggregates below.
 type InvSell struct {
 	XMLName      xml.Name    `xml:"INVSELL"`
 	InvTran      InvTran     `xml:"INVTRAN"`
@@ -101,16 +116,19 @@ type InvSell struct {
 	Inv401kSource inv401kSource `xml:"INV401KSOURCE,omitempty"` // Source of money for this transaction. One of PRETAX, AFTERTAX, MATCH, PROFITSHARING, ROLLOVER, OTHERVEST, OTHERNONVEST for 401(k) accounts. Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST
 }
 
+// BuyDebt represents a transaction purchasing a debt security
 type BuyDebt struct {
 	XMLName  xml.Name `xml:"BUYDEBT"`
 	InvBuy   InvBuy   `xml:"INVBUY"`
 	AccrdInt Amount   `xml:"ACCRDINT,omitempty"` // Accrued interest. This amount is not reflected in the <TOTAL> field of a containing aggregate.
 }
 
+// TransactionType returns a string representation of this transaction's type
 func (t BuyDebt) TransactionType() string {
 	return "BUYDEBT"
 }
 
+// BuyMF represents a transaction purchasing a mutual fund
 type BuyMF struct {
 	XMLName  xml.Name `xml:"BUYMF"`
 	InvBuy   InvBuy   `xml:"INVBUY"`
@@ -118,10 +136,12 @@ type BuyMF struct {
 	RelFiTID String   `xml:"RELFITID,omitempty"` // used to relate transactions associated with mutual fund exchanges
 }
 
+// TransactionType returns a string representation of this transaction's type
 func (t BuyMF) TransactionType() string {
 	return "BUYMF"
 }
 
+// BuyOpt represents a transaction purchasing an option
 type BuyOpt struct {
 	XMLName    xml.Name   `xml:"BUYOPT"`
 	InvBuy     InvBuy     `xml:"INVBUY"`
@@ -129,29 +149,36 @@ type BuyOpt struct {
 	ShPerCtrct Int        `xml:"SHPERCTRCT"` // Shares per contract
 }
 
+// TransactionType returns a string representation of this transaction's type
 func (t BuyOpt) TransactionType() string {
 	return "BUYOPT"
 }
 
+// BuyOther represents a transaction purchasing a type of security not covered
+// by the other Buy* structs
 type BuyOther struct {
 	XMLName xml.Name `xml:"BUYOTHER"`
 	InvBuy  InvBuy   `xml:"INVBUY"`
 }
 
+// TransactionType returns a string representation of this transaction's type
 func (t BuyOther) TransactionType() string {
 	return "BUYOTHER"
 }
 
+// BuyStock represents a transaction purchasing stock
 type BuyStock struct {
 	XMLName xml.Name `xml:"BUYSTOCK"`
 	InvBuy  InvBuy   `xml:"INVBUY"`
 	BuyType buyType  `xml:"BUYTYPE"` // One of BUY, BUYTOCOVER (BUYTOCOVER used to close short sales.)
 }
 
+// TransactionType returns a string representation of this transaction's type
 func (t BuyStock) TransactionType() string {
 	return "BUYSTOCK"
 }
 
+// ClosureOpt represents a transaction closing a position for an option
 type ClosureOpt struct {
 	XMLName    xml.Name    `xml:"CLOSUREOPT"`
 	InvTran    InvTran     `xml:"INVTRAN"`
@@ -164,11 +191,13 @@ type ClosureOpt struct {
 	Gain       Amount      `xml:"GAIN,omitempty"`     // Total gain
 }
 
+// TransactionType returns a string representation of this transaction's type
 func (t ClosureOpt) TransactionType() string {
 	return "CLOSUREOPT"
 }
 
-// Investment income is realized as cash into the investment account
+// Income represents a transaction where investment income is being realized as
+// cash into the investment account
 type Income struct {
 	XMLName       xml.Name      `xml:"INCOME"`
 	InvTran       InvTran       `xml:"INVTRAN"`
@@ -184,11 +213,13 @@ type Income struct {
 	Inv401kSource inv401kSource `xml:"INV401KSOURCE,omitempty"` // Source of money for this transaction. One of PRETAX, AFTERTAX, MATCH, PROFITSHARING, ROLLOVER, OTHERVEST, OTHERNONVEST for 401(k) accounts. Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST
 }
 
+// TransactionType returns a string representation of this transaction's type
 func (t Income) TransactionType() string {
 	return "INCOME"
 }
 
-// Expense associated with an investment
+// InvExpense represents a transaction realizing an expense associated with an
+// investment
 type InvExpense struct {
 	XMLName       xml.Name      `xml:"INVEXPENSE"`
 	InvTran       InvTran       `xml:"INVTRAN"`
@@ -201,11 +232,13 @@ type InvExpense struct {
 	Inv401kSource inv401kSource `xml:"INV401KSOURCE,omitempty"` // Source of money for this transaction. One of PRETAX, AFTERTAX, MATCH, PROFITSHARING, ROLLOVER, OTHERVEST, OTHERNONVEST for 401(k) accounts. Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST
 }
 
+// TransactionType returns a string representation of this transaction's type
 func (t InvExpense) TransactionType() string {
 	return "INVEXPENSE"
 }
 
-// Journaling cash holdings between sub-accounts within the same investment account.
+// JrnlFund represents a transaction journaling cash holdings between
+// sub-accounts within the same investment account
 type JrnlFund struct {
 	XMLName     xml.Name    `xml:"JRNLFUND"`
 	InvTran     InvTran     `xml:"INVTRAN"`
@@ -214,11 +247,13 @@ type JrnlFund struct {
 	SubAcctTo   subAcctType `xml:"SUBACCTTO"`   // Sub-account cash is being transferred to: CASH, MARGIN, SHORT, OTHER
 }
 
+// TransactionType returns a string representation of this transaction's type
 func (t JrnlFund) TransactionType() string {
 	return "JRNLFUND"
 }
 
-// Journaling security holdings between sub-accounts within the same investment account.
+// JrnlSec represents a transaction journaling security holdings between
+// sub-accounts within the same investment account
 type JrnlSec struct {
 	XMLName     xml.Name    `xml:"JRNLSEC"`
 	InvTran     InvTran     `xml:"INVTRAN"`
@@ -228,10 +263,12 @@ type JrnlSec struct {
 	Units       Amount      `xml:"UNITS"`       // For stocks, MFs, other, number of shares held. Bonds = face value. Options = number of contracts
 }
 
+// TransactionType returns a string representation of this transaction's type
 func (t JrnlSec) TransactionType() string {
 	return "JRNLSEC"
 }
 
+// MarginInterest represents a transaction realizing a margin interest expense
 type MarginInterest struct {
 	XMLName      xml.Name    `xml:"MARGININTEREST"`
 	InvTran      InvTran     `xml:"INVTRAN"`
@@ -241,11 +278,14 @@ type MarginInterest struct {
 	OrigCurrency *Currency   `xml:"ORIGCURRENCY,omitempty"` // Overriding currency for UNITPRICE
 }
 
+// TransactionType returns a string representation of this transaction's type
 func (t MarginInterest) TransactionType() string {
 	return "MARGININTEREST"
 }
 
-// REINVEST is a single transaction that contains both income and an investment transaction. If servers can’t track this as a single transaction they should return an INCOME transaction and an INVTRAN.
+// Reinvest is a single transaction that contains both income and an investment
+// transaction. If servers can’t track this as a single transaction they should
+// return an Income transaction and an InvTran.
 type Reinvest struct {
 	XMLName       xml.Name      `xml:"REINVEST"`
 	InvTran       InvTran       `xml:"INVTRAN"`
@@ -265,10 +305,13 @@ type Reinvest struct {
 	Inv401kSource inv401kSource `xml:"INV401KSOURCE,omitempty"` // Source of money for this transaction. One of PRETAX, AFTERTAX, MATCH, PROFITSHARING, ROLLOVER, OTHERVEST, OTHERNONVEST for 401(k) accounts. Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST
 }
 
+// TransactionType returns a string representation of this transaction's type
 func (t Reinvest) TransactionType() string {
 	return "REINVEST"
 }
 
+// RetOfCap represents a transaction where capital is being returned to the
+// account holder
 type RetOfCap struct {
 	XMLName       xml.Name      `xml:"RETOFCAP"`
 	InvTran       InvTran       `xml:"INVTRAN"`
@@ -281,10 +324,13 @@ type RetOfCap struct {
 	Inv401kSource inv401kSource `xml:"INV401KSOURCE,omitempty"` // Source of money for this transaction. One of PRETAX, AFTERTAX, MATCH, PROFITSHARING, ROLLOVER, OTHERVEST, OTHERNONVEST for 401(k) accounts. Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST
 }
 
+// TransactionType returns a string representation of this transaction's type
 func (t RetOfCap) TransactionType() string {
 	return "RETOFCAP"
 }
 
+// SellDebt represents the sale of a debt security. Used when debt is sold,
+// called, or reaches maturity.
 type SellDebt struct {
 	XMLName    xml.Name   `xml:"SELLDEBT"`
 	InvSell    InvSell    `xml:"INVSELL"`
@@ -292,10 +338,12 @@ type SellDebt struct {
 	AccrdInt   Amount     `xml:"ACCRDINT,omitempty"` // Accrued interest
 }
 
+// TransactionType returns a string representation of this transaction's type
 func (t SellDebt) TransactionType() string {
 	return "SELLDEBT"
 }
 
+// SellMF represents a transaction selling a mutual fund
 type SellMF struct {
 	XMLName      xml.Name `xml:"SELLMF"`
 	InvSell      InvSell  `xml:"INVSELL"`
@@ -304,10 +352,14 @@ type SellMF struct {
 	RelFiTID     String   `xml:"RELFITID,omitempty"` // used to relate transactions associated with mutual fund exchanges
 }
 
+// TransactionType returns a string representation of this transaction's type
 func (t SellMF) TransactionType() string {
 	return "SELLMF"
 }
 
+// SellOpt represents a transaction selling an option. Depending on the value
+// of OptSellType, can be used to sell a previously bought option or write a
+// new option.
 type SellOpt struct {
 	XMLName     xml.Name    `xml:"SELLOPT"`
 	InvSell     InvSell     `xml:"INVSELL"`
@@ -318,29 +370,36 @@ type SellOpt struct {
 	Secured     secured     `xml:"SECURED,omitempty"`  // NAKED, COVERED
 }
 
+// TransactionType returns a string representation of this transaction's type
 func (t SellOpt) TransactionType() string {
 	return "SELLOPT"
 }
 
+// SellOther represents a transaction selling a security type not covered by
+// the other Sell* structs
 type SellOther struct {
 	XMLName xml.Name `xml:"SELLOTHER"`
 	InvSell InvSell  `xml:"INVSELL"`
 }
 
+// TransactionType returns a string representation of this transaction's type
 func (t SellOther) TransactionType() string {
 	return "SELLOTHER"
 }
 
+// SellStock represents a transaction selling stock
 type SellStock struct {
 	XMLName  xml.Name `xml:"SELLSTOCK"`
 	InvSell  InvSell  `xml:"INVSELL"`
 	SellType sellType `xml:"SELLTYPE"` // Type of sell. SELL, SELLSHORT
 }
 
+// TransactionType returns a string representation of this transaction's type
 func (t SellStock) TransactionType() string {
 	return "SELLSTOCK"
 }
 
+// Split represents a stock or mutual fund split
 type Split struct {
 	XMLName       xml.Name      `xml:"SPLIT"`
 	InvTran       InvTran       `xml:"INVTRAN"`
@@ -357,10 +416,12 @@ type Split struct {
 	Inv401kSource inv401kSource `xml:"INV401KSOURCE,omitempty"` // Source of money for this transaction. One of PRETAX, AFTERTAX, MATCH, PROFITSHARING, ROLLOVER, OTHERVEST, OTHERNONVEST for 401(k) accounts. Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST
 }
 
+// TransactionType returns a string representation of this transaction's type
 func (t Split) TransactionType() string {
 	return "SPLIT"
 }
 
+// Transfer represents the transfer of securities into or out of an account
 type Transfer struct {
 	XMLName       xml.Name      `xml:"TRANSFER"`
 	InvTran       InvTran       `xml:"INVTRAN"`
@@ -376,29 +437,38 @@ type Transfer struct {
 	Inv401kSource inv401kSource `xml:"INV401KSOURCE,omitempty"` // Source of money for this transaction. One of PRETAX, AFTERTAX, MATCH, PROFITSHARING, ROLLOVER, OTHERVEST, OTHERNONVEST for 401(k) accounts. Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST
 }
 
+// TransactionType returns a string representation of this transaction's type
 func (t Transfer) TransactionType() string {
 	return "TRANSFER"
 }
 
+// InvTransaction is a generic interface met by all investment transactions
+// (Buy*, Sell*, & co.)
 type InvTransaction interface {
 	TransactionType() string
 }
 
+// InvBankTransaction is a banking transaction performed in an investment
+// account. This represents all transactions not related to securities - for
+// instance, funding the account using cash from another bank.
 type InvBankTransaction struct {
 	XMLName      xml.Name      `xml:"INVBANKTRAN"`
 	Transactions []Transaction `xml:"STMTTRN,omitempty"`
 	SubAcctFund  subAcctType   `xml:"SUBACCTFUND"` // Where did the money for the transaction come from or go to? CASH, MARGIN, SHORT, OTHER
 }
 
-// Must be unmarshalled manually due to the structure (don't know what kind of
-// InvTransaction is coming next)
+// InvTranList represents a list of investment account transactions. It
+// includes the date range its transactions cover, as well as the bank- and
+// security-related transactions themselfes. It must be unmarshalled manually
+// due to the structure (don't know what kind of InvTransaction is coming next)
 type InvTranList struct {
 	DtStart          Date
-	DtEnd            Date
+	DtEnd            Date // This is the value that should be sent as <DTSTART> in the next InvStatementRequest to ensure that no transactions are missed
 	InvTransactions  []InvTransaction
 	BankTransactions []InvBankTransaction
 }
 
+// UnmarshalXML handles unmarshalling an InvTranList element from an XML string
 func (l *InvTranList) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	for {
 		tok, err := nextNonWhitespaceToken(d)
@@ -556,6 +626,8 @@ func (l *InvTranList) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error
 	}
 }
 
+// InvPosition contains generic position information included in each of the
+// other *Position types
 type InvPosition struct {
 	XMLName       xml.Name      `xml:"INVPOS"`
 	SecID         SecurityID    `xml:"SECID"`
@@ -571,19 +643,23 @@ type InvPosition struct {
 	Inv401kSource inv401kSource `xml:"INV401KSOURCE,omitempty"` // One of PRETAX, AFTERTAX, MATCH, PROFITSHARING, ROLLOVER, OTHERVEST, OTHERNONVEST for 401(k) accounts. Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST
 }
 
+// Position is an interface satisfied by all the other *Position types
 type Position interface {
 	PositionType() string
 }
 
+// DebtPosition represents a position held in a debt security
 type DebtPosition struct {
 	XMLName xml.Name    `xml:"POSDEBT"`
 	InvPos  InvPosition `xml:"INVPOS"`
 }
 
+// PositionType returns a string representation of this position's type
 func (p DebtPosition) PositionType() string {
 	return "POSDEBT"
 }
 
+// MFPosition represents a position held in a mutual fund
 type MFPosition struct {
 	XMLName     xml.Name    `xml:"POSMF"`
 	InvPos      InvPosition `xml:"INVPOS"`
@@ -593,29 +669,36 @@ type MFPosition struct {
 	ReinvCG     Boolean     `xml:"REINVCG,omitempty"`     // Reinvest capital gains
 }
 
+// PositionType returns a string representation of this position's type
 func (p MFPosition) PositionType() string {
 	return "POSMF"
 }
 
+// OptPosition represents a position held in an option
 type OptPosition struct {
 	XMLName xml.Name    `xml:"POSOPT"`
 	InvPos  InvPosition `xml:"INVPOS"`
 	Secured secured     `xml:"SECURED,omitempty"` // One of NAKED, COVERED
 }
 
+// PositionType returns a string representation of this position's type
 func (p OptPosition) PositionType() string {
 	return "POSOPT"
 }
 
+// OtherPosition represents a position held in a security type not covered by
+// the other *Position elements
 type OtherPosition struct {
 	XMLName xml.Name    `xml:"POSOTHER"`
 	InvPos  InvPosition `xml:"INVPOS"`
 }
 
+// PositionType returns a string representation of this position's type
 func (p OtherPosition) PositionType() string {
 	return "POSOTHER"
 }
 
+// StockPosition represents a position held in a stock
 type StockPosition struct {
 	XMLName     xml.Name    `xml:"POSSTOCK"`
 	InvPos      InvPosition `xml:"INVPOS"`
@@ -624,12 +707,16 @@ type StockPosition struct {
 	ReinvDiv    Boolean     `xml:"REINVDIV,omitempty"`    // Reinvest dividends
 }
 
+// PositionType returns a string representation of this position's type
 func (p StockPosition) PositionType() string {
 	return "POSSTOCK"
 }
 
+// PositionList represents a list of positions held in securities in an
+// investment account
 type PositionList []Position
 
+// UnmarshalXML handles unmarshalling a PositionList from an XML string
 func (p *PositionList) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	for {
 		tok, err := nextNonWhitespaceToken(d)
@@ -679,15 +766,20 @@ func (p *PositionList) UnmarshalXML(d *xml.Decoder, start xml.StartElement) erro
 	}
 }
 
+// InvBalance contains three (or optionally four) specified balances as well as
+// a free-form list of generic balance information which may be provided by an
+// FI.
 type InvBalance struct {
 	XMLName       xml.Name  `xml:"INVBAL"`
 	AvailCash     Amount    `xml:"AVAILCASH"`     // Available cash across all sub-accounts, including sweep funds
 	MarginBalance Amount    `xml:"MARGINBALANCE"` // Negative means customer has borrowed funds
 	ShortBalance  Amount    `xml:"SHORTBALANCE"`  // Always positive, market value of all short positions
-	BuyPower      Amount    `xml:"BUYPOWER"`
+	BuyPower      Amount    `xml:"BUYPOWER, omitempty"`
 	BalList       []Balance `xml:"BALLIST>BAL,omitempty"`
 }
 
+// OO represents a generic open investment order. It is included in the other
+// OO* elements.
 type OO struct {
 	XMLName       xml.Name      `xml:"OO"`
 	FiTID         String        `xml:"FITID"`
@@ -706,10 +798,12 @@ type OO struct {
 	Inv401kSource inv401kSource `xml:"INV401KSOURCE,omitempty"` // One of PRETAX, AFTERTAX, MATCH, PROFITSHARING, ROLLOVER, OTHERVEST, OTHERNONVEST for 401(k) accounts. Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST
 }
 
+// OpenOrder is an interface satisfied by all the OO* elements.
 type OpenOrder interface {
 	OrderType() string
 }
 
+// OOBuyDebt represents an open order to purchase a debt security
 type OOBuyDebt struct {
 	XMLName   xml.Name `xml:"OOBUYDEBT"`
 	OO        OO       `xml:"OO"`
@@ -717,10 +811,12 @@ type OOBuyDebt struct {
 	DtAuction *Date    `xml:"DTAUCTION,omitempty"`
 }
 
+// OrderType returns a string representation of this order's type
 func (o OOBuyDebt) OrderType() string {
 	return "OOBUYDEBT"
 }
 
+// OOBuyMF represents an open order to purchase a mutual fund
 type OOBuyMF struct {
 	XMLName  xml.Name `xml:"OOBUYMF"`
 	OO       OO       `xml:"OO"`
@@ -728,49 +824,60 @@ type OOBuyMF struct {
 	UnitType unitType `xml:"UNITTYPE"` // What the units represent: one of SHARES, CURRENCY
 }
 
+// OrderType returns a string representation of this order's type
 func (o OOBuyMF) OrderType() string {
 	return "OOBUYMF"
 }
 
+// OOBuyOpt represents an open order to purchase an option
 type OOBuyOpt struct {
 	XMLName    xml.Name   `xml:"OOBUYOPT"`
 	OO         OO         `xml:"OO"`
 	OptBuyType optBuyType `xml:"OPTBUYTYPE"` // One of BUYTOOPEN, BUYTOCLOSE
 }
 
+// OrderType returns a string representation of this order's type
 func (o OOBuyOpt) OrderType() string {
 	return "OOBUYOPT"
 }
 
+// OOBuyOther represents an open order to purchase a security type not covered
+// by the other OOBuy* elements
 type OOBuyOther struct {
 	XMLName  xml.Name `xml:"OOBUYOTHER"`
 	OO       OO       `xml:"OO"`
 	UnitType unitType `xml:"UNITTYPE"` // What the units represent: one of SHARES, CURRENCY
 }
 
+// OrderType returns a string representation of this order's type
 func (o OOBuyOther) OrderType() string {
 	return "OOBUYOTHER"
 }
 
+// OOBuyStock represents an open order to purchase stock
 type OOBuyStock struct {
 	XMLName xml.Name `xml:"OOBUYSTOCK"`
 	OO      OO       `xml:"OO"`
 	BuyType buyType  `xml:"BUYTYPE"` // One of BUY, BUYTOCOVER
 }
 
+// OrderType returns a string representation of this order's type
 func (o OOBuyStock) OrderType() string {
 	return "OOBUYSTOCK"
 }
 
+// OOSellDebt represents an open order to sell a debt security
 type OOSellDebt struct {
 	XMLName xml.Name `xml:"OOSELLDEBT"`
 	OO      OO       `xml:"OO"`
 }
 
+// OrderType returns a string representation of this order's type
 func (o OOSellDebt) OrderType() string {
 	return "OOSELLDEBT"
 }
 
+// OOSellMF represents an open order to sell a mutual fund
 type OOSellMF struct {
 	XMLName  xml.Name `xml:"OOSELLMF"`
 	OO       OO       `xml:"OO"`
@@ -779,40 +886,50 @@ type OOSellMF struct {
 	SellAll  Boolean  `xml:"SELLALL"`  // Sell entire holding
 }
 
+// OrderType returns a string representation of this order's type
 func (o OOSellMF) OrderType() string {
 	return "OOSELLMF"
 }
 
+// OOSellOpt represents an open order to sell an option
 type OOSellOpt struct {
 	XMLName     xml.Name    `xml:"OOSELLOPT"`
 	OO          OO          `xml:"OO"`
 	OptSellType optSellType `xml:"OPTSELLTYPE"` // One of SELLTOOPEN, SELLTOCLOSE
 }
 
+// OrderType returns a string representation of this order's type
 func (o OOSellOpt) OrderType() string {
 	return "OOSELLOPT"
 }
 
+// OOSellOther represents an open order to sell a security type not covered by
+// the other OOSell* elements
 type OOSellOther struct {
 	XMLName  xml.Name `xml:"OOSELLOTHER"`
 	OO       OO       `xml:"OO"`
 	UnitType unitType `xml:"UNITTYPE"` // What the units represent: one of SHARES, CURRENCY
 }
 
+// OrderType returns a string representation of this order's type
 func (o OOSellOther) OrderType() string {
 	return "OOSELLOTHER"
 }
 
+// OOSellStock represents an open order to sell stock
 type OOSellStock struct {
 	XMLName  xml.Name `xml:"OOSELLSTOCK"`
 	OO       OO       `xml:"OO"`
 	SellType sellType `xml:"SELLTYPE"` // One of SELL, SELLSHORT
 }
 
+// OrderType returns a string representation of this order's type
 func (o OOSellStock) OrderType() string {
 	return "OOSELLSTOCK"
 }
 
+// OOSwitchMF represents an open order to switch to or purchase a different
+// mutual fund
 type OOSwitchMF struct {
 	XMLName   xml.Name   `xml:"SWITCHMF"`
 	OO        OO         `xml:"OO"`
@@ -821,12 +938,15 @@ type OOSwitchMF struct {
 	SwitchAll Boolean    `xml:"SWITCHALL"` // Switch entire holding
 }
 
+// OrderType returns a string representation of this order's type
 func (o OOSwitchMF) OrderType() string {
 	return "SWITCHMF"
 }
 
+// OOList represents a list of open orders (OO* elements)
 type OOList []OpenOrder
 
+// UnmarshalXML handles unmarshalling an OOList element from an XML string
 func (o *OOList) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	for {
 		tok, err := nextNonWhitespaceToken(d)
@@ -912,6 +1032,8 @@ func (o *OOList) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	}
 }
 
+// ContribSecurity identifies current contribution allocation for a security in
+// a 401(k) account
 type ContribSecurity struct {
 	XMLName                 xml.Name   `xml:"CONTRIBSECURITY"`
 	SecID                   SecurityID `xml:"SECID"`
@@ -931,12 +1053,15 @@ type ContribSecurity struct {
 	OtherNonVestAmt         Amount     `xml:"OTHERNONVESTAMT,omitempty"`         // Fixed amount of each new other employee contribution allocated to this security, amount
 }
 
+// VestInfo provides the vesting percentage of a 401(k) account as of a
+// particular date (past, present, or future)
 type VestInfo struct {
 	XMLName  xml.Name `xml:"VESTINFO"`
 	VestDate *Date    `xml:"VESTDATE,omitempty"` // Date at which vesting percentage changes. Default (if empty) is that the vesting percentage below applies to the current date
 	VestPct  Amount   `xml:"VESTPCT"`
 }
 
+// LoanInfo represents a loan outstanding against this 401(k) account
 type LoanInfo struct {
 	XMLName               xml.Name    `xml:"VESTINFO"`
 	LoanID                String      `xml:"LOANID"`                          // Identifier of this loan
@@ -956,18 +1081,23 @@ type LoanInfo struct {
 	LoanExtPmtDate        *Date       `xml:"LOANNEXTPMTDATE,omitempty"`       // Next payment due date
 }
 
+// Inv401KSummaryAggregate represents the total of either contributions,
+// withdrawals, or earnings made in each contribution type in a given period
+// (dates specified in a containing Inv401KSummaryPeriod)
 type Inv401KSummaryAggregate struct {
 	XMLName       xml.Name // One of CONTRIBUTIONS, WITHDRAWALS, EARNINGS
-	PreTax        Amount   `xml:"PRETAX,omitempty"`        // Pretax withdrawals.
-	AfterTax      Amount   `xml:"AFTERTAX,omitempty"`      // After tax withdrawals.
-	Match         Amount   `xml:"MATCH,omitempty"`         // Employer matching withdrawals.
-	ProfitSharing Amount   `xml:"PROFITSHARING,omitempty"` // Profit sharing withdrawals.
-	Rollover      Amount   `xml:"ROLLOVER,omitempty"`      // Rollover withdrawals.
-	OtherVest     Amount   `xml:"OTHERVEST,omitempty"`     // Other vesting withdrawals.
-	OtherNonVest  Amount   `xml:"OTHERNONVEST,omitempty"`  // Other non-vesting withdrawals.
-	Total         Amount   `xml:"TOTAL"`                   // Sum of withdrawals from all fund sources.
+	PreTax        Amount   `xml:"PRETAX,omitempty"`        // Pretax contributions, withdrawals, or earlings.
+	AfterTax      Amount   `xml:"AFTERTAX,omitempty"`      // After tax contributions, withdrawals, or earlings.
+	Match         Amount   `xml:"MATCH,omitempty"`         // Employer matching contributions, withdrawals, or earlings.
+	ProfitSharing Amount   `xml:"PROFITSHARING,omitempty"` // Profit sharing contributions, withdrawals, or earlings.
+	Rollover      Amount   `xml:"ROLLOVER,omitempty"`      // Rollover contributions, withdrawals, or earlings.
+	OtherVest     Amount   `xml:"OTHERVEST,omitempty"`     // Other vesting contributions, withdrawals, or earlings.
+	OtherNonVest  Amount   `xml:"OTHERNONVEST,omitempty"`  // Other non-vesting contributions, withdrawals, or earlings.
+	Total         Amount   `xml:"TOTAL"`                   // Sum of contributions, withdrawals, or earlings from all fund sources.
 }
 
+// Inv401KSummaryPeriod contains the total contributions, withdrawals, and
+// earnings made in the given date range
 type Inv401KSummaryPeriod struct {
 	XMLName       xml.Name                 // One of YEARTODATE, INCEPTODATE, or PERIODTODATE
 	DtStart       Date                     `xml:"DTSTART"`
@@ -977,6 +1107,8 @@ type Inv401KSummaryPeriod struct {
 	Earnings      *Inv401KSummaryAggregate `xml:"EARNINGS,omitempty"`      // 401(k) earnings aggregate. This is the market value change. It includes dividends/interest, and capital gains - realized and unrealized.
 }
 
+// Inv401K is included in InvStatementResponse for 401(k) accounts and provides
+// a summary of the 401(k) specific information about the user's account.
 type Inv401K struct {
 	XMLName             xml.Name `xml:"INV401K"`
 	EmployerName        String   `xml:"EMPLOYERNAME"`
@@ -1003,6 +1135,8 @@ type Inv401K struct {
 	PeriodToDate        *Inv401KSummaryPeriod `xml:"INV401KSUMMARY>PERIODTODATE,omitempty"` // Total contributions this contribution period
 }
 
+// Inv401KBal provides the balances for different 401(k) subaccount types, as
+// well as the total cash value of the securities held
 type Inv401KBal struct {
 	XMLName       xml.Name  `xml:"INV401KBAL"`
 	CashBal       Amount    `xml:"CASHBAL,omitempty"`       // Available cash balance
@@ -1017,6 +1151,10 @@ type Inv401KBal struct {
 	BalList       []Balance `xml:"BALLIST>BAL,omitempty"`
 }
 
+// InvStatementResponse includes requested transaction, position, open order,
+// and balance information for an investment account. It is in response to an
+// InvStatementRequest or sometimes provided as part of an OFX file downloaded
+// manually from an FI.
 type InvStatementResponse struct {
 	XMLName   xml.Name `xml:"INVSTMTTRNRS"`
 	TrnUID    UID      `xml:"TRNUID"`
@@ -1035,15 +1173,19 @@ type InvStatementResponse struct {
 	Inv401KBal  *Inv401KBal  `xml:"INVSTMTRS>INV401KBAL,omitempty"`
 }
 
+// Name returns the name of the top-level transaction XML/SGML element
 func (sr *InvStatementResponse) Name() string {
 	return "INVSTMTTRNRS"
 }
 
+// Valid returns (true, nil) if this struct was valid OFX when unmarshalled
 func (sr *InvStatementResponse) Valid() (bool, error) {
 	//TODO implement
 	return true, nil
 }
 
+// Type returns which message set this message belongs to (which Response
+// element of type []Message it belongs to)
 func (sr *InvStatementResponse) Type() messageType {
 	return InvStmtRs
 }
