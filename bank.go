@@ -180,8 +180,7 @@ func (sr *StatementResponse) Name() string {
 	return "STMTTRNRS"
 }
 
-// Valid returns (true, nil) if this struct would be valid OFX if marshalled
-// into XML/SGML
+// Valid returns (true, nil) if this struct was valid OFX when unmarshalled
 func (sr *StatementResponse) Valid() (bool, error) {
 	//TODO implement
 	return true, nil
