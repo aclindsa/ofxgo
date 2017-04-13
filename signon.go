@@ -6,6 +6,8 @@ import (
 	"github.com/aclindsa/go/src/encoding/xml"
 )
 
+// SignonRequest identifies and authenticates a user to their FI and is
+// provided with every Request
 type SignonRequest struct {
 	XMLName   xml.Name `xml:"SONRQ"`
 	DtClient  Date     `xml:"DTCLIENT"` // Current time on client, overwritten in Client.Request()
@@ -20,10 +22,13 @@ type SignonRequest struct {
 	ClientUID UID      `xml:"CLIENTUID,omitempty"`
 }
 
+// Name returns the name of the top-level transaction XML/SGML element
 func (r *SignonRequest) Name() string {
 	return "SONRQ"
 }
 
+// Valid returns (true, nil) if this struct would be valid OFX if marshalled
+// into XML/SGML
 func (r *SignonRequest) Valid() (bool, error) {
 	if len(r.UserID) < 1 || len(r.UserID) > 32 {
 		return false, errors.New("SONRQ>USERID invalid length")
@@ -40,7 +45,7 @@ func (r *SignonRequest) Valid() (bool, error) {
 	if len(r.Language) == 0 {
 		r.Language = "ENG"
 	} else if len(r.Language) != 3 {
-		return false, fmt.Errorf("SONRQ>LANGUAGE invalid length: \"%s\"\n", r.Language)
+		return false, fmt.Errorf("SONRQ>LANGUAGE invalid length: \"%s\"", r.Language)
 	}
 	if len(r.AppID) < 1 || len(r.AppID) > 5 {
 		return false, errors.New("SONRQ>APPID invalid length")
@@ -51,6 +56,8 @@ func (r *SignonRequest) Valid() (bool, error) {
 	return true, nil
 }
 
+// SignonResponse is provided with every Response and indicates the success or
+// failure of the SignonRequest in the corresponding Request
 type SignonResponse struct {
 	XMLName     xml.Name `xml:"SONRS"`
 	Status      Status   `xml:"STATUS"`
@@ -66,13 +73,15 @@ type SignonResponse struct {
 	AccessKey   String   `xml:"ACCESSKEY,omitempty"`
 }
 
+// Name returns the name of the top-level transaction XML/SGML element
 func (r *SignonResponse) Name() string {
 	return "SONRS"
 }
 
+// Valid returns (true, nil) if this struct was valid OFX when unmarshalled
 func (r *SignonResponse) Valid() (bool, error) {
 	if len(r.Language) != 3 {
-		return false, fmt.Errorf("SONRS>LANGUAGE invalid length: \"%s\"\n", r.Language)
+		return false, fmt.Errorf("SONRS>LANGUAGE invalid length: \"%s\"", r.Language)
 	}
 	return r.Status.Valid()
 }

@@ -12,8 +12,11 @@ import (
 	"time"
 )
 
+// Int provides helper methods to unmarshal int64 values from SGML/XML
 type Int int64
 
+// UnmarshalXML handles unmarshalling an Int from an SGML/XML string. Leading
+// and trailing whitespace is ignored.
 func (i *Int) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	var value string
 
@@ -33,14 +36,19 @@ func (i *Int) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return nil
 }
 
+// Equal returns true if the two Ints are equal in value
 func (i Int) Equal(o Int) bool {
 	return i == o
 }
 
+// Amount represents non-integer values (or at least values for fields that may
+// not necessarily be integers)
 type Amount struct {
 	big.Rat
 }
 
+// UnmarshalXML handles unmarshalling an Amount from an SGML/XML string.
+// Leading and trailing whitespace is ignored.
 func (a *Amount) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	var value string
 
@@ -61,18 +69,22 @@ func (a *Amount) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return nil
 }
 
+// String prints a string representation of an Amount
 func (a Amount) String() string {
 	return strings.TrimRight(strings.TrimRight(a.FloatString(100), "0"), ".")
 }
 
+// MarshalXML marshals an Amount to SGML/XML
 func (a *Amount) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	return e.EncodeElement(a.String(), start)
 }
 
+// Equal returns true if two Amounts are equal in value
 func (a Amount) Equal(o Amount) bool {
 	return (&a).Cmp(&o.Rat) == 0
 }
 
+// Date represents OFX date/time values
 type Date struct {
 	time.Time
 }
@@ -86,6 +98,10 @@ var ofxDateFormats = []string{
 }
 var ofxDateZoneRegex = regexp.MustCompile(`^([+-]?[0-9]+)(\.([0-9]{2}))?(:([A-Z]+))?$`)
 
+// UnmarshalXML handles unmarshalling a Date from an SGML/XML string. It
+// attempts to unmarshal the valid date formats in order of decreasing length
+// and defaults to GMT if a time zone is not provided, as per the OFX spec.
+// Leading and trailing whitespace is ignored.
 func (od *Date) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	var value, zone, zoneFormat string
 	err := d.DecodeElement(&value, &start)
@@ -148,6 +164,7 @@ func (od *Date) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return errors.New("OFX: Couldn't parse date:" + value)
 }
 
+// String returns a string representation of the Date abiding by the OFX spec
 func (od Date) String() string {
 	format := od.Format(ofxDateFormats[0])
 	zonename, zoneoffset := od.Zone()
@@ -165,31 +182,39 @@ func (od Date) String() string {
 
 	if len(zonename) > 0 {
 		return format + ":" + zonename + "]"
-	} else {
-		return format + "]"
 	}
+	return format + "]"
 }
 
+// MarshalXML marshals a Date to XML
 func (od *Date) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	return e.EncodeElement(od.String(), start)
 }
 
+// Equal returns true if the two Dates represent the same time (time zones are
+// accounted for when comparing, but are not required to match)
 func (od Date) Equal(o Date) bool {
 	return od.Time.Equal(o.Time)
 }
 
+// NewDate returns a new Date object with the provided date, time, and timezone
 func NewDate(year int, month time.Month, day, hour, min, sec, nsec int, loc *time.Location) *Date {
 	return &Date{Time: time.Date(year, month, day, hour, min, sec, nsec, loc)}
 }
 
 var gmt = time.FixedZone("GMT", 0)
 
+// NewDateGMT returns a new Date object with the provided date and time in the
+// GMT timezone
 func NewDateGMT(year int, month time.Month, day, hour, min, sec, nsec int) *Date {
 	return &Date{Time: time.Date(year, month, day, hour, min, sec, nsec, gmt)}
 }
 
+// String provides helper methods to unmarshal OFX string values from SGML/XML
 type String string
 
+// UnmarshalXML handles unmarshalling a String from an SGML/XML string. Leading
+// and trailing whitespace is ignored.
 func (os *String) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	var value string
 	err := d.DecodeElement(&value, &start)
@@ -200,16 +225,21 @@ func (os *String) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return nil
 }
 
+// String returns the string
 func (os *String) String() string {
 	return string(*os)
 }
 
+// Equal returns true if the two Strings are equal in value
 func (os String) Equal(o String) bool {
 	return os == o
 }
 
+// Boolean provides helper methods to unmarshal bool values from OFX SGML/XML
 type Boolean bool
 
+// UnmarshalXML handles unmarshalling a Boolean from an SGML/XML string.
+// Leading and trailing whitespace is ignored.
 func (ob *Boolean) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	var value string
 	err := d.DecodeElement(&value, &start)
@@ -228,6 +258,7 @@ func (ob *Boolean) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return nil
 }
 
+// MarshalXML marshals a Boolean to XML
 func (ob *Boolean) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	if *ob {
 		return e.EncodeElement("Y", start)
@@ -235,16 +266,21 @@ func (ob *Boolean) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	return e.EncodeElement("N", start)
 }
 
+// String returns a string representation of a Boolean value
 func (ob *Boolean) String() string {
 	return fmt.Sprintf("%v", *ob)
 }
 
+// Equal returns true if the two Booleans are the same
 func (ob Boolean) Equal(o Boolean) bool {
 	return ob == o
 }
 
+// UID represents an UID according to the OFX spec
 type UID string
 
+// UnmarshalXML handles unmarshalling an UID from an SGML/XML string. Leading
+// and trailing whitespace is ignored.
 func (ou *UID) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	var value string
 	err := d.DecodeElement(&value, &start)
@@ -255,8 +291,8 @@ func (ou *UID) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return nil
 }
 
-// The OFX specification recommends that UIDs follow the standard UUID
-// 36-character format
+// RecommendedFormat returns true iff this UID meets the OFX specification's
+// recommendation that UIDs follow the standard UUID 36-character format
 func (ou UID) RecommendedFormat() (bool, error) {
 	if len(ou) != 36 {
 		return false, errors.New("UID not 36 characters long")
@@ -267,10 +303,12 @@ func (ou UID) RecommendedFormat() (bool, error) {
 	return true, nil
 }
 
+// Equal returns true if the two UIDs are the same
 func (ou UID) Equal(o UID) bool {
 	return ou == o
 }
 
+// RandomUID creates a new randomly-generated UID
 func RandomUID() (*UID, error) {
 	uidbytes := make([]byte, 16)
 	n, err := rand.Read(uidbytes[:])

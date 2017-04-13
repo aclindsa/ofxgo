@@ -468,7 +468,8 @@ type InvTranList struct {
 	BankTransactions []InvBankTransaction
 }
 
-// UnmarshalXML handles unmarshalling an InvTranList element from an XML string
+// UnmarshalXML handles unmarshalling an InvTranList element from an SGML/XML
+// string
 func (l *InvTranList) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	for {
 		tok, err := nextNonWhitespaceToken(d)

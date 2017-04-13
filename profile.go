@@ -5,6 +5,9 @@ import (
 	"github.com/aclindsa/go/src/encoding/xml"
 )
 
+// ProfileRequest represents a request for a server to provide a profile of its
+// capabilities (which message sets and versions it supports, how to access
+// them, which languages and which types of synchronization they support, etc.)
 type ProfileRequest struct {
 	XMLName   xml.Name `xml:"PROFTRNRQ"`
 	TrnUID    UID      `xml:"TRNUID"`
@@ -12,26 +15,35 @@ type ProfileRequest struct {
 	TAN       String   `xml:"TAN,omitempty"` // Transaction authorization number
 	// TODO `xml:"OFXEXTENSION,omitempty"`
 	ClientRouting String `xml:"PROFRQ>CLIENTROUTING"` // Forced to NONE
-	DtProfUp      Date   `xml:"PROFRQ>DTPROFUP"`
+	DtProfUp      Date   `xml:"PROFRQ>DTPROFUP"`      // Date and time client last received a profile update
 }
 
+// Name returns the name of the top-level transaction XML/SGML element
 func (r *ProfileRequest) Name() string {
 	return "PROFTRNRQ"
 }
 
+// Valid returns (true, nil) if this struct would be valid OFX if marshalled
+// into XML/SGML
 func (r *ProfileRequest) Valid() (bool, error) {
 	// TODO implement
 	r.ClientRouting = "NONE"
 	return true, nil
 }
 
+// Type returns which message set this message belongs to (which Request
+// element of type []Message it should appended to)
 func (r *ProfileRequest) Type() messageType {
 	return ProfRq
 }
 
+// SignonInfo provides the requirements to login to a single signon realm. A
+// signon realm consists of all MessageSets which can be accessed using one set
+// of login credentials. Most FI's only use one signon realm to make it easier
+// and less confusing for the user.
 type SignonInfo struct {
 	XMLName           xml.Name `xml:"SIGNONINFO"`
-	SignonRealm       String   `xml:"SIGNONREALM"`
+	SignonRealm       String   `xml:"SIGNONREALM"`              // The SignonRealm for which this SignonInfo provides information. This SignonInfo is valid for all MessageSets with SignonRealm fields matching this one
 	Min               Int      `xml:"MIN"`                      // Minimum number of password characters
 	Max               Int      `xml:"MAX"`                      // Maximum number of password characters
 	CharType          charType `xml:"CHARTYPE"`                 // One of ALPHAONLY, NUMERICONLY, ALPHAORNUMERIC, ALPHAANDNUMERIC
@@ -51,11 +63,13 @@ type SignonInfo struct {
 	AccessTokenReq    Boolean  `xml:"ACCESSTOKENREQ,omitempty"`    // Server requires ACCESSTOKEN to be sent with all requests except profile
 }
 
+// MessageSet represents one message set supported by an FI and its
+// capabilities
 type MessageSet struct {
 	XMLName     xml.Name // <xxxMSGSETVn>
 	Name        string   // <xxxMSGSETVn> (copy of XMLName.Local)
-	Ver         Int      `xml:"MSGSETCORE>VER"`                   // Message set version - should always match 'n' in <xxxMSGSETVn>
-	Url         String   `xml:"MSGSETCORE>URL"`                   // URL where messages in this set are to be set
+	Ver         Int      `xml:"MSGSETCORE>VER"`                   // Message set version - should always match 'n' in <xxxMSGSETVn> of Name
+	URL         String   `xml:"MSGSETCORE>URL"`                   // URL where messages in this set are to be set
 	OfxSec      ofxSec   `xml:"MSGSETCORE>OFXSEC"`                // NONE or 'TYPE 1'
 	TranspSec   Boolean  `xml:"MSGSETCORE>TRANSPSEC"`             // Transport-level security must be used
 	SignonRealm String   `xml:"MSGSETCORE>SIGNONREALM"`           // Used to identify which SignonInfo to use for to this MessageSet
@@ -67,8 +81,11 @@ type MessageSet struct {
 	// TODO MessageSet-specific stuff?
 }
 
+// MessageSetList is a list of MessageSets (necessary because they must be
+// manually parsed)
 type MessageSetList []MessageSet
 
+// UnmarshalXML handles unmarshalling a MessageSetList element from an XML string
 func (msl *MessageSetList) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	for {
 		var msgset MessageSet
@@ -106,6 +123,11 @@ func (msl *MessageSetList) UnmarshalXML(d *xml.Decoder, start xml.StartElement) 
 	}
 }
 
+// ProfileResponse contains a requested profile of the server's capabilities
+// (which message sets and versions it supports, how to access them, which
+// languages and which types of synchronization they support, etc.). Note that
+// if the server does not support ClientRouting=NONE (as we always send with
+// ProfileRequest), this may be an error)
 type ProfileResponse struct {
 	XMLName   xml.Name `xml:"PROFTRNRS"`
 	TrnUID    UID      `xml:"TRNUID"`
@@ -130,15 +152,19 @@ type ProfileResponse struct {
 	Email          String         `xml:"PROFRS>EMAIL,omitempty"`
 }
 
+// Name returns the name of the top-level transaction XML/SGML element
 func (pr *ProfileResponse) Name() string {
 	return "PROFTRNRS"
 }
 
+// Valid returns (true, nil) if this struct was valid OFX when unmarshalled
 func (pr *ProfileResponse) Valid() (bool, error) {
 	//TODO implement
 	return true, nil
 }
 
+// Type returns which message set this message belongs to (which Response
+// element of type []Message it belongs to)
 func (pr *ProfileResponse) Type() messageType {
 	return ProfRs
 }

@@ -5,12 +5,17 @@ import (
 	"github.com/aclindsa/go/src/encoding/xml"
 )
 
+// SecurityID identifies a security by its CUSIP (for US-based FI's, others may
+// use UniqueID types other than CUSIP)
 type SecurityID struct {
 	XMLName      xml.Name `xml:"SECID"`
 	UniqueID     String   `xml:"UNIQUEID"`     // CUSIP for US FI's
 	UniqueIDType String   `xml:"UNIQUEIDTYPE"` // Should always be "CUSIP" for US FI's
 }
 
+// SecurityRequest represents a request for one security. It is specified with
+// a SECID aggregate, a ticker symbol, or an FI assigned identifier (but no
+// more than one of them at a time)
 type SecurityRequest struct {
 	XMLName xml.Name `xml:"SECRQ"`
 	// Only one of the next three should be present
@@ -19,6 +24,8 @@ type SecurityRequest struct {
 	FiID   String      `xml:"FIID,omitempty"`
 }
 
+// SecListRequest represents a request for information (namely price) about one
+// or more securities
 type SecListRequest struct {
 	XMLName   xml.Name `xml:"SECLISTTRNRQ"`
 	TrnUID    UID      `xml:"TRNUID"`
@@ -28,19 +35,29 @@ type SecListRequest struct {
 	Securities []SecurityRequest `xml:"SECLISTRQ>SECRQ,omitempty"`
 }
 
+// Name returns the name of the top-level transaction XML/SGML element
 func (r *SecListRequest) Name() string {
 	return "SECLISTTRNRQ"
 }
 
+// Valid returns (true, nil) if this struct would be valid OFX if marshalled
+// into XML/SGML
 func (r *SecListRequest) Valid() (bool, error) {
 	// TODO implement
 	return true, nil
 }
 
+// Type returns which message set this message belongs to (which Request
+// element of type []Message it should appended to)
 func (r *SecListRequest) Type() messageType {
 	return SecListRq
 }
 
+// SecListResponse is always empty (except for the transaction UID, status, and
+// optional client cookie). Its presence signifies that the SecurityList (a
+// different element from this one) immediately after this element in
+// Response.SecList was been generated in response to the same SecListRequest
+// this is a response to.
 type SecListResponse struct {
 	XMLName   xml.Name `xml:"SECLISTTRNRS"`
 	TrnUID    UID      `xml:"TRNUID"`
@@ -50,23 +67,31 @@ type SecListResponse struct {
 	// SECLISTRS is always empty, so we don't parse it here. The actual securities list will be in a top-level element parallel to SECLISTTRNRS
 }
 
+// Name returns the name of the top-level transaction XML/SGML element
 func (r *SecListResponse) Name() string {
 	return "SECLISTTRNRS"
 }
 
+// Valid returns (true, nil) if this struct was valid OFX when unmarshalled
 func (r *SecListResponse) Valid() (bool, error) {
 	// TODO implement
 	return true, nil
 }
 
+// Type returns which message set this message belongs to (which Response
+// element of type []Message it belongs to)
 func (r *SecListResponse) Type() messageType {
 	return SecListRs
 }
 
+// Security is satisfied by all *Info elements providing information about
+// securities for SecurityList
 type Security interface {
 	SecurityType() string
 }
 
+// SecInfo represents the generic information about a security. It is included
+// in most other *Info elements.
 type SecInfo struct {
 	XMLName   xml.Name   `xml:"SECINFO"`
 	SecID     SecurityID `xml:"SECID"`
@@ -80,6 +105,7 @@ type SecInfo struct {
 	Memo      String     `xml:"MEMO,omitempty"`
 }
 
+// DebtInfo provides information about a debt security
 type DebtInfo struct {
 	XMLName      xml.Name   `xml:"DEBTINFO"`
 	SecInfo      SecInfo    `xml:"SECINFO"`
@@ -99,22 +125,29 @@ type DebtInfo struct {
 	FiAssetClass String     `xml:"FIASSETCLASS,omitempty"` // FI-defined asset class
 }
 
+// SecurityType returns a string representation of this security's type
 func (i DebtInfo) SecurityType() string {
 	return "DEBTINFO"
 }
 
+// AssetPortion represents the percentage of a mutual fund with the given asset
+// classification
 type AssetPortion struct {
 	XMLName    xml.Name   `xml:"PORTION"`
 	AssetClass assetClass `xml:"ASSETCLASS"` // One of DOMESTICBOND, INTLBOND, LARGESTOCK, SMALLSTOCK, INTLSTOCK, MONEYMRKT, OTHER
 	Percent    Amount     `xml:"PERCENT"`    // Percentage of the fund that falls under this asset class
 }
 
+// FiAssetPortion represents the percentage of a mutual fund with the given
+// FI-defined asset classification (AssetPortion should be used for all asset
+// classifications defined by the assetClass enum)
 type FiAssetPortion struct {
 	XMLName      xml.Name `xml:"FIPORTION"`
 	FiAssetClass String   `xml:"FIASSETCLASS,omitempty"` // FI-defined asset class
 	Percent      Amount   `xml:"PERCENT"`                // Percentage of the fund that falls under this asset class
 }
 
+// MFInfo provides information about a mutual fund
 type MFInfo struct {
 	XMLName        xml.Name         `xml:"MFINFO"`
 	SecInfo        SecInfo          `xml:"SECINFO"`
@@ -125,10 +158,12 @@ type MFInfo struct {
 	FiAssetClasses []FiAssetPortion `xml:"FIMFASSETCLASS>FIPORTION"`
 }
 
+// SecurityType returns a string representation of this security's type
 func (i MFInfo) SecurityType() string {
 	return "MFINFO"
 }
 
+// OptInfo provides information about an option
 type OptInfo struct {
 	XMLName      xml.Name    `xml:"OPTINFO"`
 	SecInfo      SecInfo     `xml:"SECINFO"`
@@ -141,10 +176,13 @@ type OptInfo struct {
 	FiAssetClass String      `xml:"FIASSETCLASS,omitempty"` // FI-defined asset class
 }
 
+// SecurityType returns a string representation of this security's type
 func (i OptInfo) SecurityType() string {
 	return "OPTINFO"
 }
 
+// OtherInfo provides information about a security type not covered by the
+// other *Info elements
 type OtherInfo struct {
 	XMLName      xml.Name   `xml:"OTHERINFO"`
 	SecInfo      SecInfo    `xml:"SECINFO"`
@@ -153,10 +191,12 @@ type OtherInfo struct {
 	FiAssetClass String     `xml:"FIASSETCLASS,omitempty"` // FI-defined asset class
 }
 
+// SecurityType returns a string representation of this security's type
 func (i OtherInfo) SecurityType() string {
 	return "OTHERINFO"
 }
 
+// StockInfo provides information about a security type
 type StockInfo struct {
 	XMLName      xml.Name   `xml:"STOCKINFO"`
 	SecInfo      SecInfo    `xml:"SECINFO"`
@@ -167,27 +207,35 @@ type StockInfo struct {
 	FiAssetClass String     `xml:"FIASSETCLASS,omitempty"` // FI-defined asset class
 }
 
+// SecurityType returns a string representation of this security's type
 func (i StockInfo) SecurityType() string {
 	return "STOCKINFO"
 }
 
+// SecurityList is a container for Security objects containaing information
+// about securities
 type SecurityList struct {
 	Securities []Security
 }
 
+// Name returns the name of the top-level transaction XML/SGML element
 func (r *SecurityList) Name() string {
 	return "SECLIST"
 }
 
+// Valid returns (true, nil) if this struct was valid OFX when unmarshalled
 func (r *SecurityList) Valid() (bool, error) {
 	// TODO implement
 	return true, nil
 }
 
+// Type returns which message set this message belongs to (which Response
+// element of type []Message it belongs to)
 func (r *SecurityList) Type() messageType {
 	return SecListRs
 }
 
+// UnmarshalXML handles unmarshalling a SecurityList from an SGML/XML string
 func (r *SecurityList) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	for {
 		tok, err := nextNonWhitespaceToken(d)
