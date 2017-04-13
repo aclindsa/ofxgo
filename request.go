@@ -66,7 +66,7 @@ func (oq *Request) SetClientFields(c *Client) {
 
 	// Overwrite fields that the client controls
 	oq.Version = c.OfxVersion()
-	oq.Signon.AppId = c.Id()
+	oq.Signon.AppID = c.ID()
 	oq.Signon.AppVer = c.Version()
 	oq.indent = c.IndentRequests()
 }

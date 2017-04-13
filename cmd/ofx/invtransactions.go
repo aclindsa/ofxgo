@@ -17,8 +17,8 @@ var invTransactionsCommand = Command{
 
 func init() {
 	defineServerFlags(invTransactionsCommand.Flags)
-	invTransactionsCommand.Flags.StringVar(&acctId, "acctid", "", "AcctId (from `get-accounts` subcommand)")
-	invTransactionsCommand.Flags.StringVar(&brokerId, "brokerid", "", "BrokerId (from `get-accounts` subcommand)")
+	invTransactionsCommand.Flags.StringVar(&acctID, "acctid", "", "AcctID (from `get-accounts` subcommand)")
+	invTransactionsCommand.Flags.StringVar(&brokerID, "brokerid", "", "BrokerID (from `get-accounts` subcommand)")
 }
 
 func invTransactions() {
@@ -33,8 +33,8 @@ func invTransactions() {
 	statementRequest := ofxgo.InvStatementRequest{
 		TrnUID: *uid,
 		InvAcctFrom: ofxgo.InvAcct{
-			BrokerId: ofxgo.String(brokerId),
-			AcctId:   ofxgo.String(acctId),
+			BrokerID: ofxgo.String(brokerID),
+			AcctID:   ofxgo.String(acctID),
 		},
 		Include:        true,
 		IncludeOO:      true,
@@ -99,7 +99,7 @@ func invTransactions() {
 				} else if tran.OrigCurrency != nil {
 					currency = tran.Currency.CurSym
 				}
-				fmt.Printf(" %s %s %s (%s %s)\n", tran.IncomeType, tran.Total, currency, tran.SecId.UniqueIdType, tran.SecId.UniqueId)
+				fmt.Printf(" %s %s %s (%s %s)\n", tran.IncomeType, tran.Total, currency, tran.SecID.UniqueIDType, tran.SecID.UniqueID)
 				// TODO print ticker instead of CUSIP
 			case ofxgo.InvExpense:
 				printInvTran(&tran.InvTran)
@@ -109,14 +109,14 @@ func invTransactions() {
 				} else if tran.OrigCurrency != nil {
 					currency = tran.Currency.CurSym
 				}
-				fmt.Printf(" %s %s (%s %s)\n", tran.Total, currency, tran.SecId.UniqueIdType, tran.SecId.UniqueId)
+				fmt.Printf(" %s %s (%s %s)\n", tran.Total, currency, tran.SecID.UniqueIDType, tran.SecID.UniqueID)
 				// TODO print ticker instead of CUSIP
 			case ofxgo.JrnlFund:
 				printInvTran(&tran.InvTran)
 				fmt.Printf(" %s %s (%s -> %s)\n", tran.Total, stmt.CurDef, tran.SubAcctFrom, tran.SubAcctTo)
 			case ofxgo.JrnlSec:
 				printInvTran(&tran.InvTran)
-				fmt.Printf(" %s %s %s (%s -> %s)\n", tran.Units, tran.SecId.UniqueIdType, tran.SecId.UniqueId, tran.SubAcctFrom, tran.SubAcctTo)
+				fmt.Printf(" %s %s %s (%s -> %s)\n", tran.Units, tran.SecID.UniqueIDType, tran.SecID.UniqueID, tran.SubAcctFrom, tran.SubAcctTo)
 				// TODO print ticker instead of CUSIP
 			case ofxgo.MarginInterest:
 				printInvTran(&tran.InvTran)
@@ -135,7 +135,7 @@ func invTransactions() {
 				} else if tran.OrigCurrency != nil {
 					currency = tran.Currency.CurSym
 				}
-				fmt.Printf(" %s (%s %s)@%s %s (Total: %s)\n", tran.Units, tran.SecId.UniqueIdType, tran.SecId.UniqueId, tran.UnitPrice, currency, tran.Total)
+				fmt.Printf(" %s (%s %s)@%s %s (Total: %s)\n", tran.Units, tran.SecID.UniqueIDType, tran.SecID.UniqueID, tran.UnitPrice, currency, tran.Total)
 				// TODO print ticker instead of CUSIP
 			case ofxgo.RetOfCap:
 				printInvTran(&tran.InvTran)
@@ -145,7 +145,7 @@ func invTransactions() {
 				} else if tran.OrigCurrency != nil {
 					currency = tran.Currency.CurSym
 				}
-				fmt.Printf(" %s %s (%s %s)\n", tran.Total, currency, tran.SecId.UniqueIdType, tran.SecId.UniqueId)
+				fmt.Printf(" %s %s (%s %s)\n", tran.Total, currency, tran.SecID.UniqueIDType, tran.SecID.UniqueID)
 				// TODO print ticker instead of CUSIP
 			case ofxgo.SellDebt:
 				printInvSell(stmt.CurDef, &tran.InvSell)
@@ -165,11 +165,11 @@ func invTransactions() {
 				} else if tran.OrigCurrency != nil {
 					currency = tran.Currency.CurSym
 				}
-				fmt.Printf(" %d/%d %s -> %s shares of %s %s (%s %s for fractional shares)\n", tran.Numerator, tran.Denominator, tran.OldUnits, tran.NewUnits, tran.SecId.UniqueIdType, tran.SecId.UniqueId, tran.FracCash, currency)
+				fmt.Printf(" %d/%d %s -> %s shares of %s %s (%s %s for fractional shares)\n", tran.Numerator, tran.Denominator, tran.OldUnits, tran.NewUnits, tran.SecID.UniqueIDType, tran.SecID.UniqueID, tran.FracCash, currency)
 				// TODO print ticker instead of CUSIP
 			case ofxgo.Transfer:
 				printInvTran(&tran.InvTran)
-				fmt.Printf(" %s (%s %s) %s\n", tran.Units, tran.SecId.UniqueIdType, tran.SecId.UniqueId, tran.TferAction)
+				fmt.Printf(" %s (%s %s) %s\n", tran.Units, tran.SecID.UniqueIDType, tran.SecID.UniqueID, tran.TferAction)
 				// TODO print ticker instead of CUSIP
 			}
 		}
@@ -189,7 +189,7 @@ func printInvBuy(defCurrency ofxgo.String, ib *ofxgo.InvBuy) {
 		currency = ib.Currency.CurSym
 	}
 
-	fmt.Printf("%s (%s %s)@%s %s (Total: %s)\n", ib.Units, ib.SecId.UniqueIdType, ib.SecId.UniqueId, ib.UnitPrice, currency, ib.Total)
+	fmt.Printf("%s (%s %s)@%s %s (Total: %s)\n", ib.Units, ib.SecID.UniqueIDType, ib.SecID.UniqueID, ib.UnitPrice, currency, ib.Total)
 	// TODO print ticker instead of CUSIP
 }
 
@@ -202,6 +202,6 @@ func printInvSell(defCurrency ofxgo.String, is *ofxgo.InvSell) {
 		currency = is.Currency.CurSym
 	}
 
-	fmt.Printf(" %s (%s %s)@%s %s (Total: %s)\n", is.Units, is.SecId.UniqueIdType, is.SecId.UniqueId, is.UnitPrice, currency, is.Total)
+	fmt.Printf(" %s (%s %s)@%s %s (Total: %s)\n", is.Units, is.SecID.UniqueIDType, is.SecID.UniqueID, is.UnitPrice, currency, is.Total)
 	// TODO print ticker instead of CUSIP
 }

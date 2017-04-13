@@ -43,13 +43,13 @@ func TestMarshalBankStatementRequest(t *testing.T) {
 </OFX>`
 
 	var client = ofxgo.Client{
-		AppId:       "OFXGO",
+		AppID:       "OFXGO",
 		AppVer:      "0001",
 		SpecVersion: "203",
 	}
 
 	var request ofxgo.Request
-	request.Signon.UserId = "myusername"
+	request.Signon.UserID = "myusername"
 	request.Signon.UserPass = "Pa$$word"
 	request.Signon.Org = "BNK"
 	request.Signon.Fid = "1987"
@@ -57,8 +57,8 @@ func TestMarshalBankStatementRequest(t *testing.T) {
 	statementRequest := ofxgo.StatementRequest{
 		TrnUID: "123",
 		BankAcctFrom: ofxgo.BankAcct{
-			BankId:   "318398732",
-			AcctId:   "78346129",
+			BankID:   "318398732",
+			AcctID:   "78346129",
 			AcctType: ofxgo.AcctTypeChecking,
 		},
 		Include: true,
@@ -117,13 +117,13 @@ NEWFILEUID:NONE
 </OFX>`
 
 	var client = ofxgo.Client{
-		AppId:       "OFXGO",
+		AppID:       "OFXGO",
 		AppVer:      "0001",
 		SpecVersion: "103",
 	}
 
 	var request ofxgo.Request
-	request.Signon.UserId = "myusername"
+	request.Signon.UserID = "myusername"
 	request.Signon.UserPass = "Pa$$word"
 	request.Signon.Org = "BNK"
 	request.Signon.Fid = "1987"
@@ -131,8 +131,8 @@ NEWFILEUID:NONE
 	statementRequest := ofxgo.StatementRequest{
 		TrnUID: "123",
 		BankAcctFrom: ofxgo.BankAcct{
-			BankId:   "318398732",
-			AcctId:   "78346129",
+			BankID:   "318398732",
+			AcctID:   "78346129",
 			AcctType: ofxgo.AcctTypeChecking,
 		},
 		Include: true,
@@ -235,7 +235,7 @@ func TestUnmarshalBankStatementResponse(t *testing.T) {
 				TrnType:  ofxgo.TrnTypeCheck,
 				DtPosted: *ofxgo.NewDateGMT(2006, 1, 4, 0, 0, 0, 0),
 				TrnAmt:   trnamt1,
-				FiTId:    "00592",
+				FiTID:    "00592",
 				CheckNum: "2002",
 			},
 			{
@@ -243,7 +243,7 @@ func TestUnmarshalBankStatementResponse(t *testing.T) {
 				DtPosted: *ofxgo.NewDateGMT(2006, 1, 12, 0, 0, 0, 0),
 				DtUser:   ofxgo.NewDateGMT(2006, 1, 12, 0, 0, 0, 0),
 				TrnAmt:   trnamt2,
-				FiTId:    "00679",
+				FiTID:    "00679",
 			},
 		},
 	}
@@ -260,8 +260,8 @@ func TestUnmarshalBankStatementResponse(t *testing.T) {
 		},
 		CurDef: "USD",
 		BankAcctFrom: ofxgo.BankAcct{
-			BankId:   "318398732",
-			AcctId:   "78346129",
+			BankID:   "318398732",
+			AcctID:   "78346129",
 			AcctType: ofxgo.AcctTypeChecking,
 		},
 		BankTranList: &banktranlist,

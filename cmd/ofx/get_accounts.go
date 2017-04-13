@@ -57,11 +57,11 @@ func getAccounts() {
 	if acctinfo, ok := response.Signup[0].(*ofxgo.AcctInfoResponse); ok {
 		for _, acct := range acctinfo.AcctInfo {
 			if acct.BankAcctInfo != nil {
-				fmt.Printf("Bank Account:\n\tBankId: \"%s\"\n\tAcctId: \"%s\"\n\tAcctType: %s\n", acct.BankAcctInfo.BankAcctFrom.BankId, acct.BankAcctInfo.BankAcctFrom.AcctId, acct.BankAcctInfo.BankAcctFrom.AcctType)
+				fmt.Printf("Bank Account:\n\tBankID: \"%s\"\n\tAcctID: \"%s\"\n\tAcctType: %s\n", acct.BankAcctInfo.BankAcctFrom.BankID, acct.BankAcctInfo.BankAcctFrom.AcctID, acct.BankAcctInfo.BankAcctFrom.AcctType)
 			} else if acct.CCAcctInfo != nil {
-				fmt.Printf("Credit card:\n\tAcctId: \"%s\"\n", acct.CCAcctInfo.CCAcctFrom.AcctId)
+				fmt.Printf("Credit card:\n\tAcctID: \"%s\"\n", acct.CCAcctInfo.CCAcctFrom.AcctID)
 			} else if acct.InvAcctInfo != nil {
-				fmt.Printf("Investment account:\n\tBrokerId: \"%s\"\n\tAcctId: \"%s\"\n", acct.InvAcctInfo.InvAcctFrom.BrokerId, acct.InvAcctInfo.InvAcctFrom.AcctId)
+				fmt.Printf("Investment account:\n\tBrokerID: \"%s\"\n\tAcctID: \"%s\"\n", acct.InvAcctInfo.InvAcctFrom.BrokerID, acct.InvAcctInfo.InvAcctFrom.AcctID)
 			} else {
 				fmt.Printf("Unknown type: %s %s\n", acct.Name, acct.Desc)
 			}

@@ -9,13 +9,13 @@ import (
 type SignonRequest struct {
 	XMLName   xml.Name `xml:"SONRQ"`
 	DtClient  Date     `xml:"DTCLIENT"` // Current time on client, overwritten in Client.Request()
-	UserId    String   `xml:"USERID"`
+	UserID    String   `xml:"USERID"`
 	UserPass  String   `xml:"USERPASS,omitempty"`
 	UserKey   String   `xml:"USERKEY,omitempty"`
 	Language  String   `xml:"LANGUAGE"` // Defaults to ENG
 	Org       String   `xml:"FI>ORG"`
 	Fid       String   `xml:"FI>FID"`
-	AppId     String   `xml:"APPID"`  // Overwritten in Client.Request()
+	AppID     String   `xml:"APPID"`  // Overwritten in Client.Request()
 	AppVer    String   `xml:"APPVER"` // Overwritten in Client.Request()
 	ClientUID UID      `xml:"CLIENTUID,omitempty"`
 }
@@ -25,7 +25,7 @@ func (r *SignonRequest) Name() string {
 }
 
 func (r *SignonRequest) Valid() (bool, error) {
-	if len(r.UserId) < 1 || len(r.UserId) > 32 {
+	if len(r.UserID) < 1 || len(r.UserID) > 32 {
 		return false, errors.New("SONRQ>USERID invalid length")
 	}
 	if (len(r.UserPass) == 0) == (len(r.UserKey) == 0) {
@@ -42,7 +42,7 @@ func (r *SignonRequest) Valid() (bool, error) {
 	} else if len(r.Language) != 3 {
 		return false, fmt.Errorf("SONRQ>LANGUAGE invalid length: \"%s\"\n", r.Language)
 	}
-	if len(r.AppId) < 1 || len(r.AppId) > 5 {
+	if len(r.AppID) < 1 || len(r.AppID) > 5 {
 		return false, errors.New("SONRQ>APPID invalid length")
 	}
 	if len(r.AppVer) < 1 || len(r.AppVer) > 4 {

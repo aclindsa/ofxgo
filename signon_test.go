@@ -7,13 +7,13 @@ import (
 
 func TestMarshalInvalidSignons(t *testing.T) {
 	var client = ofxgo.Client{
-		AppId:       "OFXGO",
+		AppID:       "OFXGO",
 		AppVer:      "0001",
 		SpecVersion: "203",
 	}
 
 	var request ofxgo.Request
-	request.Signon.UserId = "myusername"
+	request.Signon.UserID = "myusername"
 	request.Signon.UserPass = "Pa$$word"
 	request.Signon.Org = "BNK"
 	request.Signon.Fid = "1987"
@@ -36,16 +36,16 @@ func TestMarshalInvalidSignons(t *testing.T) {
 		t.Fatalf("Unexpected error marshalling signon: %s\n", err)
 	}
 
-	request.Signon.UserId = ""
+	request.Signon.UserID = ""
 	_, err = request.Marshal()
 	if err == nil {
-		t.Fatalf("Expected error due to unspecified UserId\n")
+		t.Fatalf("Expected error due to unspecified UserID\n")
 	}
-	request.Signon.UserId = "lakhgdlsakhgdlkahdglkhsadlkghaslkdghsalkdghalsdhg"
+	request.Signon.UserID = "lakhgdlsakhgdlkahdglkhsadlkghaslkdghsalkdghalsdhg"
 	if err == nil {
-		t.Fatalf("Expected error due to UserId too long\n")
+		t.Fatalf("Expected error due to UserID too long\n")
 	}
-	request.Signon.UserId = "myusername"
+	request.Signon.UserID = "myusername"
 
 	request.Signon.UserKey = "adlfahdslkgahdweoihadf98agrha87rghasdf9hawhra2hrkwahhaguhwaoefajkei23hff"
 	_, err = request.Marshal()
@@ -78,23 +78,23 @@ func TestMarshalInvalidSignons(t *testing.T) {
 	}
 	request.Signon.Language = "ENG"
 
-	request.Signon.AppId = ""
+	request.Signon.AppID = ""
 	_, err = request.Marshal()
 	if err == nil {
-		t.Fatalf("Expected error due to missing AppId\n")
+		t.Fatalf("Expected error due to missing AppID\n")
 	}
 	request.SetClientFields(&client)
 	_, err = request.Marshal()
 	if err != nil {
-		t.Fatalf("Client expected to set empty AppId: %s\n", err)
+		t.Fatalf("Client expected to set empty AppID: %s\n", err)
 	}
-	client.AppId = "ALKHGDH"
+	client.AppID = "ALKHGDH"
 	request.SetClientFields(&client)
 	_, err = request.Marshal()
 	if err == nil {
-		t.Fatalf("Expected error due to AppId too long\n")
+		t.Fatalf("Expected error due to AppID too long\n")
 	}
-	client.AppId = "OFXGO"
+	client.AppID = "OFXGO"
 
 	request.Signon.AppVer = ""
 	_, err = request.Marshal()

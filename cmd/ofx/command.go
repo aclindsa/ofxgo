@@ -20,7 +20,7 @@ func (c *Command) Usage() {
 }
 
 // flags common to all server transactions
-var serverURL, username, password, org, fid, appId, appVer, ofxVersion, clientUID string
+var serverURL, username, password, org, fid, appID, appVer, ofxVersion, clientUID string
 var noIndentRequests bool
 
 func defineServerFlags(f *flag.FlagSet) {
@@ -29,7 +29,7 @@ func defineServerFlags(f *flag.FlagSet) {
 	f.StringVar(&password, "password", "", "Your password at financial institution")
 	f.StringVar(&org, "org", "", "'ORG' for your financial institution")
 	f.StringVar(&fid, "fid", "", "'FID' for your financial institution")
-	f.StringVar(&appId, "appid", "QWIN", "'APPID' to pretend to be")
+	f.StringVar(&appID, "appid", "QWIN", "'APPID' to pretend to be")
 	f.StringVar(&appVer, "appver", "2400", "'APPVER' to pretend to be")
 	f.StringVar(&ofxVersion, "ofxversion", "203", "OFX version to use")
 	f.StringVar(&clientUID, "clientuid", "", "Client UID (only required by a few FIs, like Chase)")

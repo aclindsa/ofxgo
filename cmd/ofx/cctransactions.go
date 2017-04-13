@@ -17,7 +17,7 @@ var ccTransactionsCommand = Command{
 
 func init() {
 	defineServerFlags(ccTransactionsCommand.Flags)
-	ccTransactionsCommand.Flags.StringVar(&acctId, "acctid", "", "AcctId (from `get-accounts` subcommand)")
+	ccTransactionsCommand.Flags.StringVar(&acctID, "acctid", "", "AcctID (from `get-accounts` subcommand)")
 }
 
 func ccTransactions() {
@@ -32,7 +32,7 @@ func ccTransactions() {
 	statementRequest := ofxgo.CCStatementRequest{
 		TrnUID: *uid,
 		CCAcctFrom: ofxgo.CCAcct{
-			AcctId: ofxgo.String(acctId),
+			AcctID: ofxgo.String(acctID),
 		},
 		Include: true,
 	}

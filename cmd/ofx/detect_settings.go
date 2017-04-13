@@ -30,7 +30,7 @@ func init() {
 // We keep a separate list of APPIDs to preserve the ordering (ordering isn't
 // guaranteed in maps). We want to try them in order from 'best' and most
 // likely to work to 'worse' and least likely to work
-var appIds = []string{
+var appIDs = []string{
 	"OFXGO", // ofxgo (this library)
 	"QWIN",  // Intuit Quicken Windows
 	"QMOFX", // Intuit Quicken Mac
@@ -92,13 +92,13 @@ var versions = []string{
 
 func detectSettings() {
 	var attempts uint
-	for _, appId := range appIds {
-		for _, appVer := range appVersions[appId] {
+	for _, appID := range appIDs {
+		for _, appVer := range appVersions[appID] {
 			for _, version := range versions {
 				for _, noIndent := range []bool{false, true} {
-					if tryProfile(appId, appVer, version, noIndent) {
+					if tryProfile(appID, appVer, version, noIndent) {
 						fmt.Println("The following settings were found to work:")
-						fmt.Printf("AppId: %s\n", appId)
+						fmt.Printf("AppID: %s\n", appID)
 						fmt.Printf("AppVer: %s\n", appVer)
 						fmt.Printf("OFX Version: %s\n", version)
 						fmt.Printf("noindent: %t\n", noIndent)
@@ -109,7 +109,7 @@ func detectSettings() {
 						if noIndent {
 							noIndentString = " noindent"
 						}
-						fmt.Printf("Attempt %d failed (%s %s %s%s), trying again after %dms...\n", attempts, appId, appVer, version, noIndentString, delay)
+						fmt.Printf("Attempt %d failed (%s %s %s%s), trying again after %dms...\n", attempts, appID, appVer, version, noIndentString, delay)
 						time.Sleep(time.Duration(delay) * time.Millisecond)
 					}
 				}
@@ -120,9 +120,9 @@ func detectSettings() {
 
 const anonymous = "anonymous00000000000000000000000"
 
-func tryProfile(appId, appVer, version string, noindent bool) bool {
+func tryProfile(appID, appVer, version string, noindent bool) bool {
 	var client = ofxgo.Client{
-		AppId:       appId,
+		AppID:       appID,
 		AppVer:      appVer,
 		SpecVersion: version,
 		NoIndent:    noindent,
@@ -131,7 +131,7 @@ func tryProfile(appId, appVer, version string, noindent bool) bool {
 	var query ofxgo.Request
 	query.URL = serverURL
 	query.Signon.ClientUID = ofxgo.UID(clientUID)
-	query.Signon.UserId = ofxgo.String(username)
+	query.Signon.UserID = ofxgo.String(username)
 	query.Signon.UserPass = ofxgo.String(password)
 	query.Signon.Org = ofxgo.String(org)
 	query.Signon.Fid = ofxgo.String(fid)
@@ -154,7 +154,7 @@ func tryProfile(appId, appVer, version string, noindent bool) bool {
 	}
 
 	// try again with anonymous logins
-	query.Signon.UserId = ofxgo.String(anonymous)
+	query.Signon.UserID = ofxgo.String(anonymous)
 	query.Signon.UserPass = ofxgo.String(anonymous)
 
 	_, err = client.Request(&query)

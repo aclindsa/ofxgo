@@ -19,7 +19,7 @@ var ccDownloadCommand = Command{
 func init() {
 	defineServerFlags(ccDownloadCommand.Flags)
 	ccDownloadCommand.Flags.StringVar(&filename, "filename", "./download.ofx", "The file to save to")
-	ccDownloadCommand.Flags.StringVar(&acctId, "acctid", "", "AcctId (from `get-accounts` subcommand)")
+	ccDownloadCommand.Flags.StringVar(&acctID, "acctid", "", "AcctID (from `get-accounts` subcommand)")
 }
 
 func ccDownloadCheckFlags() bool {
@@ -45,7 +45,7 @@ func ccDownload() {
 	statementRequest := ofxgo.CCStatementRequest{
 		TrnUID: *uid,
 		CCAcctFrom: ofxgo.CCAcct{
-			AcctId: ofxgo.String(acctId),
+			AcctID: ofxgo.String(acctID),
 		},
 		Include: true,
 	}

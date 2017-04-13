@@ -42,13 +42,13 @@ func TestMarshalCCStatementRequest(t *testing.T) {
 </OFX>`
 
 	var client = ofxgo.Client{
-		AppId:       "OFXGO",
+		AppID:       "OFXGO",
 		AppVer:      "0001",
 		SpecVersion: "203",
 	}
 
 	var request ofxgo.Request
-	request.Signon.UserId = "myusername"
+	request.Signon.UserID = "myusername"
 	request.Signon.UserPass = "Pa$$word"
 	request.Signon.Org = "BNK"
 	request.Signon.Fid = "1987"
@@ -56,7 +56,7 @@ func TestMarshalCCStatementRequest(t *testing.T) {
 	statementRequest := ofxgo.CCStatementRequest{
 		TrnUID: "913846",
 		CCAcctFrom: ofxgo.CCAcct{
-			AcctId: "XXXXXXXXXXXX1234",
+			AcctID: "XXXXXXXXXXXX1234",
 		},
 		DtStart: ofxgo.NewDateGMT(2017, 1, 1, 0, 0, 0, 0),
 		Include: true,
@@ -108,21 +108,21 @@ NEWFILEUID:NONE
 				TrnType:  ofxgo.TrnTypeDebit,
 				DtPosted: *ofxgo.NewDateGMT(2017, 2, 9, 12, 0, 0, 0),
 				TrnAmt:   trnamt1,
-				FiTId:    "2017020924435657040207171600195",
+				FiTID:    "2017020924435657040207171600195",
 				Name:     "SLICE OF NY",
 			},
 			{
 				TrnType:  ofxgo.TrnTypeCredit,
 				DtPosted: *ofxgo.NewDateGMT(2016, 12, 28, 12, 0, 0, 0),
 				TrnAmt:   trnamt2,
-				FiTId:    "2016122823633637200000258482730",
+				FiTID:    "2016122823633637200000258482730",
 				Name:     "Payment Thank You Electro",
 			},
 			{
 				TrnType:  ofxgo.TrnTypeDebit,
 				DtPosted: *ofxgo.NewDateGMT(2017, 3, 27, 12, 0, 0, 0),
 				TrnAmt:   trnamt3,
-				FiTId:    "2017032724445727085300442885680",
+				FiTID:    "2017032724445727085300442885680",
 				Name:     "KROGER FUEL #9999",
 			},
 		},
@@ -140,7 +140,7 @@ NEWFILEUID:NONE
 		},
 		CurDef: "USD",
 		CCAcctFrom: ofxgo.CCAcct{
-			AcctId: "9283744488463775",
+			AcctID: "9283744488463775",
 		},
 		BankTranList: &banktranlist,
 		BalAmt:       balamt,

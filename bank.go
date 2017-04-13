@@ -79,10 +79,10 @@ type Transaction struct {
 	DtUser        *Date         `xml:"DTUSER,omitempty"`
 	DtAvail       *Date         `xml:"DTAVAIL,omitempty"`
 	TrnAmt        Amount        `xml:"TRNAMT"`
-	FiTId         String        `xml:"FITID"`                   // Client uses FITID to detect whether it has previously downloaded the transaction
-	CorrectFiTId  String        `xml:"CORRECTFITID,omitempty"`  // Transaction Id that this transaction corrects, if present
+	FiTID         String        `xml:"FITID"`                   // Client uses FITID to detect whether it has previously downloaded the transaction
+	CorrectFiTID  String        `xml:"CORRECTFITID,omitempty"`  // Transaction ID that this transaction corrects, if present
 	CorrectAction correctAction `xml:"CORRECTACTION,omitempty"` // One of DELETE, REPLACE
-	SrvrTId       String        `xml:"SRVRTID,omitempty"`
+	SrvrTID       String        `xml:"SRVRTID,omitempty"`
 	CheckNum      String        `xml:"CHECKNUM,omitempty"`
 	RefNum        String        `xml:"REFNUM,omitempty"`
 	SIC           Int           `xml:"SIC,omitempty"` // Standard Industrial Code
@@ -111,7 +111,7 @@ type TransactionList struct {
 
 // PendingTransaction represents a single pending transaction. It is similar to
 // Transaction, but is not finalized (and may never be). For instance, it lacks
-// FiTId and DtPosted fields.
+// FiTID and DtPosted fields.
 type PendingTransaction struct {
 	XMLName      xml.Name    `xml:"STMTTRNP"`
 	TrnType      trnType     `xml:"TRNTYPE"` // One of CREDIT, DEBIT, INT (interest earned or paid. Note: Depends on signage of amount), DIV, FEE, SRVCHG (service charge), DEP (deposit), ATM (Note: Depends on signage of amount), POS (Note: Depends on signage of amount), XFER, CHECK, PAYMENT, CASH, DIRECTDEP, DIRECTDEBIT, REPEATPMT, HOLD, OTHER

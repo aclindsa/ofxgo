@@ -38,13 +38,13 @@ func TestMarshalAcctInfoRequest(t *testing.T) {
 	EST := time.FixedZone("EST", -5*60*60)
 
 	var client = ofxgo.Client{
-		AppId:       "OFXGO",
+		AppID:       "OFXGO",
 		AppVer:      "0001",
 		SpecVersion: "203",
 	}
 
 	var request ofxgo.Request
-	request.Signon.UserId = "myusername"
+	request.Signon.UserID = "myusername"
 	request.Signon.UserPass = "Pa$$word"
 	request.Signon.Org = "BNK"
 	request.Signon.Fid = "1987"
@@ -124,8 +124,8 @@ func TestUnmarshalAcctInfoResponse(t *testing.T) {
 
 	bankacctinfo := ofxgo.BankAcctInfo{
 		BankAcctFrom: ofxgo.BankAcct{
-			BankId:   "8367556009",
-			AcctId:   "000999847",
+			BankID:   "8367556009",
+			AcctID:   "000999847",
 			AcctType: ofxgo.AcctTypeMoneyMrkt,
 		},
 		SupTxDl:   true,

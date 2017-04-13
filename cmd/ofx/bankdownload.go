@@ -16,13 +16,13 @@ var downloadCommand = Command{
 	Do:          download,
 }
 
-var filename, bankId, acctId, acctType string
+var filename, bankID, acctID, acctType string
 
 func init() {
 	defineServerFlags(downloadCommand.Flags)
 	downloadCommand.Flags.StringVar(&filename, "filename", "./download.ofx", "The file to save to")
-	downloadCommand.Flags.StringVar(&bankId, "bankid", "", "BankId (from `get-accounts` subcommand)")
-	downloadCommand.Flags.StringVar(&acctId, "acctid", "", "AcctId (from `get-accounts` subcommand)")
+	downloadCommand.Flags.StringVar(&bankID, "bankid", "", "BankID (from `get-accounts` subcommand)")
+	downloadCommand.Flags.StringVar(&acctID, "acctid", "", "AcctID (from `get-accounts` subcommand)")
 	downloadCommand.Flags.StringVar(&acctType, "accttype", "CHECKING", "AcctType (from `get-accounts` subcommand)")
 }
 
@@ -55,8 +55,8 @@ func download() {
 	statementRequest := ofxgo.StatementRequest{
 		TrnUID: *uid,
 		BankAcctFrom: ofxgo.BankAcct{
-			BankId:   ofxgo.String(bankId),
-			AcctId:   ofxgo.String(acctId),
+			BankID:   ofxgo.String(bankID),
+			AcctID:   ofxgo.String(acctID),
 			AcctType: acctTypeEnum,
 		},
 		Include: true,

@@ -267,9 +267,9 @@ func (s *Status) CodeConditions() (string, error) {
 // BankAcct represents the identifying information for one bank account
 type BankAcct struct {
 	XMLName  xml.Name // BANKACCTTO or BANKACCTFROM
-	BankId   String   `xml:"BANKID"`
-	BranchId String   `xml:"BRANCHID,omitempty"` // Unused in USA
-	AcctId   String   `xml:"ACCTID"`
+	BankID   String   `xml:"BANKID"`
+	BranchID String   `xml:"BRANCHID,omitempty"` // Unused in USA
+	AcctID   String   `xml:"ACCTID"`
 	AcctType acctType `xml:"ACCTTYPE"`          // One of CHECKING, SAVINGS, MONEYMRKT, CREDITLINE, CD
 	AcctKey  String   `xml:"ACCTKEY,omitempty"` // Unused in USA
 }
@@ -277,15 +277,15 @@ type BankAcct struct {
 // CCAcct represents the identifying information for one checking account
 type CCAcct struct {
 	XMLName xml.Name // CCACCTTO or CCACCTFROM
-	AcctId  String   `xml:"ACCTID"`
+	AcctID  String   `xml:"ACCTID"`
 	AcctKey String   `xml:"ACCTKEY,omitempty"` // Unused in USA
 }
 
 // InvAcct represents the identifying information for one investment account
 type InvAcct struct {
 	XMLName  xml.Name // INVACCTTO or INVACCTFROM
-	BrokerId String   `xml:"BROKERID"`
-	AcctId   String   `xml:"ACCTID"`
+	BrokerID String   `xml:"BROKERID"`
+	AcctID   String   `xml:"ACCTID"`
 }
 
 // Currency represents one ISO-4217 currency

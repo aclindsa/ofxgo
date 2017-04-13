@@ -16,13 +16,13 @@ var invDownloadCommand = Command{
 	Do:          invDownload,
 }
 
-var brokerId string
+var brokerID string
 
 func init() {
 	defineServerFlags(invDownloadCommand.Flags)
 	invDownloadCommand.Flags.StringVar(&filename, "filename", "./download.ofx", "The file to save to")
-	invDownloadCommand.Flags.StringVar(&acctId, "acctid", "", "AcctId (from `get-accounts` subcommand)")
-	invDownloadCommand.Flags.StringVar(&brokerId, "brokerid", "", "BrokerId (from `get-accounts` subcommand)")
+	invDownloadCommand.Flags.StringVar(&acctID, "acctid", "", "AcctID (from `get-accounts` subcommand)")
+	invDownloadCommand.Flags.StringVar(&brokerID, "brokerid", "", "BrokerID (from `get-accounts` subcommand)")
 }
 
 func invDownloadCheckFlags() bool {
@@ -48,8 +48,8 @@ func invDownload() {
 	statementRequest := ofxgo.InvStatementRequest{
 		TrnUID: *uid,
 		InvAcctFrom: ofxgo.InvAcct{
-			BrokerId: ofxgo.String(brokerId),
-			AcctId:   ofxgo.String(acctId),
+			BrokerID: ofxgo.String(brokerID),
+			AcctID:   ofxgo.String(acctID),
 		},
 		Include:        true,
 		IncludeOO:      true,

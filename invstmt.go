@@ -39,18 +39,18 @@ func (r *InvStatementRequest) Type() messageType {
 
 type InvTran struct {
 	XMLName       xml.Name `xml:"INVTRAN"`
-	FiTId         String   `xml:"FITID"`
-	SrvrTId       String   `xml:"SRVRTID,omitempty"`
+	FiTID         String   `xml:"FITID"`
+	SrvrTID       String   `xml:"SRVRTID,omitempty"`
 	DtTrade       Date     `xml:"DTTRADE"`                 // trade date; for stock splits, day of record
 	DtSettle      *Date    `xml:"DTSETTLE,omitempty"`      // settlement date; for stock splits, execution date
-	ReversalFiTId String   `xml:"REVERSALFITID,omitempty"` // For a reversal transaction, the FITID of the transaction that is being reversed.
+	ReversalFiTID String   `xml:"REVERSALFITID,omitempty"` // For a reversal transaction, the FITID of the transaction that is being reversed.
 	Memo          String   `xml:"MEMO,omitempty"`
 }
 
 type InvBuy struct {
 	XMLName      xml.Name    `xml:"INVBUY"`
 	InvTran      InvTran     `xml:"INVTRAN"`
-	SecId        SecurityId  `xml:"SECID"`
+	SecID        SecurityID  `xml:"SECID"`
 	Units        Amount      `xml:"UNITS"`            // For stocks, MFs, other, number of shares held. Bonds = face value. Options = number of contracts
 	UnitPrice    Amount      `xml:"UNITPRICE"`        // For stocks, MFs, other, price per share. Bonds = percentage of par. Option = premium per share of underlying security
 	Markup       Amount      `xml:"MARKUP,omitempty"` // Portion of UNITPRICE that is attributed to the dealer markup
@@ -65,7 +65,7 @@ type InvBuy struct {
 	SubAcctFund  subAcctType `xml:"SUBACCTFUND"`            // Where did the money for the transaction come from or go to? CASH, MARGIN, SHORT, OTHER
 
 	// The next three elements must either all be provided, or none of them
-	LoanId        String `xml:"LOANID,omitempty"`        // For 401(k) accounts only. Indicates that the transaction was due to a loan or a loan repayment, and which loan it was
+	LoanID        String `xml:"LOANID,omitempty"`        // For 401(k) accounts only. Indicates that the transaction was due to a loan or a loan repayment, and which loan it was
 	LoanPrincipal Amount `xml:"LOANPRINCIPAL,omitempty"` // For 401(k) accounts only. Indicates how much of the loan repayment was principal
 	LoanInterest  Amount `xml:"LOANINTEREST,omitempty"`  // For 401(k) accounts only. Indicates how much of the loan repayment was interest
 
@@ -77,7 +77,7 @@ type InvBuy struct {
 type InvSell struct {
 	XMLName      xml.Name    `xml:"INVSELL"`
 	InvTran      InvTran     `xml:"INVTRAN"`
-	SecId        SecurityId  `xml:"SECID"`
+	SecID        SecurityID  `xml:"SECID"`
 	Units        Amount      `xml:"UNITS"`              // For stocks, MFs, other, number of shares held. Bonds = face value. Options = number of contracts
 	UnitPrice    Amount      `xml:"UNITPRICE"`          // For stocks, MFs, other, price per share. Bonds = percentage of par. Option = premium per share of underlying security
 	Markdown     Amount      `xml:"MARKDOWN,omitempty"` // Portion of UNITPRICE that is attributed to the dealer markdown
@@ -94,7 +94,7 @@ type InvSell struct {
 	SubAcctSec   subAcctType `xml:"SUBACCTSEC"`             // Sub-account type for this security. One of CASH, MARGIN, SHORT, OTHER
 	SubAcctFund  subAcctType `xml:"SUBACCTFUND"`            // Where did the money for the transaction come from or go to? CASH, MARGIN, SHORT, OTHER
 
-	LoanId          String `xml:"LOANID,omitempty"`           // For 401(k) accounts only. Indicates that the transaction was due to a loan or a loan repayment, and which loan it was
+	LoanID          String `xml:"LOANID,omitempty"`           // For 401(k) accounts only. Indicates that the transaction was due to a loan or a loan repayment, and which loan it was
 	StateWitholding Amount `xml:"STATEWITHHOLDING,omitempty"` // State tax witholdings
 	Penalty         Amount `xml:"PENALTY,omitempty"`          // Amount withheld due to penalty
 
@@ -115,7 +115,7 @@ type BuyMF struct {
 	XMLName  xml.Name `xml:"BUYMF"`
 	InvBuy   InvBuy   `xml:"INVBUY"`
 	BuyType  buyType  `xml:"BUYTYPE"`            // One of BUY, BUYTOCOVER (BUYTOCOVER used to close short sales.)
-	RelFiTId String   `xml:"RELFITID,omitempty"` // used to relate transactions associated with mutual fund exchanges
+	RelFiTID String   `xml:"RELFITID,omitempty"` // used to relate transactions associated with mutual fund exchanges
 }
 
 func (t BuyMF) TransactionType() string {
@@ -155,12 +155,12 @@ func (t BuyStock) TransactionType() string {
 type ClosureOpt struct {
 	XMLName    xml.Name    `xml:"CLOSUREOPT"`
 	InvTran    InvTran     `xml:"INVTRAN"`
-	SecId      SecurityId  `xml:"SECID"`
+	SecID      SecurityID  `xml:"SECID"`
 	OptAction  optAction   `xml:"OPTACTION"`          // One of EXERCISE, ASSIGN, EXPIRE. The EXERCISE action is used to close out an option that is exercised. The ASSIGN action is used when an option writer is assigned. The EXPIRE action is used when the option’s expired date is reached
 	Units      Amount      `xml:"UNITS"`              // For stocks, MFs, other, number of shares held. Bonds = face value. Options = number of contracts
 	ShPerCtrct Int         `xml:"SHPERCTRCT"`         // Shares per contract
 	SubAcctSec subAcctType `xml:"SUBACCTSEC"`         // Sub-account type for this security. One of CASH, MARGIN, SHORT, OTHER
-	RelFiTId   String      `xml:"RELFITID,omitempty"` // used to relate transactions associated with mutual fund exchanges
+	RelFiTID   String      `xml:"RELFITID,omitempty"` // used to relate transactions associated with mutual fund exchanges
 	Gain       Amount      `xml:"GAIN,omitempty"`     // Total gain
 }
 
@@ -172,7 +172,7 @@ func (t ClosureOpt) TransactionType() string {
 type Income struct {
 	XMLName       xml.Name      `xml:"INCOME"`
 	InvTran       InvTran       `xml:"INVTRAN"`
-	SecId         SecurityId    `xml:"SECID"`
+	SecID         SecurityID    `xml:"SECID"`
 	IncomeType    incomeType    `xml:"INCOMETYPE"` // Type of investment income: CGLONG (capital gains-long term), CGSHORT (capital gains-short term), DIV (dividend), INTEREST, MISC
 	Total         Amount        `xml:"TOTAL"`
 	SubAcctSec    subAcctType   `xml:"SUBACCTSEC"`              // Sub-account type for this security. One of CASH, MARGIN, SHORT, OTHER
@@ -192,7 +192,7 @@ func (t Income) TransactionType() string {
 type InvExpense struct {
 	XMLName       xml.Name      `xml:"INVEXPENSE"`
 	InvTran       InvTran       `xml:"INVTRAN"`
-	SecId         SecurityId    `xml:"SECID"`
+	SecID         SecurityID    `xml:"SECID"`
 	Total         Amount        `xml:"TOTAL"`
 	SubAcctSec    subAcctType   `xml:"SUBACCTSEC"`              // Sub-account type for this security. One of CASH, MARGIN, SHORT, OTHER
 	SubAcctFund   subAcctType   `xml:"SUBACCTFUND"`             // Where did the money for the transaction come from or go to? CASH, MARGIN, SHORT, OTHER
@@ -222,7 +222,7 @@ func (t JrnlFund) TransactionType() string {
 type JrnlSec struct {
 	XMLName     xml.Name    `xml:"JRNLSEC"`
 	InvTran     InvTran     `xml:"INVTRAN"`
-	SecId       SecurityId  `xml:"SECID"`
+	SecID       SecurityID  `xml:"SECID"`
 	SubAcctFrom subAcctType `xml:"SUBACCTFROM"` // Sub-account cash is being transferred from: CASH, MARGIN, SHORT, OTHER
 	SubAcctTo   subAcctType `xml:"SUBACCTTO"`   // Sub-account cash is being transferred to: CASH, MARGIN, SHORT, OTHER
 	Units       Amount      `xml:"UNITS"`       // For stocks, MFs, other, number of shares held. Bonds = face value. Options = number of contracts
@@ -249,7 +249,7 @@ func (t MarginInterest) TransactionType() string {
 type Reinvest struct {
 	XMLName       xml.Name      `xml:"REINVEST"`
 	InvTran       InvTran       `xml:"INVTRAN"`
-	SecId         SecurityId    `xml:"SECID"`
+	SecID         SecurityID    `xml:"SECID"`
 	IncomeType    incomeType    `xml:"INCOMETYPE"` // Type of investment income: CGLONG (capital gains-long term), CGSHORT (capital gains-short term), DIV (dividend), INTEREST, MISC
 	Total         Amount        `xml:"TOTAL"`      // Transaction total. Buys, sells, etc.:((quan. * (price +/- markup/markdown)) +/-(commission + fees + load + taxes + penalty + withholding + statewithholding)). Distributions, interest, margin interest, misc. expense, etc.: amount. Return of cap: cost basis
 	SubAcctSec    subAcctType   `xml:"SUBACCTSEC"` // Sub-account type for this security. One of CASH, MARGIN, SHORT, OTHER
@@ -272,7 +272,7 @@ func (t Reinvest) TransactionType() string {
 type RetOfCap struct {
 	XMLName       xml.Name      `xml:"RETOFCAP"`
 	InvTran       InvTran       `xml:"INVTRAN"`
-	SecId         SecurityId    `xml:"SECID"`
+	SecID         SecurityID    `xml:"SECID"`
 	Total         Amount        `xml:"TOTAL"`
 	SubAcctSec    subAcctType   `xml:"SUBACCTSEC"`              // Sub-account type for this security. One of CASH, MARGIN, SHORT, OTHER
 	SubAcctFund   subAcctType   `xml:"SUBACCTFUND"`             // Where did the money for the transaction come from or go to? CASH, MARGIN, SHORT, OTHER
@@ -301,7 +301,7 @@ type SellMF struct {
 	InvSell      InvSell  `xml:"INVSELL"`
 	SellType     sellType `xml:"SELLTYPE"` // Type of sell. SELL, SELLSHORT
 	AvgCostBasis Amount   `xml:"AVGCOSTBASIS"`
-	RelFiTId     String   `xml:"RELFITID,omitempty"` // used to relate transactions associated with mutual fund exchanges
+	RelFiTID     String   `xml:"RELFITID,omitempty"` // used to relate transactions associated with mutual fund exchanges
 }
 
 func (t SellMF) TransactionType() string {
@@ -313,7 +313,7 @@ type SellOpt struct {
 	InvSell     InvSell     `xml:"INVSELL"`
 	OptSellType optSellType `xml:"OPTSELLTYPE"`        // For options, type of sell: SELLTOCLOSE, SELLTOOPEN. The SELLTOCLOSE action is selling a previously bought option. The SELLTOOPEN action is writing an option
 	ShPerCtrct  Int         `xml:"SHPERCTRCT"`         // Shares per contract
-	RelFiTId    String      `xml:"RELFITID,omitempty"` // used to relate transactions associated with mutual fund exchanges
+	RelFiTID    String      `xml:"RELFITID,omitempty"` // used to relate transactions associated with mutual fund exchanges
 	RelType     relType     `xml:"RELTYPE,omitempty"`  // Related option transaction type: SPREAD, STRADDLE, NONE, OTHER
 	Secured     secured     `xml:"SECURED,omitempty"`  // NAKED, COVERED
 }
@@ -344,7 +344,7 @@ func (t SellStock) TransactionType() string {
 type Split struct {
 	XMLName       xml.Name      `xml:"SPLIT"`
 	InvTran       InvTran       `xml:"INVTRAN"`
-	SecId         SecurityId    `xml:"SECID"`
+	SecID         SecurityID    `xml:"SECID"`
 	SubAcctSec    subAcctType   `xml:"SUBACCTSEC"`              // Sub-account type for this security. One of CASH, MARGIN, SHORT, OTHER
 	OldUnits      Amount        `xml:"OLDUNITS"`                // number of shares before the split
 	NewUnits      Amount        `xml:"NEWUNITS"`                // number of shares after the split
@@ -364,7 +364,7 @@ func (t Split) TransactionType() string {
 type Transfer struct {
 	XMLName       xml.Name      `xml:"TRANSFER"`
 	InvTran       InvTran       `xml:"INVTRAN"`
-	SecId         SecurityId    `xml:"SECID"`
+	SecID         SecurityID    `xml:"SECID"`
 	SubAcctSec    subAcctType   `xml:"SUBACCTSEC"` // Sub-account type for this security. One of CASH, MARGIN, SHORT, OTHER
 	Units         Amount        `xml:"UNITS"`      // For stocks, MFs, other, number of shares held. Bonds = face value. Options = number of contracts
 	TferAction    tferAction    `xml:"TFERACTION"` // One of IN, OUT
@@ -558,7 +558,7 @@ func (l *InvTranList) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error
 
 type InvPosition struct {
 	XMLName       xml.Name      `xml:"INVPOS"`
-	SecId         SecurityId    `xml:"SECID"`
+	SecID         SecurityID    `xml:"SECID"`
 	HeldInAcct    subAcctType   `xml:"HELDINACCT"`             // Sub-account type, one of CASH, MARGIN, SHORT, OTHER
 	PosType       posType       `xml:"POSTYPE"`                // SHORT = Writer for options, Short for all others; LONG = Holder for options, Long for all others.
 	Units         Amount        `xml:"UNITS"`                  // For stocks, MFs, other, number of shares held. Bonds = face value. Options = number of contracts
@@ -690,9 +690,9 @@ type InvBalance struct {
 
 type OO struct {
 	XMLName       xml.Name      `xml:"OO"`
-	FiTId         String        `xml:"FITID"`
-	SrvrTId       String        `xml:"SRVRTID,omitempty"`
-	SecId         SecurityId    `xml:"SECID"`
+	FiTID         String        `xml:"FITID"`
+	SrvrTID       String        `xml:"SRVRTID,omitempty"`
+	SecID         SecurityID    `xml:"SECID"`
 	DtPlaced      Date          `xml:"DTPLACED"`           // Date the order was placed
 	Units         Amount        `xml:"UNITS"`              // Quantity of the security the open order is for
 	SubAcct       subAcctType   `xml:"SUBACCT"`            // One of CASH, MARGIN, SHORT, OTHER
@@ -816,7 +816,7 @@ func (o OOSellStock) OrderType() string {
 type OOSwitchMF struct {
 	XMLName   xml.Name   `xml:"SWITCHMF"`
 	OO        OO         `xml:"OO"`
-	SecId     SecurityId `xml:"SECID"`     // Security ID of the fund to switch to or purchase
+	SecID     SecurityID `xml:"SECID"`     // Security ID of the fund to switch to or purchase
 	UnitType  unitType   `xml:"UNITTYPE"`  // What the units represent: one of SHARES, CURRENCY
 	SwitchAll Boolean    `xml:"SWITCHALL"` // Switch entire holding
 }
@@ -914,7 +914,7 @@ func (o *OOList) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 
 type ContribSecurity struct {
 	XMLName                 xml.Name   `xml:"CONTRIBSECURITY"`
-	SecId                   SecurityId `xml:"SECID"`
+	SecID                   SecurityID `xml:"SECID"`
 	PreTaxContribPct        Amount     `xml:"PRETAXCONTRIBPCT,omitempty"`        // Percentage of each new employee pretax contribution allocated to this security, rate.
 	PreTaxContribAmt        Amount     `xml:"PRETAXCONTRIBAMT,omitempty"`        // Fixed amount of each new employee pretax contribution allocated to this security, amount
 	AfterTaxContribPct      Amount     `xml:"AFTERTAXCONTRIBPCT,omitempty"`      // Percentage of each new employee after tax contribution allocated to this security, rate.

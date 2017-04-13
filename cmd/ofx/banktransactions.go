@@ -17,8 +17,8 @@ var bankTransactionsCommand = Command{
 
 func init() {
 	defineServerFlags(bankTransactionsCommand.Flags)
-	bankTransactionsCommand.Flags.StringVar(&bankId, "bankid", "", "BankId (from `get-accounts` subcommand)")
-	bankTransactionsCommand.Flags.StringVar(&acctId, "acctid", "", "AcctId (from `get-accounts` subcommand)")
+	bankTransactionsCommand.Flags.StringVar(&bankID, "bankid", "", "BankID (from `get-accounts` subcommand)")
+	bankTransactionsCommand.Flags.StringVar(&acctID, "acctid", "", "AcctID (from `get-accounts` subcommand)")
 	bankTransactionsCommand.Flags.StringVar(&acctType, "accttype", "CHECKING", "AcctType (from `get-accounts` subcommand)")
 }
 
@@ -40,8 +40,8 @@ func bankTransactions() {
 	statementRequest := ofxgo.StatementRequest{
 		TrnUID: *uid,
 		BankAcctFrom: ofxgo.BankAcct{
-			BankId:   ofxgo.String(bankId),
-			AcctId:   ofxgo.String(acctId),
+			BankID:   ofxgo.String(bankID),
+			AcctID:   ofxgo.String(acctID),
 			AcctType: acctTypeEnum,
 		},
 		Include: true,

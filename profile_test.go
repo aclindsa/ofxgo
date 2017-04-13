@@ -37,13 +37,13 @@ func TestMarshalProfileRequest(t *testing.T) {
 </OFX>`
 
 	var client = ofxgo.Client{
-		AppId:       "OFXGO",
+		AppID:       "OFXGO",
 		AppVer:      "0001",
 		SpecVersion: "203",
 	}
 
 	var request ofxgo.Request
-	request.Signon.UserId = "anonymous00000000000000000000000"
+	request.Signon.UserID = "anonymous00000000000000000000000"
 	request.Signon.UserPass = "anonymous00000000000000000000000"
 	request.Signon.Org = "BNK"
 	request.Signon.Fid = "1987"

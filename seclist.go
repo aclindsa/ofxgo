@@ -5,18 +5,18 @@ import (
 	"github.com/aclindsa/go/src/encoding/xml"
 )
 
-type SecurityId struct {
+type SecurityID struct {
 	XMLName      xml.Name `xml:"SECID"`
-	UniqueId     String   `xml:"UNIQUEID"`     // CUSIP for US FI's
-	UniqueIdType String   `xml:"UNIQUEIDTYPE"` // Should always be "CUSIP" for US FI's
+	UniqueID     String   `xml:"UNIQUEID"`     // CUSIP for US FI's
+	UniqueIDType String   `xml:"UNIQUEIDTYPE"` // Should always be "CUSIP" for US FI's
 }
 
 type SecurityRequest struct {
 	XMLName xml.Name `xml:"SECRQ"`
 	// Only one of the next three should be present
-	SecId  *SecurityId `xml:"SECID,omitempty"`
+	SecID  *SecurityID `xml:"SECID,omitempty"`
 	Ticker String      `xml:"TICKER,omitempty"`
-	FiId   String      `xml:"FIID,omitempty"`
+	FiID   String      `xml:"FIID,omitempty"`
 }
 
 type SecListRequest struct {
@@ -69,10 +69,10 @@ type Security interface {
 
 type SecInfo struct {
 	XMLName   xml.Name   `xml:"SECINFO"`
-	SecId     SecurityId `xml:"SECID"`
+	SecID     SecurityID `xml:"SECID"`
 	SecName   String     `xml:"SECNAME"`          // Full name of security
 	Ticker    String     `xml:"TICKER,omitempty"` // Ticker symbol
-	FiId      String     `xml:"FIID,omitempty"`
+	FiID      String     `xml:"FIID,omitempty"`
 	Rating    String     `xml:"RATING,omitempty"`
 	UnitPrice Amount     `xml:"UNITPRICE,omitempty"` // Current price, as of DTASOF
 	DtAsOf    *Date      `xml:"DTASOF,omitempty"`    // Date UNITPRICE was for
@@ -136,7 +136,7 @@ type OptInfo struct {
 	StrikePrice  Amount      `xml:"STRIKEPRICE"`
 	DtExpire     Date        `xml:"DTEXPIRE"`               // Expiration date
 	ShPerCtrct   Int         `xml:"SHPERCTRCT"`             // Shares per contract
-	SecId        *SecurityId `xml:"SECID,omitempty"`        // Security ID of the underlying security
+	SecID        *SecurityID `xml:"SECID,omitempty"`        // Security ID of the underlying security
 	AssetClass   assetClass  `xml:"ASSETCLASS,omitempty"`   // One of DOMESTICBOND, INTLBOND, LARGESTOCK, SMALLSTOCK, INTLSTOCK, MONEYMRKT, OTHER
 	FiAssetClass String      `xml:"FIASSETCLASS,omitempty"` // FI-defined asset class
 }

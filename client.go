@@ -11,7 +11,7 @@ type Client struct {
 	// Request fields to overwrite with the client's values. If nonempty,
 	// defaults are used
 	SpecVersion string // VERSION in header
-	AppId       string // SONRQ>APPID
+	AppID       string // SONRQ>APPID
 	AppVer      string // SONRQ>APPVER
 
 	// Don't insert newlines or indentation when marshalling to SGML/XML
@@ -28,9 +28,9 @@ func (c *Client) OfxVersion() string {
 	}
 }
 
-func (c *Client) Id() String {
-	if len(c.AppId) > 0 {
-		return String(c.AppId)
+func (c *Client) ID() String {
+	if len(c.AppID) > 0 {
+		return String(c.AppID)
 	} else {
 		return String("OFXGO")
 	}
@@ -102,7 +102,7 @@ func (c *Client) RequestNoParse(r *Request) (*http.Response, error) {
 //
 // Before being marshaled, some of the the Request object's values are
 // overwritten, namely those dictated by the Client's configuration (Version,
-// AppId, AppVer fields), and the client's curren time (DtClient). These are
+// AppID, AppVer fields), and the client's curren time (DtClient). These are
 // updated in place in the supplied Request object so they may later be
 // inspected by the caller.
 func (c *Client) Request(r *Request) (*Response, error) {
