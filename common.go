@@ -7,16 +7,18 @@ import (
 	"github.com/aclindsa/go/src/encoding/xml"
 )
 
-// Represents an OFX message in a message set
+// Message represents an OFX message in a message set. it is used to ease
+// marshalling and unmarshalling.
 type Message interface {
 	Name() string         // The name of the OFX transaction wrapper element this represents
-	Valid() (bool, error) // Called before a Message is marshaled and after
-	// it's unmarshaled to ensure the request or response is valid
-	Type() messageType // The message set this message belongs to
+	Valid() (bool, error) // Called before a Message is marshaled and after it's unmarshaled to ensure the request or response is valid
+	Type() messageType    // The message set this message belongs to
 }
 
 type messageType uint
 
+// These constants are returned by Messages' Type() functions to determine
+// which message set they belong to
 const (
 	// Requests
 	SignonRq messageType = iota
@@ -34,6 +36,7 @@ const (
 	PresDlvRq
 	ProfRq
 	ImageRq
+
 	// Responses
 	SignonRs
 	SignupRs
