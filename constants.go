@@ -13,6 +13,80 @@ import (
 	"strings"
 )
 
+type ofxVersion uint
+
+// OfxVersion* constants represent the OFX specification version in use
+const (
+	OfxVersion102 ofxVersion = 1 + iota
+	OfxVersion103
+	OfxVersion151
+	OfxVersion160
+	OfxVersion200
+	OfxVersion201
+	OfxVersion202
+	OfxVersion203
+	OfxVersion210
+	OfxVersion211
+	OfxVersion220
+)
+
+var ofxVersions = [...]string{"102", "103", "151", "160", "200", "201", "202", "203", "210", "211", "220"}
+
+func (e ofxVersion) Valid() bool {
+	// This check is mostly out of paranoia, ensuring e != 0 should be
+	// sufficient
+	return e >= OfxVersion102 && e <= OfxVersion220
+}
+
+func (e ofxVersion) String() string {
+	if e.Valid() {
+		return ofxVersions[e-1]
+	}
+	return fmt.Sprintf("invalid ofxVersion (%d)", e)
+}
+
+func (e *ofxVersion) FromString(in string) error {
+	value := strings.TrimSpace(in)
+
+	for i, s := range ofxVersions {
+		if s == value {
+			*e = ofxVersion(i + 1)
+			return nil
+		}
+	}
+	*e = 0
+	return errors.New("Invalid OfxVersion: \"" + in + "\"")
+}
+
+func (e *ofxVersion) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	var value string
+	err := d.DecodeElement(&value, &start)
+	if err != nil {
+		return err
+	}
+
+	return e.FromString(value)
+}
+
+func (e *ofxVersion) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+	if !e.Valid() {
+		return nil
+	}
+	enc.EncodeElement(ofxVersions[*e-1], start)
+	return nil
+}
+
+// NewOfxVersion returns returns an 'enum' value of type ofxVersion given its
+// string representation
+func NewOfxVersion(s string) (ofxVersion, error) {
+	var e ofxVersion
+	err := e.FromString(s)
+	if err != nil {
+		return 0, err
+	}
+	return e, nil
+}
+
 type acctType uint
 
 // AcctType* constants represent types of bank accounts

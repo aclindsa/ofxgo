@@ -3,6 +3,7 @@ package ofxgo
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"github.com/aclindsa/go/src/encoding/xml"
 	"time"
 )
@@ -14,7 +15,7 @@ import (
 // error will be returned when Marshal() is called on this Request.
 type Request struct {
 	URL        string
-	Version    string        // OFX version string, overwritten in Client.Request()
+	Version    ofxVersion    // OFX version, overwritten in Client.Request()
 	Signon     SignonRequest //<SIGNONMSGSETV1>
 	Signup     []Message     //<SIGNUPMSGSETV1>
 	Bank       []Message     //<BANKMSGSETV1>
@@ -80,10 +81,10 @@ func (oq *Request) Marshal() (*bytes.Buffer, error) {
 
 	// Write the header appropriate to our version
 	switch oq.Version {
-	case "102", "103", "151", "160":
+	case OfxVersion102, OfxVersion103, OfxVersion151, OfxVersion160:
 		b.WriteString(`OFXHEADER:100
 DATA:OFXSGML
-VERSION:` + oq.Version + `
+VERSION:` + oq.Version.String() + `
 SECURITY:NONE
 ENCODING:USASCII
 CHARSET:1252
@@ -92,11 +93,11 @@ OLDFILEUID:NONE
 NEWFILEUID:NONE
 
 `)
-	case "200", "201", "202", "203", "210", "211", "220":
+	case OfxVersion200, OfxVersion201, OfxVersion202, OfxVersion203, OfxVersion210, OfxVersion211, OfxVersion220:
 		b.WriteString(`<?xml version="1.0" encoding="UTF-8" standalone="no"?>` + "\n")
-		b.WriteString(`<?OFX OFXHEADER="200" VERSION="` + oq.Version + `" SECURITY="NONE" OLDFILEUID="NONE" NEWFILEUID="NONE"?>` + "\n")
+		b.WriteString(`<?OFX OFXHEADER="200" VERSION="` + oq.Version.String() + `" SECURITY="NONE" OLDFILEUID="NONE" NEWFILEUID="NONE"?>` + "\n")
 	default:
-		return nil, errors.New(oq.Version + " is not a valid OFX version string")
+		return nil, fmt.Errorf("%d is not a valid OFX version string", oq.Version)
 	}
 
 	encoder := xml.NewEncoder(&b)

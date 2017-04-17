@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 
 enums = {
+    # OFX spec version
+    "OfxVersion": (["102", "103", "151", "160", "200", "201", "202", "203", "210", "211", "220"], "the OFX specification version in use"),
+
     # Bank/general
     "AcctType": (["Checking", "Savings", "MoneyMrkt", "CreditLine", "CD"], "types of bank accounts"),
     "TrnType": (["Credit", "Debit", "Int", "Div", "Fee", "SrvChg", "Dep", "ATM", "POS", "Xfer", "Check", "Payment", "Cash", "DirectDep", "DirectDebit", "RepeatPmt", "Hold", "Other"], "types of transactions. INT, ATM, and POS depend on the signage of the account."),

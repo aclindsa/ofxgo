@@ -13,6 +13,51 @@ import (
 	"testing"
 )
 
+func TestOfxVersion(t *testing.T) {
+	e, err := ofxgo.NewOfxVersion("102")
+	if err != nil {
+		t.Fatalf("Unexpected error creating new OfxVersion from string \"102\"\n")
+	}
+	if !e.Valid() {
+		t.Fatalf("OfxVersion unexpectedly invalid\n")
+	}
+	err = e.FromString("220")
+	if err != nil {
+		t.Fatalf("Unexpected error on OfxVersion.FromString(\"220\")\n")
+	}
+	if e.String() != "220" {
+		t.Fatalf("OfxVersion.String() expected to be \"220\"\n")
+	}
+
+	marshalHelper(t, "220", &e)
+
+	overwritten, err := ofxgo.NewOfxVersion("THISWILLNEVERBEAVALIDENUMSTRING")
+	if err == nil {
+		t.Fatalf("Expected error creating new OfxVersion from string \"THISWILLNEVERBEAVALIDENUMSTRING\"\n")
+	}
+	if overwritten.Valid() {
+		t.Fatalf("OfxVersion created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not be valid\n")
+	}
+	if !strings.Contains(strings.ToLower(overwritten.String()), "invalid") {
+		t.Fatalf("OfxVersion created with string \"THISWILLNEVERBEAVALIDENUMSTRING\" should not return valid string from String()\n")
+	}
+
+	b, err := xml.Marshal(&overwritten)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(OfxVersion): %s\n", err)
+	}
+	if string(b) != "" {
+		t.Fatalf("Expected empty string, got '%s'\n", string(b))
+	}
+
+	unmarshalHelper(t, "220", &e, &overwritten)
+
+	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
+	if err == nil {
+		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
+}
+
 func TestAcctType(t *testing.T) {
 	e, err := ofxgo.NewAcctType("CHECKING")
 	if err != nil {

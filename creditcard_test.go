@@ -44,7 +44,7 @@ func TestMarshalCCStatementRequest(t *testing.T) {
 	var client = ofxgo.Client{
 		AppID:       "OFXGO",
 		AppVer:      "0001",
-		SpecVersion: "203",
+		SpecVersion: ofxgo.OfxVersion203,
 	}
 
 	var request ofxgo.Request
@@ -86,7 +86,7 @@ NEWFILEUID:NONE
 	EDT := time.FixedZone("EDT", -4*60*60)
 	EST := time.FixedZone("EST", -5*60*60)
 
-	expected.Version = "102"
+	expected.Version = ofxgo.OfxVersion102
 	expected.Signon.Status.Code = 0
 	expected.Signon.Status.Severity = "INFO"
 	expected.Signon.Status.Message = "SUCCESS"

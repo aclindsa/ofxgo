@@ -52,7 +52,7 @@ func TestMarshalInvStatementRequest(t *testing.T) {
 	var client = ofxgo.Client{
 		AppID:       "MYAPP",
 		AppVer:      "1234",
-		SpecVersion: "203",
+		SpecVersion: ofxgo.OfxVersion203,
 	}
 
 	var request ofxgo.Request
@@ -322,7 +322,7 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 </OFX>`)
 	var expected ofxgo.Response
 
-	expected.Version = "203"
+	expected.Version = ofxgo.OfxVersion203
 	expected.Signon.Status.Code = 0
 	expected.Signon.Status.Severity = "INFO"
 	expected.Signon.DtServer = *ofxgo.NewDateGMT(2017, 4, 1, 20, 12, 44, 0)
@@ -765,7 +765,7 @@ NEWFILEUID: NONE
 </OFX>`)
 	var expected ofxgo.Response
 
-	expected.Version = "102"
+	expected.Version = ofxgo.OfxVersion102
 	expected.Signon.Status.Code = 0
 	expected.Signon.Status.Severity = "INFO"
 	expected.Signon.DtServer = *ofxgo.NewDateGMT(2017, 4, 3, 12, 0, 0, 0)

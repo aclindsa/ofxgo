@@ -121,10 +121,15 @@ func detectSettings() {
 const anonymous = "anonymous00000000000000000000000"
 
 func tryProfile(appID, appVer, version string, noindent bool) bool {
+	ver, err := ofxgo.NewOfxVersion(version)
+	if err != nil {
+		fmt.Println("Error creating new OfxVersion enum:", err)
+		os.Exit(1)
+	}
 	var client = ofxgo.Client{
 		AppID:       appID,
 		AppVer:      appVer,
-		SpecVersion: version,
+		SpecVersion: ver,
 		NoIndent:    noindent,
 	}
 

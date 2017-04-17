@@ -14,7 +14,7 @@ import (
 // It can be inspected by using type assertions or switches on the message set
 // you're interested in.
 type Response struct {
-	Version    string         // String for OFX header, defaults to 203
+	Version    ofxVersion     // OFX header version
 	Signon     SignonResponse //<SIGNONMSGSETV1>
 	Signup     []Message      //<SIGNUPMSGSETV1>
 	Bank       []Message      //<BANKMSGSETV1>
@@ -68,12 +68,14 @@ func (or *Response) readSGMLHeaders(r *bufio.Reader) error {
 				return errors.New("OFX DATA header does not contain OFXSGML")
 			}
 		case "VERSION":
-			switch headervalue {
-			case "102", "103", "151", "160":
-				seenVersion = true
-				or.Version = headervalue
-			default:
-				return errors.New("Invalid OFX VERSION in header")
+			err := or.Version.FromString(headervalue)
+			if err != nil {
+				return err
+			}
+			seenVersion = true
+
+			if or.Version > OfxVersion160 {
+				return errors.New("OFX VERSION > 160 in SGML header")
 			}
 		case "SECURITY":
 			if headervalue != "NONE" {
@@ -134,12 +136,14 @@ func (or *Response) readXMLHeaders(decoder *xml.Decoder) error {
 				}
 				seenHeader = true
 			case "VERSION":
-				switch value {
-				case "200", "201", "202", "203", "210", "211", "220":
-					seenVersion = true
-					or.Version = value
-				default:
-					return errors.New("Invalid OFX VERSION in header")
+				err := or.Version.FromString(value)
+				if err != nil {
+					return err
+				}
+				seenVersion = true
+
+				if or.Version < OfxVersion200 {
+					return errors.New("OFX VERSION < 200 in XML header")
 				}
 			case "SECURITY":
 				if value != "NONE" {

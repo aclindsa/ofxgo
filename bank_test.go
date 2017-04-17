@@ -45,7 +45,7 @@ func TestMarshalBankStatementRequest(t *testing.T) {
 	var client = ofxgo.Client{
 		AppID:       "OFXGO",
 		AppVer:      "0001",
-		SpecVersion: "203",
+		SpecVersion: ofxgo.OfxVersion203,
 	}
 
 	var request ofxgo.Request
@@ -119,7 +119,7 @@ NEWFILEUID:NONE
 	var client = ofxgo.Client{
 		AppID:       "OFXGO",
 		AppVer:      "0001",
-		SpecVersion: "103",
+		SpecVersion: ofxgo.OfxVersion103,
 	}
 
 	var request ofxgo.Request
@@ -213,7 +213,7 @@ func TestUnmarshalBankStatementResponse(t *testing.T) {
 </OFX>`)
 	var expected ofxgo.Response
 
-	expected.Version = "203"
+	expected.Version = ofxgo.OfxVersion203
 	expected.Signon.Status.Code = 0
 	expected.Signon.Status.Severity = "INFO"
 	expected.Signon.DtServer = *ofxgo.NewDateGMT(2006, 1, 15, 11, 23, 03, 0)

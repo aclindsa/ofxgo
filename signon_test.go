@@ -9,7 +9,7 @@ func TestMarshalInvalidSignons(t *testing.T) {
 	var client = ofxgo.Client{
 		AppID:       "OFXGO",
 		AppVer:      "0001",
-		SpecVersion: "203",
+		SpecVersion: ofxgo.OfxVersion203,
 	}
 
 	var request ofxgo.Request

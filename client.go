@@ -15,9 +15,9 @@ import (
 type Client struct {
 	// Request fields to overwrite with the client's values. If nonempty,
 	// defaults are used
-	SpecVersion string // VERSION in header
-	AppID       string // SONRQ>APPID
-	AppVer      string // SONRQ>APPVER
+	SpecVersion ofxVersion // VERSION in header
+	AppID       string     // SONRQ>APPID
+	AppVer      string     // SONRQ>APPVER
 
 	// Don't insert newlines or indentation when marshalling to SGML/XML
 	NoIndent bool
@@ -25,14 +25,13 @@ type Client struct {
 
 var defaultClient Client
 
-// OfxVersion returns a string representation of the OFX specification version
-// this Client will marshal Requests as. Defaults to "203" if the client's
-// SpecVersion field is empty.
-func (c *Client) OfxVersion() string {
-	if len(c.SpecVersion) > 0 {
+// OfxVersion returns the OFX specification version this Client will marshal
+// Requests as. Defaults to "203" if the client's SpecVersion field is empty.
+func (c *Client) OfxVersion() ofxVersion {
+	if c.SpecVersion.Valid() {
 		return c.SpecVersion
 	}
-	return "203"
+	return OfxVersion203
 }
 
 // ID returns this Client's OFX AppID field, defaulting to "OFXGO" if

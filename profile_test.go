@@ -39,7 +39,7 @@ func TestMarshalProfileRequest(t *testing.T) {
 	var client = ofxgo.Client{
 		AppID:       "OFXGO",
 		AppVer:      "0001",
-		SpecVersion: "203",
+		SpecVersion: ofxgo.OfxVersion203,
 	}
 
 	var request ofxgo.Request
@@ -215,7 +215,7 @@ NEWFILEUID:NONE
 </OFX>`)
 	var expected ofxgo.Response
 
-	expected.Version = "102"
+	expected.Version = ofxgo.OfxVersion102
 	expected.Signon.Status.Code = 0
 	expected.Signon.Status.Severity = "INFO"
 	expected.Signon.DtServer = *ofxgo.NewDateGMT(2017, 4, 3, 9, 34, 58, 0)
