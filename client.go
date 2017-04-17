@@ -7,6 +7,11 @@ import (
 	"strings"
 )
 
+// Client serves to aggregate OFX client settings that may be necessary to talk
+// to a particular server due to quirks in that server's implementation. Client
+// also provides the Request, RequestNoParse, and RawRequest helper methods to
+// aid in making and parsing requests. Client uses default, non-zero settings,
+// even if its fields are not initialized.
 type Client struct {
 	// Request fields to overwrite with the client's values. If nonempty,
 	// defaults are used
@@ -20,32 +25,36 @@ type Client struct {
 
 var defaultClient Client
 
+// OfxVersion returns a string representation of the OFX specification version
+// this Client will marshal Requests as. Defaults to "203" if the client's
+// SpecVersion field is empty.
 func (c *Client) OfxVersion() string {
 	if len(c.SpecVersion) > 0 {
 		return c.SpecVersion
-	} else {
-		return "203"
 	}
+	return "203"
 }
 
+// ID returns this Client's OFX AppID field, defaulting to "OFXGO" if
+// unspecified.
 func (c *Client) ID() String {
 	if len(c.AppID) > 0 {
 		return String(c.AppID)
-	} else {
-		return String("OFXGO")
 	}
+	return String("OFXGO")
 }
 
+// Version returns this Client's version number as a string, defaulting to
+// "0001" if unspecified.
 func (c *Client) Version() String {
 	if len(c.AppVer) > 0 {
 		return String(c.AppVer)
-	} else {
-		return String("0001")
 	}
+	return String("0001")
 }
 
-// Returns true if the marshaled XML should be indented (and contain newlines,
-// since the two are linked in the current implementation)
+// IndentRequests returns true if the marshaled XML should be indented (and
+// contain newlines, since the two are linked in the current implementation)
 func (c *Client) IndentRequests() bool {
 	return !c.NoIndent
 }
