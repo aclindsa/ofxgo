@@ -459,7 +459,7 @@ type InvBankTransaction struct {
 
 // InvTranList represents a list of investment account transactions. It
 // includes the date range its transactions cover, as well as the bank- and
-// security-related transactions themselfes. It must be unmarshalled manually
+// security-related transactions themselves. It must be unmarshalled manually
 // due to the structure (don't know what kind of InvTransaction is coming next)
 type InvTranList struct {
 	DtStart          Date
