@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-var ccDownloadCommand = Command{
+var ccDownloadCommand = command{
 	Name:        "download-cc",
 	Description: "Download a credit card account statement to a file",
 	Flags:       flag.NewFlagSet("download-cc", flag.ExitOnError),
@@ -34,7 +34,7 @@ func ccDownloadCheckFlags() bool {
 }
 
 func ccDownload() {
-	client, query := NewRequest()
+	client, query := newRequest()
 
 	uid, err := ofxgo.RandomUID()
 	if err != nil {

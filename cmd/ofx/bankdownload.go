@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-var downloadCommand = Command{
+var downloadCommand = command{
 	Name:        "download-bank",
 	Description: "Download a bank account statement to a file",
 	Flags:       flag.NewFlagSet("download-bank", flag.ExitOnError),
@@ -38,7 +38,7 @@ func downloadCheckFlags() bool {
 }
 
 func download() {
-	client, query := NewRequest()
+	client, query := newRequest()
 
 	acctTypeEnum, err := ofxgo.NewAcctType(acctType)
 	if err != nil {

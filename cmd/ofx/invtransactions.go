@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-var invTransactionsCommand = Command{
+var invTransactionsCommand = command{
 	Name:        "transactions-inv",
 	Description: "Print investment transactions",
 	Flags:       flag.NewFlagSet("transactions-inv", flag.ExitOnError),
@@ -22,7 +22,7 @@ func init() {
 }
 
 func invTransactions() {
-	client, query := NewRequest()
+	client, query := newRequest()
 
 	uid, err := ofxgo.RandomUID()
 	if err != nil {
@@ -47,8 +47,6 @@ func invTransactions() {
 
 	response, err := client.Request(query)
 	if err != nil {
-		fmt.Println("Error requesting account statement:", err)
-
 		os.Exit(1)
 	}
 

@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-var bankTransactionsCommand = Command{
+var bankTransactionsCommand = command{
 	Name:        "transactions-bank",
 	Description: "Print bank transactions and balance",
 	Flags:       flag.NewFlagSet("transactions-bank", flag.ExitOnError),
@@ -23,7 +23,7 @@ func init() {
 }
 
 func bankTransactions() {
-	client, query := NewRequest()
+	client, query := newRequest()
 
 	acctTypeEnum, err := ofxgo.NewAcctType(acctType)
 	if err != nil {

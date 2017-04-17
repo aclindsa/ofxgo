@@ -6,7 +6,7 @@ import (
 	"github.com/howeyc/gopass"
 )
 
-type Command struct {
+type command struct {
 	Name        string
 	Description string
 	Flags       *flag.FlagSet
@@ -14,7 +14,7 @@ type Command struct {
 	Do          func()      // Run the command (only called if CheckFlags returns true)
 }
 
-func (c *Command) Usage() {
+func (c *command) usage() {
 	fmt.Printf("Usage of %s:\n", c.Name)
 	c.Flags.PrintDefaults()
 }

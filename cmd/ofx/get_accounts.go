@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-var getAccountsCommand = Command{
+var getAccountsCommand = command{
 	Name:        "get-accounts",
 	Description: "List accounts at your financial institution",
 	Flags:       flag.NewFlagSet("get-accounts", flag.ExitOnError),
@@ -21,7 +21,7 @@ func init() {
 }
 
 func getAccounts() {
-	client, query := NewRequest()
+	client, query := newRequest()
 
 	uid, err := ofxgo.RandomUID()
 	if err != nil {

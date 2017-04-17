@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-var commands = []Command{
+var commands = []command{
 	getAccountsCommand,
 	downloadCommand,
 	ccDownloadCommand,
@@ -39,17 +39,17 @@ The commands are:`)
 	}
 }
 
-func runCmd(c *Command) {
+func runCmd(c *command) {
 	err := c.Flags.Parse(os.Args[2:])
 	if err != nil {
 		fmt.Printf("Error parsing flags: %s\n", err)
-		c.Usage()
+		c.usage()
 		os.Exit(1)
 	}
 
 	if !c.CheckFlags() {
 		fmt.Println()
-		c.Usage()
+		c.usage()
 		os.Exit(1)
 	}
 

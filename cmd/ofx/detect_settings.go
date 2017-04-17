@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-var detectSettingsCommand = Command{
+var detectSettingsCommand = command{
 	Name:        "detect-settings",
 	Description: "Attempt to guess client settings needed for a particular financial institution",
 	Flags:       flag.NewFlagSet("detect-settings", flag.ExitOnError),
@@ -104,7 +104,7 @@ func detectSettings() {
 						fmt.Printf("noindent: %t\n", noIndent)
 						os.Exit(0)
 					} else {
-						attempts += 1
+						attempts++
 						var noIndentString string
 						if noIndent {
 							noIndentString = " noindent"

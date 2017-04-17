@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-var ccTransactionsCommand = Command{
+var ccTransactionsCommand = command{
 	Name:        "transactions-cc",
 	Description: "Print credit card transactions and balance",
 	Flags:       flag.NewFlagSet("transactions-cc", flag.ExitOnError),
@@ -21,7 +21,7 @@ func init() {
 }
 
 func ccTransactions() {
-	client, query := NewRequest()
+	client, query := newRequest()
 
 	uid, err := ofxgo.RandomUID()
 	if err != nil {

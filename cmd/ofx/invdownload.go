@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-var invDownloadCommand = Command{
+var invDownloadCommand = command{
 	Name:        "download-inv",
 	Description: "Download a investment account statement to a file",
 	Flags:       flag.NewFlagSet("download-inv", flag.ExitOnError),
@@ -37,7 +37,7 @@ func invDownloadCheckFlags() bool {
 }
 
 func invDownload() {
-	client, query := NewRequest()
+	client, query := newRequest()
 
 	uid, err := ofxgo.RandomUID()
 	if err != nil {

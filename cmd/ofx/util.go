@@ -4,7 +4,7 @@ import (
 	"github.com/aclindsa/ofxgo"
 )
 
-func NewRequest() (*ofxgo.Client, *ofxgo.Request) {
+func newRequest() (*ofxgo.Client, *ofxgo.Request) {
 	var client = ofxgo.Client{
 		AppID:       appID,
 		AppVer:      appVer,
