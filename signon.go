@@ -29,7 +29,7 @@ func (r *SignonRequest) Name() string {
 
 // Valid returns (true, nil) if this struct would be valid OFX if marshalled
 // into XML/SGML
-func (r *SignonRequest) Valid() (bool, error) {
+func (r *SignonRequest) Valid(version ofxVersion) (bool, error) {
 	if len(r.UserID) < 1 || len(r.UserID) > 32 {
 		return false, errors.New("SONRQ>USERID invalid length")
 	}
@@ -79,7 +79,7 @@ func (r *SignonResponse) Name() string {
 }
 
 // Valid returns (true, nil) if this struct was valid OFX when unmarshalled
-func (r *SignonResponse) Valid() (bool, error) {
+func (r *SignonResponse) Valid(version ofxVersion) (bool, error) {
 	if len(r.Language) != 3 {
 		return false, fmt.Errorf("SONRS>LANGUAGE invalid length: \"%s\"", r.Language)
 	}

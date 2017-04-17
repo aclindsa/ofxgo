@@ -42,7 +42,7 @@ func (r *SecListRequest) Name() string {
 
 // Valid returns (true, nil) if this struct would be valid OFX if marshalled
 // into XML/SGML
-func (r *SecListRequest) Valid() (bool, error) {
+func (r *SecListRequest) Valid(version ofxVersion) (bool, error) {
 	// TODO implement
 	return true, nil
 }
@@ -73,7 +73,7 @@ func (r *SecListResponse) Name() string {
 }
 
 // Valid returns (true, nil) if this struct was valid OFX when unmarshalled
-func (r *SecListResponse) Valid() (bool, error) {
+func (r *SecListResponse) Valid(version ofxVersion) (bool, error) {
 	// TODO implement
 	return true, nil
 }
@@ -224,7 +224,7 @@ func (r *SecurityList) Name() string {
 }
 
 // Valid returns (true, nil) if this struct was valid OFX when unmarshalled
-func (r *SecurityList) Valid() (bool, error) {
+func (r *SecurityList) Valid(version ofxVersion) (bool, error) {
 	// TODO implement
 	return true, nil
 }

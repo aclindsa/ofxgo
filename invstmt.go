@@ -34,7 +34,7 @@ func (r *InvStatementRequest) Name() string {
 
 // Valid returns (true, nil) if this struct would be valid OFX if marshalled
 // into XML/SGML
-func (r *InvStatementRequest) Valid() (bool, error) {
+func (r *InvStatementRequest) Valid(version ofxVersion) (bool, error) {
 	// TODO implement
 	return true, nil
 }
@@ -1180,7 +1180,7 @@ func (sr *InvStatementResponse) Name() string {
 }
 
 // Valid returns (true, nil) if this struct was valid OFX when unmarshalled
-func (sr *InvStatementResponse) Valid() (bool, error) {
+func (sr *InvStatementResponse) Valid(version ofxVersion) (bool, error) {
 	//TODO implement
 	return true, nil
 }

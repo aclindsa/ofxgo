@@ -35,7 +35,7 @@ type Request struct {
 	indent bool // Whether to indent the marshaled XML
 }
 
-func marshalMessageSet(e *xml.Encoder, requests []Message, set messageType) error {
+func marshalMessageSet(e *xml.Encoder, requests []Message, set messageType, version ofxVersion) error {
 	if len(requests) > 0 {
 		messageSetElement := xml.StartElement{Name: xml.Name{Local: set.String()}}
 		if err := e.EncodeToken(messageSetElement); err != nil {
@@ -46,7 +46,7 @@ func marshalMessageSet(e *xml.Encoder, requests []Message, set messageType) erro
 			if request.Type() != set {
 				return errors.New("Expected " + set.String() + " message , found " + request.Type().String())
 			}
-			if ok, err := request.Valid(); !ok {
+			if ok, err := request.Valid(version); !ok {
 				return err
 			}
 			if err := e.Encode(request); err != nil {
@@ -111,7 +111,7 @@ NEWFILEUID:NONE
 		return nil, err
 	}
 
-	if ok, err := oq.Signon.Valid(); !ok {
+	if ok, err := oq.Signon.Valid(oq.Version); !ok {
 		return nil, err
 	}
 	signonMsgSet := xml.StartElement{Name: xml.Name{Local: SignonRq.String()}}
@@ -145,7 +145,7 @@ NEWFILEUID:NONE
 		{oq.Image, ImageRq},
 	}
 	for _, set := range messageSets {
-		if err := marshalMessageSet(encoder, set.Messages, set.Type); err != nil {
+		if err := marshalMessageSet(encoder, set.Messages, set.Type, oq.Version); err != nil {
 			return nil, err
 		}
 	}

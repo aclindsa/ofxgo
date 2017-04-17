@@ -316,7 +316,7 @@ func ParseResponse(reader io.Reader) (*Response, error) {
 	} else if signonEnd, ok := tok.(xml.EndElement); !ok || signonEnd.Name.Local != SignonRs.String() {
 		return nil, errors.New("Missing closing SIGNONMSGSRSV1 xml element")
 	}
-	if ok, err := or.Signon.Valid(); !ok {
+	if ok, err := or.Signon.Valid(or.Version); !ok {
 		return nil, err
 	}
 

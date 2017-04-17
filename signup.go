@@ -23,7 +23,7 @@ func (r *AcctInfoRequest) Name() string {
 
 // Valid returns (true, nil) if this struct would be valid OFX if marshalled
 // into XML/SGML
-func (r *AcctInfoRequest) Valid() (bool, error) {
+func (r *AcctInfoRequest) Valid(version ofxVersion) (bool, error) {
 	// TODO implement
 	return true, nil
 }
@@ -148,7 +148,7 @@ func (air *AcctInfoResponse) Name() string {
 }
 
 // Valid returns (true, nil) if this struct was valid OFX when unmarshalled
-func (air *AcctInfoResponse) Valid() (bool, error) {
+func (air *AcctInfoResponse) Valid(version ofxVersion) (bool, error) {
 	//TODO implement
 	return true, nil
 }

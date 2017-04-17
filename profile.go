@@ -25,7 +25,7 @@ func (r *ProfileRequest) Name() string {
 
 // Valid returns (true, nil) if this struct would be valid OFX if marshalled
 // into XML/SGML
-func (r *ProfileRequest) Valid() (bool, error) {
+func (r *ProfileRequest) Valid(version ofxVersion) (bool, error) {
 	// TODO implement
 	r.ClientRouting = "NONE"
 	return true, nil
@@ -158,7 +158,7 @@ func (pr *ProfileResponse) Name() string {
 }
 
 // Valid returns (true, nil) if this struct was valid OFX when unmarshalled
-func (pr *ProfileResponse) Valid() (bool, error) {
+func (pr *ProfileResponse) Valid(version ofxVersion) (bool, error) {
 	//TODO implement
 	return true, nil
 }

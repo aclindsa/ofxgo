@@ -10,9 +10,9 @@ import (
 // Message represents an OFX message in a message set. it is used to ease
 // marshalling and unmarshalling.
 type Message interface {
-	Name() string         // The name of the OFX transaction wrapper element this represents
-	Valid() (bool, error) // Called before a Message is marshaled and after it's unmarshaled to ensure the request or response is valid
-	Type() messageType    // The message set this message belongs to
+	Name() string                           // The name of the OFX transaction wrapper element this represents
+	Valid(version ofxVersion) (bool, error) // Called before a Message is marshaled and after it's unmarshaled to ensure the request or response is valid
+	Type() messageType                      // The message set this message belongs to
 }
 
 type messageType uint
