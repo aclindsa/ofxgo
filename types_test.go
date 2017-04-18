@@ -373,3 +373,71 @@ func TestRandomUID(t *testing.T) {
 		t.Fatalf("UID generated with RandomUID() doesn't match recommended format: %s\n", err)
 	}
 }
+
+func TestMarshalCurrSymbol(t *testing.T) {
+	c, _ := ofxgo.NewCurrSymbol("USD")
+	marshalHelper(t, "USD", &c)
+}
+
+func TestUnmarshalCurrSymbol(t *testing.T) {
+	var overwritten ofxgo.CurrSymbol
+	c, _ := ofxgo.NewCurrSymbol("USD")
+	unmarshalHelper(t, "USD", c, &overwritten)
+	// Make sure stray newlines are handled properly
+	c, _ = ofxgo.NewCurrSymbol("EUR")
+	unmarshalHelper(t, "EUR\n", c, &overwritten)
+	unmarshalHelper(t, "EUR\n\t", c, &overwritten)
+}
+
+func TestCurrSymbolEqual(t *testing.T) {
+	usd1, _ := ofxgo.NewCurrSymbol("USD")
+	usd2, _ := ofxgo.NewCurrSymbol("USD")
+	if !usd1.Equal(*usd2) {
+		t.Fatalf("Two \"USD\" CurrSymbols returned !Equal()\n")
+	}
+	xxx, _ := ofxgo.NewCurrSymbol("XXX")
+	if usd1.Equal(*xxx) {
+		t.Fatalf("\"USD\" and \"XXX\" CurrSymbols returned Equal()\n")
+	}
+}
+
+func TestCurrSymbolValid(t *testing.T) {
+	var initial ofxgo.CurrSymbol
+	ok, err := initial.Valid()
+	if ok || err == nil {
+		t.Fatalf("CurrSymbol unexpectedly returned Valid() for initial value\n")
+	}
+
+	ars, _ := ofxgo.NewCurrSymbol("ARS")
+	ok, err = ars.Valid()
+	if !ok || err != nil {
+		t.Fatalf("CurrSymbol unexpectedly returned !Valid() for \"ARS\": %s\n", err.Error())
+	}
+
+	xxx, _ := ofxgo.NewCurrSymbol("XXX")
+	ok, err = xxx.Valid()
+	if ok || err == nil {
+		t.Fatalf("CurrSymbol unexpectedly returned Valid() for \"XXX\"\n")
+	}
+}
+
+func TestNewCurrSymbol(t *testing.T) {
+	curr, err := ofxgo.NewCurrSymbol("GBP")
+	if err != nil {
+		t.Fatalf("Unexpected error calling NewCurrSymbol: %s\n", err)
+	}
+	if curr.String() != "GBP" {
+		t.Fatalf("Created CurrSymbol doesn't print \"GBP\" as string representation\n")
+	}
+	curr, err = ofxgo.NewCurrSymbol("AFN")
+	if err != nil {
+		t.Fatalf("Unexpected error calling NewCurrSymbol: %s\n", err)
+	}
+	if curr.String() != "AFN" {
+		t.Fatalf("Created CurrSymbol doesn't print \"AFN\" as string representation\n")
+	}
+	curr, err = ofxgo.NewCurrSymbol("BLAH")
+	if err == nil {
+		t.Fatalf("NewCurrSymbol didn't error on invalid currency identifier\n")
+	}
+}

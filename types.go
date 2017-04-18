@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/aclindsa/go/src/encoding/xml"
+	"golang.org/x/text/currency"
 	"math/big"
 	"regexp"
 	"strconv"
@@ -320,4 +321,55 @@ func RandomUID() (*UID, error) {
 	}
 	uid := UID(fmt.Sprintf("%08x-%04x-%04x-%04x-%012x", uidbytes[:4], uidbytes[4:6], uidbytes[6:8], uidbytes[8:10], uidbytes[10:]))
 	return &uid, nil
+}
+
+// CurrSymbol represents an ISO-4217 currency
+type CurrSymbol struct {
+	currency.Unit
+}
+
+// UnmarshalXML handles unmarshalling a CurrSymbol from an SGML/XML string.
+// Leading and trailing whitespace is ignored.
+func (c *CurrSymbol) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	var value string
+
+	err := d.DecodeElement(&value, &start)
+	if err != nil {
+		return err
+	}
+
+	value = strings.TrimSpace(value)
+
+	unit, err := currency.ParseISO(value)
+	if err != nil {
+		errors.New("Error parsing CurrSymbol:" + err.Error())
+	}
+	c.Unit = unit
+	return nil
+}
+
+// MarshalXML marshals a CurrSymbol to SGML/XML
+func (c *CurrSymbol) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	return e.EncodeElement(c.String(), start)
+}
+
+// Equal returns true if the two Currencies are the same
+func (c CurrSymbol) Equal(o CurrSymbol) bool {
+	return c.String() == o.String()
+}
+
+// Valid returns true, nil if the CurrSymbol is valid.
+func (c CurrSymbol) Valid() (bool, error) {
+	if c.String() == "XXX" {
+		return false, fmt.Errorf("Invalid CurrSymbol: %s", c.Unit)
+	}
+	return true, nil
+}
+
+func NewCurrSymbol(s string) (*CurrSymbol, error) {
+	unit, err := currency.ParseISO(s)
+	if err != nil {
+		return nil, errors.New("Error parsing string to create new CurrSymbol:" + err.Error())
+	}
+	return &CurrSymbol{unit}, nil
 }
