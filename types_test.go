@@ -364,6 +364,21 @@ func TestUIDRecommendedFormat(t *testing.T) {
 	}
 }
 
+func TestUIDValid(t *testing.T) {
+	var u ofxgo.UID = ""
+	if ok, err := u.Valid(); ok || err == nil {
+		t.Fatalf("Empty UID unexpectedly valid\n")
+	}
+	u = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+	if ok, err := u.Valid(); ok || err == nil {
+		t.Fatalf("Too-long UID unexpectedly valid\n")
+	}
+	u = "7be37076-623a-425f-ae6b-a5465b7e93b0"
+	if ok, err := u.Valid(); !ok || err != nil {
+		t.Fatalf("Good UID unexpectedly invalid: %s\n", err.Error())
+	}
+}
+
 func TestRandomUID(t *testing.T) {
 	uid, err := ofxgo.RandomUID()
 	if err != nil {

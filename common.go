@@ -274,11 +274,31 @@ type BankAcct struct {
 	AcctKey  String   `xml:"ACCTKEY,omitempty"` // Unused in USA
 }
 
+func (b BankAcct) Valid() (bool, error) {
+	if len(b.BankID) == 0 {
+		return false, errors.New("BankAcct.BankID empty")
+	}
+	if len(b.AcctID) == 0 {
+		return false, errors.New("BankAcct.AcctID empty")
+	}
+	if !b.AcctType.Valid() {
+		return false, errors.New("Invalid or unspecified BankAcct.AcctType")
+	}
+	return true, nil
+}
+
 // CCAcct represents the identifying information for one checking account
 type CCAcct struct {
 	XMLName xml.Name // CCACCTTO or CCACCTFROM
 	AcctID  String   `xml:"ACCTID"`
 	AcctKey String   `xml:"ACCTKEY,omitempty"` // Unused in USA
+}
+
+func (c CCAcct) Valid() (bool, error) {
+	if len(c.AcctID) == 0 {
+		return false, errors.New("CCAcct.AcctID empty")
+	}
+	return true, nil
 }
 
 // InvAcct represents the identifying information for one investment account

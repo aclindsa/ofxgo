@@ -304,6 +304,15 @@ func (ou UID) RecommendedFormat() (bool, error) {
 	return true, nil
 }
 
+// Valid returns true, nil if the UID is valid. This is less strict than
+// RecommendedFormat, and will always return true, nil if it does.
+func (ou UID) Valid() (bool, error) {
+	if len(ou) == 0 || len(ou) > 36 {
+		return false, errors.New("UID invalid length")
+	}
+	return true, nil
+}
+
 // Equal returns true if the two UIDs are the same
 func (ou UID) Equal(o UID) bool {
 	return ou == o

@@ -1,6 +1,7 @@
 package ofxgo
 
 import (
+	"errors"
 	"github.com/aclindsa/go/src/encoding/xml"
 )
 
@@ -30,8 +31,16 @@ func (r *StatementRequest) Name() string {
 // Valid returns (true, nil) if this struct would be valid OFX if marshalled
 // into XML/SGML
 func (r *StatementRequest) Valid(version ofxVersion) (bool, error) {
-	// TODO implement
-	return true, nil
+	if ok, err := r.TrnUID.Valid(); !ok {
+		return false, err
+	}
+	if r.IncludePending && version < OfxVersion220 {
+		return false, errors.New("StatementRequest.IncludePending invalid for OFX < 2.2")
+	}
+	if r.IncTranImg && version < OfxVersion210 {
+		return false, errors.New("StatementRequest.IncTranImg invalid for OFX < 2.1")
+	}
+	return r.BankAcctFrom.Valid()
 }
 
 // Type returns which message set this message belongs to (which Request
@@ -52,6 +61,26 @@ type Payee struct {
 	PostalCode String   `xml:"POSTALCODE"`
 	Country    String   `xml:"COUNTRY,omitempty"`
 	Phone      String   `xml:"PHONE"`
+}
+
+// Valid returns (true, nil) if this struct is valid OFX
+func (p Payee) Valid() (bool, error) {
+	if len(p.Name) == 0 {
+		return false, errors.New("Payee.Name empty")
+	} else if len(p.Addr1) == 0 {
+		return false, errors.New("Payee.Addr1 empty")
+	} else if len(p.City) == 0 {
+		return false, errors.New("Payee.City empty")
+	} else if len(p.State) == 0 {
+		return false, errors.New("Payee.State empty")
+	} else if len(p.PostalCode) == 0 {
+		return false, errors.New("Payee.PostalCode empty")
+	} else if len(p.Country) != 0 && len(p.Country) != 3 {
+		return false, errors.New("Payee.Country invalid length")
+	} else if len(p.Phone) == 0 {
+		return false, errors.New("Payee.Phone empty")
+	}
+	return true, nil
 }
 
 // ImageData represents the metadata surrounding a check or other image file,
@@ -100,6 +129,49 @@ type Transaction struct {
 	Inv401kSource inv401kSource `xml:"INV401KSOURCE,omitempty"` // One of PRETAX, AFTERTAX, MATCH, PROFITSHARING, ROLLOVER, OTHERVEST, OTHERNONVEST (Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST.)
 }
 
+// Valid returns (true, nil) if this struct is valid OFX
+func (t Transaction) Valid(version ofxVersion) (bool, error) {
+	var emptyDate Date
+	if !t.TrnType.Valid() || t.TrnType == TrnTypeHold {
+		return false, errors.New("Transaction.TrnType invalid")
+	} else if t.DtPosted.Equal(emptyDate) {
+		return false, errors.New("Transaction.DtPosted not filled")
+	} else if len(t.FiTID) == 0 {
+		return false, errors.New("Transaction.FiTID empty")
+	} else if len(t.CorrectFiTID) > 0 && t.CorrectAction.Valid() {
+		return false, errors.New("Transaction.CorrectFiTID nonempty but CorrectAction invalid")
+	} else if len(t.Name) > 0 && t.Payee != nil {
+		return false, errors.New("Only one of Transaction.Name and Payee may be specified")
+	}
+	if t.Payee != nil {
+		if ok, err := t.Payee.Valid(); !ok {
+			return false, err
+		}
+	}
+	if t.BankAcctTo != nil && t.CCAcctTo != nil {
+		return false, errors.New("Only one of Transaction.BankAcctTo and CCAcctTo may be specified")
+	} else if t.BankAcctTo != nil {
+		if ok, err := t.BankAcctTo.Valid(); !ok {
+			return false, err
+		}
+	} else if t.CCAcctTo != nil {
+		if ok, err := t.CCAcctTo.Valid(); !ok {
+			return false, err
+		}
+	}
+	if version < OfxVersion220 && len(t.ImageData) > 0 {
+		return false, errors.New("Transaction.ImageData only supportd for OFX > 220")
+	} else if len(t.ImageData) > 2 {
+		return false, errors.New("Only 2 of ImageData allowed in Transaction")
+	}
+	ok1, _ := t.Currency.Valid()
+	ok2, _ := t.OrigCurrency.Valid()
+	if ok1 && ok2 {
+		return false, errors.New("Currency and OrigCurrency both supplied for Pending Transaction, only one allowed")
+	}
+	return true, nil
+}
+
 // TransactionList represents a list of bank transactions, and also includes
 // the date range its transactions cover.
 type TransactionList struct {
@@ -107,6 +179,23 @@ type TransactionList struct {
 	DtStart      Date          `xml:"DTSTART"` // Start date for transaction data
 	DtEnd        Date          `xml:"DTEND"`   // Value that client should send in next <DTSTART> request to ensure that it does not miss any transactions
 	Transactions []Transaction `xml:"STMTTRN,omitempty"`
+}
+
+// Valid returns (true, nil) if this struct is valid OFX
+func (l TransactionList) Valid(version ofxVersion) (bool, error) {
+	var emptyDate Date
+	if l.DtStart.Equal(emptyDate) {
+		return false, errors.New("TransactionList.DtStart not filled")
+	} else if l.DtEnd.Equal(emptyDate) {
+		return false, errors.New("TransactionList.DtEnd not filled")
+	}
+	for _, t := range l.Transactions {
+		if ok, err := t.Valid(version); !ok {
+			return false, err
+		}
+	}
+
+	return true, nil
 }
 
 // PendingTransaction represents a single pending transaction. It is similar to
@@ -127,12 +216,45 @@ type PendingTransaction struct {
 	OrigCurrency CurrSymbol  `xml:"ORIGCURRENCY,omitempty"` // If different from CURDEF in STMTTRS
 }
 
+// Valid returns (true, nil) if this struct is valid OFX
+func (t PendingTransaction) Valid() (bool, error) {
+	var emptyDate Date
+	if !t.TrnType.Valid() {
+		return false, errors.New("PendingTransaction.TrnType invalid")
+	} else if t.DtTran.Equal(emptyDate) {
+		return false, errors.New("PendingTransaction.DtTran not filled")
+	} else if len(t.Name) == 0 {
+		return false, errors.New("PendingTransaction.Name empty")
+	}
+	ok1, _ := t.Currency.Valid()
+	ok2, _ := t.OrigCurrency.Valid()
+	if ok1 && ok2 {
+		return false, errors.New("Currency and OrigCurrency both supplied for Pending Transaction, only one allowed")
+	}
+	return true, nil
+}
+
 // PendingTransactionList represents a list of pending transactions, along with
 // the date they were generated
 type PendingTransactionList struct {
 	XMLName      xml.Name             `xml:"BANKTRANLISTP"`
 	DtAsOf       Date                 `xml:"DTASOF"` // Date and time this set of pending transactions was generated
 	Transactions []PendingTransaction `xml:"STMTTRNP,omitempty"`
+}
+
+// Valid returns (true, nil) if this struct is valid OFX
+func (l PendingTransactionList) Valid() (bool, error) {
+	var emptyDate Date
+	if l.DtAsOf.Equal(emptyDate) {
+		return false, errors.New("PendingTransactionList.DtAsOf not filled")
+	}
+	for _, t := range l.Transactions {
+		if ok, err := t.Valid(); !ok {
+			return false, err
+		}
+	}
+
+	return true, nil
 }
 
 // Balance represents a generic (free-form) balance defined by an FI.
@@ -150,6 +272,17 @@ type Balance struct {
 	Value    Amount    `xml:"VALUE"`
 	DtAsOf   *Date     `xml:"DTASOF,omitempty"`
 	Currency *Currency `xml:"CURRENCY,omitempty"` // if BALTYPE is DOLLAR
+}
+
+// Valid returns (true, nil) if this struct is valid OFX
+func (b Balance) Valid() (bool, error) {
+	if len(b.Name) == 0 || len(b.Desc) == 0 {
+		return false, errors.New("Balance Name and Desc not supplied")
+	}
+	if !b.BalType.Valid() {
+		return false, errors.New("Balance BALTYPE not specified")
+	}
+	return true, nil
 }
 
 // StatementResponse represents a bank account statement, including its
@@ -182,7 +315,38 @@ func (sr *StatementResponse) Name() string {
 
 // Valid returns (true, nil) if this struct was valid OFX when unmarshalled
 func (sr *StatementResponse) Valid(version ofxVersion) (bool, error) {
-	//TODO implement
+	var emptyDate Date
+	if ok, err := sr.TrnUID.Valid(); !ok {
+		return false, err
+	} else if ok, err := sr.Status.Valid(); !ok {
+		return false, err
+	} else if ok, err := sr.CurDef.Valid(); !ok {
+		return false, err
+	} else if ok, err := sr.BankAcctFrom.Valid(); !ok {
+		return false, err
+	} else if sr.DtAsOf.Equal(emptyDate) {
+		return false, errors.New("StatementResponse.DtAsOf not filled")
+	} else if (sr.AvailBalAmt == nil) != (sr.AvailDtAsOf == nil) {
+		return false, errors.New("StatementResponse.Avail* must both either be present or absent")
+	}
+	if sr.BankTranList != nil {
+		if ok, err := sr.BankTranList.Valid(version); !ok {
+			return false, err
+		}
+	}
+	if sr.BankTranListP != nil {
+		if version < OfxVersion220 {
+			return false, errors.New("StatementResponse.BankTranListP invalid for OFX < 2.2")
+		}
+		if ok, err := sr.BankTranListP.Valid(); !ok {
+			return false, err
+		}
+	}
+	for _, bal := range sr.BalList {
+		if ok, err := bal.Valid(); !ok {
+			return false, err
+		}
+	}
 	return true, nil
 }
 
