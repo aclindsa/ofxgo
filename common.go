@@ -274,6 +274,7 @@ type BankAcct struct {
 	AcctKey  String   `xml:"ACCTKEY,omitempty"` // Unused in USA
 }
 
+// Valid returns whether the BankAcct is valid according to the OFX spec
 func (b BankAcct) Valid() (bool, error) {
 	if len(b.BankID) == 0 {
 		return false, errors.New("BankAcct.BankID empty")
@@ -294,6 +295,7 @@ type CCAcct struct {
 	AcctKey String   `xml:"ACCTKEY,omitempty"` // Unused in USA
 }
 
+// Valid returns whether the CCAcct is valid according to the OFX spec
 func (c CCAcct) Valid() (bool, error) {
 	if len(c.AcctID) == 0 {
 		return false, errors.New("CCAcct.AcctID empty")

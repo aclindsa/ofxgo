@@ -351,7 +351,7 @@ func (c *CurrSymbol) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error 
 
 	unit, err := currency.ParseISO(value)
 	if err != nil {
-		errors.New("Error parsing CurrSymbol:" + err.Error())
+		return errors.New("Error parsing CurrSymbol:" + err.Error())
 	}
 	c.Unit = unit
 	return nil
@@ -375,6 +375,8 @@ func (c CurrSymbol) Valid() (bool, error) {
 	return true, nil
 }
 
+// NewCurrSymbol returns a new CurrSymbol given a three-letter ISO-4217
+// currency symbol as a string
 func NewCurrSymbol(s string) (*CurrSymbol, error) {
 	unit, err := currency.ParseISO(s)
 	if err != nil {
