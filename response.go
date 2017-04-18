@@ -219,7 +219,7 @@ var responseTypes = map[string]map[string]reflect.Type{
 	ImageRs.String(): {},
 }
 
-func decodeMessageSet(d *xml.Decoder, start xml.StartElement, msgs *[]Message) error {
+func decodeMessageSet(d *xml.Decoder, start xml.StartElement, msgs *[]Message, version ofxVersion) error {
 	setTypes, ok := responseTypes[start.Name.Local]
 	if !ok {
 		return errors.New("Invalid message set: " + start.Name.Local)
@@ -243,6 +243,9 @@ func decodeMessageSet(d *xml.Decoder, start xml.StartElement, msgs *[]Message) e
 			response := reflect.New(responseType).Interface()
 			responseMessage := response.(Message)
 			if err := d.DecodeElement(responseMessage, &startElement); err != nil {
+				return err
+			}
+			if ok, err := responseMessage.Valid(version); !ok {
 				return err
 			}
 			*msgs = append(*msgs, responseMessage)
@@ -348,7 +351,7 @@ func ParseResponse(reader io.Reader) (*Response, error) {
 			if !ok {
 				return nil, errors.New("Invalid message set: " + start.Name.Local)
 			}
-			if err := decodeMessageSet(decoder, start, slice); err != nil {
+			if err := decodeMessageSet(decoder, start, slice, or.Version); err != nil {
 				return nil, err
 			}
 		} else {
