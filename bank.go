@@ -95,8 +95,8 @@ type Transaction struct {
 	CCAcctTo      *CCAcct       `xml:"CCACCTTO,omitempty"`   // If the transfer was to a credit card account we have the account information for
 	Memo          String        `xml:"MEMO,omitempty"`       // Extra information (not in NAME)
 	ImageData     []ImageData   `xml:"IMAGEDATA,omitempty"`
-	Currency      String        `xml:"CURRENCY,omitempty"`      // If different from CURDEF in STMTTRS
-	OrigCurrency  String        `xml:"ORIGCURRENCY,omitempty"`  // If different from CURDEF in STMTTRS
+	Currency      CurrSymbol    `xml:"CURRENCY,omitempty"`      // If different from CURDEF in STMTTRS
+	OrigCurrency  CurrSymbol    `xml:"ORIGCURRENCY,omitempty"`  // If different from CURDEF in STMTTRS
 	Inv401kSource inv401kSource `xml:"INV401KSOURCE,omitempty"` // One of PRETAX, AFTERTAX, MATCH, PROFITSHARING, ROLLOVER, OTHERVEST, OTHERNONVEST (Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST.)
 }
 
@@ -123,8 +123,8 @@ type PendingTransaction struct {
 	ExtdName     String      `xml:"EXTDNAME,omitempty"` // Extended name of payee or transaction description
 	Memo         String      `xml:"MEMO,omitempty"`     // Extra information (not in NAME)
 	ImageData    []ImageData `xml:"IMAGEDATA,omitempty"`
-	Currency     String      `xml:"CURRENCY,omitempty"`     // If different from CURDEF in STMTTRS
-	OrigCurrency String      `xml:"ORIGCURRENCY,omitempty"` // If different from CURDEF in STMTTRS
+	Currency     CurrSymbol  `xml:"CURRENCY,omitempty"`     // If different from CURDEF in STMTTRS
+	OrigCurrency CurrSymbol  `xml:"ORIGCURRENCY,omitempty"` // If different from CURDEF in STMTTRS
 }
 
 // PendingTransactionList represents a list of pending transactions, along with
@@ -161,7 +161,7 @@ type StatementResponse struct {
 	Status    Status   `xml:"STATUS"`
 	CltCookie String   `xml:"CLTCOOKIE,omitempty"`
 	// TODO `xml:"OFXEXTENSION,omitempty"`
-	CurDef        String                  `xml:"STMTRS>CURDEF"`
+	CurDef        CurrSymbol              `xml:"STMTRS>CURDEF"`
 	BankAcctFrom  BankAcct                `xml:"STMTRS>BANKACCTFROM"`
 	BankTranList  *TransactionList        `xml:"STMTRS>BANKTRANLIST,omitempty"`
 	BankTranListP *PendingTransactionList `xml:"STMTRS>BANKTRANLISTP,omitempty"`

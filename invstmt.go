@@ -1163,7 +1163,7 @@ type InvStatementResponse struct {
 	CltCookie String   `xml:"CLTCOOKIE,omitempty"`
 	// TODO `xml:"OFXEXTENSION,omitempty"`
 	DtAsOf      Date         `xml:"INVSTMTRS>DTASOF"`
-	CurDef      String       `xml:"INVSTMTRS>CURDEF"`
+	CurDef      CurrSymbol   `xml:"INVSTMTRS>CURDEF"`
 	InvAcctFrom InvAcct      `xml:"INVSTMTRS>INVACCTFROM"`
 	InvTranList *InvTranList `xml:"INVSTMTRS>INVTRANLIST,omitempty"`
 	InvPosList  PositionList `xml:"INVSTMTRS>INVPOSLIST,omitempty"`

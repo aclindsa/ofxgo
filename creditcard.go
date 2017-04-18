@@ -48,7 +48,7 @@ type CCStatementResponse struct {
 	Status    Status   `xml:"STATUS"`
 	CltCookie String   `xml:"CLTCOOKIE,omitempty"`
 	// TODO `xml:"OFXEXTENSION,omitempty"`
-	CurDef       String           `xml:"CCSTMTRS>CURDEF"`
+	CurDef       CurrSymbol       `xml:"CCSTMTRS>CURDEF"`
 	CCAcctFrom   CCAcct           `xml:"CCSTMTRS>CCACCTFROM"`
 	BankTranList *TransactionList `xml:"CCSTMTRS>BANKTRANLIST,omitempty"`
 	//BANKTRANLISTP

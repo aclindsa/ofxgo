@@ -417,6 +417,11 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 	oounits2.SetFrac64(25, 1)
 	oolimitprice2.SetFrac64(1975, 100)
 
+	usd, err := ofxgo.NewCurrSymbol("USD")
+	if err != nil {
+		t.Fatalf("Unexpected error creating CurrSymbol for USD\n")
+	}
+
 	statementResponse := ofxgo.InvStatementResponse{
 		TrnUID: "1a0117ad-692b-4c6a-a21b-020d37d34d49",
 		Status: ofxgo.Status{
@@ -424,7 +429,7 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 			Severity: "INFO",
 		},
 		DtAsOf: *ofxgo.NewDateGMT(2017, 3, 31, 0, 0, 0, 0),
-		CurDef: "USD",
+		CurDef: *usd,
 		InvAcctFrom: ofxgo.InvAcct{
 			BrokerID: "invstrus.com",
 			AcctID:   "91827364",
@@ -861,6 +866,11 @@ NEWFILEUID: NONE
 	posunitprice2.SetFrac64(2987, 100)
 	posmktval2.SetFrac64(2987, 1)
 
+	usd, err := ofxgo.NewCurrSymbol("USD")
+	if err != nil {
+		t.Fatalf("Unexpected error creating CurrSymbol for USD\n")
+	}
+
 	statementResponse := ofxgo.InvStatementResponse{
 		TrnUID: "1283719872",
 		Status: ofxgo.Status{
@@ -868,7 +878,7 @@ NEWFILEUID: NONE
 			Severity: "INFO",
 		},
 		DtAsOf: *ofxgo.NewDateGMT(2017, 4, 3, 12, 0, 0, 0),
-		CurDef: "USD",
+		CurDef: *usd,
 		InvAcctFrom: ofxgo.InvAcct{
 			BrokerID: "www.exampletrader.com",
 			AcctID:   "12341234",

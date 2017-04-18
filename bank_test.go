@@ -252,13 +252,18 @@ func TestUnmarshalBankStatementResponse(t *testing.T) {
 	balamt.SetFrac64(20029, 100)
 	availbalamt.SetFrac64(20029, 100)
 
+	usd, err := ofxgo.NewCurrSymbol("USD")
+	if err != nil {
+		t.Fatalf("Unexpected error creating CurrSymbol for USD\n")
+	}
+
 	statementResponse := ofxgo.StatementResponse{
 		TrnUID: "1001",
 		Status: ofxgo.Status{
 			Code:     0,
 			Severity: "INFO",
 		},
-		CurDef: "USD",
+		CurDef: *usd,
 		BankAcctFrom: ofxgo.BankAcct{
 			BankID:   "318398732",
 			AcctID:   "78346129",

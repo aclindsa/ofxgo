@@ -132,13 +132,18 @@ NEWFILEUID:NONE
 	balamt.SetFrac64(-933400, 100)
 	availbalamt.SetFrac64(763017, 100)
 
+	usd, err := ofxgo.NewCurrSymbol("USD")
+	if err != nil {
+		t.Fatalf("Unexpected error creating CurrSymbol for USD\n")
+	}
+
 	statementResponse := ofxgo.CCStatementResponse{
 		TrnUID: "59e850ad-7448-b4ce-4b71-29057763b306",
 		Status: ofxgo.Status{
 			Code:     0,
 			Severity: "INFO",
 		},
-		CurDef: "USD",
+		CurDef: *usd,
 		CCAcctFrom: ofxgo.CCAcct{
 			AcctID: "9283744488463775",
 		},

@@ -178,12 +178,12 @@ func printInvTran(it *ofxgo.InvTran) {
 	fmt.Printf("%s", it.DtTrade)
 }
 
-func printInvBuy(defCurrency ofxgo.String, ib *ofxgo.InvBuy) {
+func printInvBuy(defCurrency ofxgo.CurrSymbol, ib *ofxgo.InvBuy) {
 	printInvTran(&ib.InvTran)
 	currency := defCurrency
-	if ib.Currency != nil {
+	if ok, _ := ib.Currency.CurSym.Valid(); ok {
 		currency = ib.Currency.CurSym
-	} else if ib.OrigCurrency != nil {
+	} else if ok, _ := ib.OrigCurrency.CurSym.Valid(); ok {
 		currency = ib.Currency.CurSym
 	}
 
@@ -191,15 +191,15 @@ func printInvBuy(defCurrency ofxgo.String, ib *ofxgo.InvBuy) {
 	// TODO print ticker instead of CUSIP
 }
 
-func printInvSell(defCurrency ofxgo.String, is *ofxgo.InvSell) {
+func printInvSell(defCurrency ofxgo.CurrSymbol, is *ofxgo.InvSell) {
 	printInvTran(&is.InvTran)
 	currency := defCurrency
-	if is.Currency != nil {
+	if ok, _ := is.Currency.CurSym.Valid(); ok {
 		currency = is.Currency.CurSym
-	} else if is.OrigCurrency != nil {
+	} else if ok, _ := is.OrigCurrency.CurSym.Valid(); ok {
 		currency = is.Currency.CurSym
 	}
 
-	fmt.Printf(" %s (%s %s)@%s %s (Total: %s)\n", is.Units, is.SecID.UniqueIDType, is.SecID.UniqueID, is.UnitPrice, currency, is.Total)
+	fmt.Printf(" %s (%s %s)@%s %s (Total: %s)\n", is.Units, is.SecID.UniqueIDType, is.SecID.UniqueID, is.UnitPrice, currency.String(), is.Total)
 	// TODO print ticker instead of CUSIP
 }

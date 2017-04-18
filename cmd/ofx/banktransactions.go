@@ -75,12 +75,12 @@ func bankTransactions() {
 	}
 }
 
-func printTransaction(defCurrency ofxgo.String, tran *ofxgo.Transaction) {
+func printTransaction(defCurrency ofxgo.CurrSymbol, tran *ofxgo.Transaction) {
 	currency := defCurrency
-	if len(tran.Currency) > 0 {
+	if ok, _ := tran.Currency.Valid(); ok {
 		currency = tran.Currency
-	} else if len(tran.OrigCurrency) > 0 {
-		currency = tran.Currency
+	} else if ok, _ := tran.OrigCurrency.Valid(); ok {
+		currency = tran.OrigCurrency
 	}
 
 	var name string
@@ -94,5 +94,5 @@ func printTransaction(defCurrency ofxgo.String, tran *ofxgo.Transaction) {
 		name = name + " - " + string(tran.Memo)
 	}
 
-	fmt.Printf("%s %-15s %-11s %s\n", tran.DtPosted, tran.TrnAmt.String()+" "+string(currency), tran.TrnType, name)
+	fmt.Printf("%s %-15s %-11s %s\n", tran.DtPosted, tran.TrnAmt.String()+" "+currency.String(), tran.TrnType, name)
 }
