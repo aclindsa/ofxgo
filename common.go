@@ -316,3 +316,13 @@ type Currency struct {
 	CurRate Amount     `xml:"CURRATE"` // Ratio of <CURDEF> currency to <CURSYM> currency
 	CurSym  CurrSymbol `xml:"CURSYM"`  // ISO-4217 3-character currency identifier
 }
+
+// Valid returns whether the Currency is valid according to the OFX spec
+func (c Currency) Valid() (bool, error) {
+	if c.CurRate.IsInt() && c.CurRate.Num().Int64() == 0 {
+		return false, errors.New("CurRate may not be zero")
+	} else if ok, err := c.CurSym.Valid(); !ok {
+		return false, err
+	}
+	return true, nil
+}
