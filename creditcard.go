@@ -29,6 +29,9 @@ func (r *CCStatementRequest) Name() string {
 // Valid returns (true, nil) if this struct would be valid OFX if marshalled
 // into XML/SGML
 func (r *CCStatementRequest) Valid(version ofxVersion) (bool, error) {
+	if ok, err := r.TrnUID.Valid(); !ok {
+		return false, err
+	}
 	// TODO implement
 	return true, nil
 }
@@ -74,6 +77,9 @@ func (sr *CCStatementResponse) Name() string {
 
 // Valid returns (true, nil) if this struct was valid OFX when unmarshalled
 func (sr *CCStatementResponse) Valid(version ofxVersion) (bool, error) {
+	if ok, err := sr.TrnUID.Valid(); !ok {
+		return false, err
+	}
 	//TODO implement
 	return true, nil
 }
