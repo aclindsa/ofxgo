@@ -117,15 +117,17 @@ type Transaction struct {
 	SIC           Int           `xml:"SIC,omitempty"` // Standard Industrial Code
 	PayeeID       String        `xml:"PAYEEID,omitempty"`
 	// Note: Servers should provide NAME or PAYEE, but not both
-	Name          String        `xml:"NAME,omitempty"`
-	Payee         *Payee        `xml:"PAYEE,omitempty"`
-	ExtdName      String        `xml:"EXTDNAME,omitempty"`   // Extended name of payee or transaction description
-	BankAcctTo    *BankAcct     `xml:"BANKACCTTO,omitempty"` // If the transfer was to a bank account we have the account information for
-	CCAcctTo      *CCAcct       `xml:"CCACCTTO,omitempty"`   // If the transfer was to a credit card account we have the account information for
-	Memo          String        `xml:"MEMO,omitempty"`       // Extra information (not in NAME)
-	ImageData     []ImageData   `xml:"IMAGEDATA,omitempty"`
-	Currency      Currency      `xml:"CURRENCY,omitempty"`      // If different from CURDEF in STMTTRS
-	OrigCurrency  Currency      `xml:"ORIGCURRENCY,omitempty"`  // If different from CURDEF in STMTTRS
+	Name       String      `xml:"NAME,omitempty"`
+	Payee      *Payee      `xml:"PAYEE,omitempty"`
+	ExtdName   String      `xml:"EXTDNAME,omitempty"`   // Extended name of payee or transaction description
+	BankAcctTo *BankAcct   `xml:"BANKACCTTO,omitempty"` // If the transfer was to a bank account we have the account information for
+	CCAcctTo   *CCAcct     `xml:"CCACCTTO,omitempty"`   // If the transfer was to a credit card account we have the account information for
+	Memo       String      `xml:"MEMO,omitempty"`       // Extra information (not in NAME)
+	ImageData  []ImageData `xml:"IMAGEDATA,omitempty"`
+
+	// Only one of Currency and OrigCurrency can ever be Valid() for the same transaction
+	Currency      Currency      `xml:"CURRENCY,omitempty"`      // Represents the currency of TrnAmt (instead of CURDEF in STMTRS) if Valid
+	OrigCurrency  Currency      `xml:"ORIGCURRENCY,omitempty"`  // Represents the currency TrnAmt was converted to STMTRS' CURDEF from if Valid
 	Inv401kSource inv401kSource `xml:"INV401KSOURCE,omitempty"` // One of PRETAX, AFTERTAX, MATCH, PROFITSHARING, ROLLOVER, OTHERVEST, OTHERNONVEST (Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST.)
 }
 
@@ -202,18 +204,20 @@ func (l TransactionList) Valid(version ofxVersion) (bool, error) {
 // Transaction, but is not finalized (and may never be). For instance, it lacks
 // FiTID and DtPosted fields.
 type PendingTransaction struct {
-	XMLName      xml.Name    `xml:"STMTTRNP"`
-	TrnType      trnType     `xml:"TRNTYPE"` // One of CREDIT, DEBIT, INT (interest earned or paid. Note: Depends on signage of amount), DIV, FEE, SRVCHG (service charge), DEP (deposit), ATM (Note: Depends on signage of amount), POS (Note: Depends on signage of amount), XFER, CHECK, PAYMENT, CASH, DIRECTDEP, DIRECTDEBIT, REPEATPMT, HOLD, OTHER
-	DtTran       Date        `xml:"DTTRAN"`
-	DtExpire     *Date       `xml:"DTEXPIRE,omitempty"` // only valid for TrnType==HOLD, the date the hold will expire
-	TrnAmt       Amount      `xml:"TRNAMT"`
-	RefNum       String      `xml:"REFNUM,omitempty"`
-	Name         String      `xml:"NAME,omitempty"`
-	ExtdName     String      `xml:"EXTDNAME,omitempty"` // Extended name of payee or transaction description
-	Memo         String      `xml:"MEMO,omitempty"`     // Extra information (not in NAME)
-	ImageData    []ImageData `xml:"IMAGEDATA,omitempty"`
-	Currency     Currency    `xml:"CURRENCY,omitempty"`     // If different from CURDEF in STMTTRS
-	OrigCurrency Currency    `xml:"ORIGCURRENCY,omitempty"` // If different from CURDEF in STMTTRS
+	XMLName   xml.Name    `xml:"STMTTRNP"`
+	TrnType   trnType     `xml:"TRNTYPE"` // One of CREDIT, DEBIT, INT (interest earned or paid. Note: Depends on signage of amount), DIV, FEE, SRVCHG (service charge), DEP (deposit), ATM (Note: Depends on signage of amount), POS (Note: Depends on signage of amount), XFER, CHECK, PAYMENT, CASH, DIRECTDEP, DIRECTDEBIT, REPEATPMT, HOLD, OTHER
+	DtTran    Date        `xml:"DTTRAN"`
+	DtExpire  *Date       `xml:"DTEXPIRE,omitempty"` // only valid for TrnType==HOLD, the date the hold will expire
+	TrnAmt    Amount      `xml:"TRNAMT"`
+	RefNum    String      `xml:"REFNUM,omitempty"`
+	Name      String      `xml:"NAME,omitempty"`
+	ExtdName  String      `xml:"EXTDNAME,omitempty"` // Extended name of payee or transaction description
+	Memo      String      `xml:"MEMO,omitempty"`     // Extra information (not in NAME)
+	ImageData []ImageData `xml:"IMAGEDATA,omitempty"`
+
+	// Only one of Currency and OrigCurrency can ever be Valid() for the same transaction
+	Currency     Currency `xml:"CURRENCY,omitempty"`     // Represents the currency of TrnAmt (instead of CURDEF in STMTRS) if Valid
+	OrigCurrency Currency `xml:"ORIGCURRENCY,omitempty"` // Represents the currency TrnAmt was converted to STMTRS' CURDEF from if Valid
 }
 
 // Valid returns (true, nil) if this struct is valid OFX

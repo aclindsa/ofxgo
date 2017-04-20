@@ -79,8 +79,6 @@ func printTransaction(defCurrency ofxgo.CurrSymbol, tran *ofxgo.Transaction) {
 	currency := defCurrency
 	if ok, _ := tran.Currency.Valid(); ok {
 		currency = tran.Currency.CurSym
-	} else if ok, _ := tran.OrigCurrency.Valid(); ok {
-		currency = tran.OrigCurrency.CurSym
 	}
 
 	var name string

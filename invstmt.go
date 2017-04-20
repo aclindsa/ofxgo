@@ -75,8 +75,8 @@ type InvBuy struct {
 	Fees         Amount      `xml:"FEES,omitempty"`
 	Load         Amount      `xml:"LOAD,omitempty"`
 	Total        Amount      `xml:"TOTAL"`                  // Transaction total. Buys, sells, etc.:((quan. * (price +/- markup/markdown)) +/-(commission + fees + load + taxes + penalty + withholding + statewithholding)). Distributions, interest, margin interest, misc. expense, etc.: amount. Return of cap: cost basis
-	Currency     *Currency   `xml:"CURRENCY,omitempty"`     // Overriding currency for UNITPRICE
-	OrigCurrency *Currency   `xml:"ORIGCURRENCY,omitempty"` // Overriding currency for UNITPRICE
+	Currency     Currency    `xml:"CURRENCY,omitempty"`     // Represents the currency this transaction is in (instead of CURDEF in INVSTMTRS) if Valid()
+	OrigCurrency Currency    `xml:"ORIGCURRENCY,omitempty"` // Represents the currency this transaction was converted to INVSTMTRS' CURDEF from if Valid
 	SubAcctSec   subAcctType `xml:"SUBACCTSEC"`             // Sub-account type for this security. One of CASH, MARGIN, SHORT, OTHER
 	SubAcctFund  subAcctType `xml:"SUBACCTFUND"`            // Where did the money for the transaction come from or go to? CASH, MARGIN, SHORT, OTHER
 
@@ -107,8 +107,8 @@ type InvSell struct {
 	TaxExempt    Boolean     `xml:"TAXEXEMPT,omitempty"`    // Tax-exempt transaction
 	Total        Amount      `xml:"TOTAL"`                  // Transaction total. Buys, sells, etc.:((quan. * (price +/- markup/markdown)) +/-(commission + fees + load + taxes + penalty + withholding + statewithholding)). Distributions, interest, margin interest, misc. expense, etc.: amount. Return of cap: cost basis
 	Gain         Amount      `xml:"GAIN,omitempty"`         // Total gain
-	Currency     *Currency   `xml:"CURRENCY,omitempty"`     // Overriding currency for UNITPRICE
-	OrigCurrency *Currency   `xml:"ORIGCURRENCY,omitempty"` // Overriding currency for UNITPRICE
+	Currency     Currency    `xml:"CURRENCY,omitempty"`     // Represents the currency this transaction is in (instead of CURDEF in INVSTMTRS) if Valid()
+	OrigCurrency Currency    `xml:"ORIGCURRENCY,omitempty"` // Represents the currency this transaction was converted to INVSTMTRS' CURDEF from if Valid
 	SubAcctSec   subAcctType `xml:"SUBACCTSEC"`             // Sub-account type for this security. One of CASH, MARGIN, SHORT, OTHER
 	SubAcctFund  subAcctType `xml:"SUBACCTFUND"`            // Where did the money for the transaction come from or go to? CASH, MARGIN, SHORT, OTHER
 
@@ -211,8 +211,8 @@ type Income struct {
 	SubAcctFund   subAcctType   `xml:"SUBACCTFUND"`             // Where did the money for the transaction come from or go to? CASH, MARGIN, SHORT, OTHER
 	TaxExempt     Boolean       `xml:"TAXEXEMPT,omitempty"`     // Tax-exempt transaction
 	Witholding    Amount        `xml:"WITHHOLDING,omitempty"`   // Federal tax witholdings
-	Currency      *Currency     `xml:"CURRENCY,omitempty"`      // Overriding currency for UNITPRICE
-	OrigCurrency  *Currency     `xml:"ORIGCURRENCY,omitempty"`  // Overriding currency for UNITPRICE
+	Currency      Currency      `xml:"CURRENCY,omitempty"`      // Represents the currency this transaction is in (instead of CURDEF in INVSTMTRS) if Valid()
+	OrigCurrency  Currency      `xml:"ORIGCURRENCY,omitempty"`  // Represents the currency this transaction was converted to INVSTMTRS' CURDEF from if Valid
 	Inv401kSource inv401kSource `xml:"INV401KSOURCE,omitempty"` // Source of money for this transaction. One of PRETAX, AFTERTAX, MATCH, PROFITSHARING, ROLLOVER, OTHERVEST, OTHERNONVEST for 401(k) accounts. Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST
 }
 
@@ -230,8 +230,8 @@ type InvExpense struct {
 	Total         Amount        `xml:"TOTAL"`
 	SubAcctSec    subAcctType   `xml:"SUBACCTSEC"`              // Sub-account type for this security. One of CASH, MARGIN, SHORT, OTHER
 	SubAcctFund   subAcctType   `xml:"SUBACCTFUND"`             // Where did the money for the transaction come from or go to? CASH, MARGIN, SHORT, OTHER
-	Currency      *Currency     `xml:"CURRENCY,omitempty"`      // Overriding currency for UNITPRICE
-	OrigCurrency  *Currency     `xml:"ORIGCURRENCY,omitempty"`  // Overriding currency for UNITPRICE
+	Currency      Currency      `xml:"CURRENCY,omitempty"`      // Represents the currency this transaction is in (instead of CURDEF in INVSTMTRS) if Valid()
+	OrigCurrency  Currency      `xml:"ORIGCURRENCY,omitempty"`  // Represents the currency this transaction was converted to INVSTMTRS' CURDEF from if Valid
 	Inv401kSource inv401kSource `xml:"INV401KSOURCE,omitempty"` // Source of money for this transaction. One of PRETAX, AFTERTAX, MATCH, PROFITSHARING, ROLLOVER, OTHERVEST, OTHERNONVEST for 401(k) accounts. Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST
 }
 
@@ -277,8 +277,8 @@ type MarginInterest struct {
 	InvTran      InvTran     `xml:"INVTRAN"`
 	Total        Amount      `xml:"TOTAL"`
 	SubAcctFund  subAcctType `xml:"SUBACCTFUND"`            // Where did the money for the transaction come from or go to? CASH, MARGIN, SHORT, OTHER
-	Currency     *Currency   `xml:"CURRENCY,omitempty"`     // Overriding currency for UNITPRICE
-	OrigCurrency *Currency   `xml:"ORIGCURRENCY,omitempty"` // Overriding currency for UNITPRICE
+	Currency     Currency    `xml:"CURRENCY,omitempty"`     // Represents the currency this transaction is in (instead of CURDEF in INVSTMTRS) if Valid()
+	OrigCurrency Currency    `xml:"ORIGCURRENCY,omitempty"` // Represents the currency this transaction was converted to INVSTMTRS' CURDEF from if Valid
 }
 
 // TransactionType returns a string representation of this transaction's type
@@ -303,8 +303,8 @@ type Reinvest struct {
 	Fees          Amount        `xml:"FEES,omitempty"`
 	Load          Amount        `xml:"LOAD,omitempty"`
 	TaxExempt     Boolean       `xml:"TAXEXEMPT,omitempty"`     // Tax-exempt transaction
-	Currency      *Currency     `xml:"CURRENCY,omitempty"`      // Overriding currency for UNITPRICE
-	OrigCurrency  *Currency     `xml:"ORIGCURRENCY,omitempty"`  // Overriding currency for UNITPRICE
+	Currency      Currency      `xml:"CURRENCY,omitempty"`      // Represents the currency this transaction is in (instead of CURDEF in INVSTMTRS) if Valid()
+	OrigCurrency  Currency      `xml:"ORIGCURRENCY,omitempty"`  // Represents the currency this transaction was converted to INVSTMTRS' CURDEF from if Valid
 	Inv401kSource inv401kSource `xml:"INV401KSOURCE,omitempty"` // Source of money for this transaction. One of PRETAX, AFTERTAX, MATCH, PROFITSHARING, ROLLOVER, OTHERVEST, OTHERNONVEST for 401(k) accounts. Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST
 }
 
@@ -322,8 +322,8 @@ type RetOfCap struct {
 	Total         Amount        `xml:"TOTAL"`
 	SubAcctSec    subAcctType   `xml:"SUBACCTSEC"`              // Sub-account type for this security. One of CASH, MARGIN, SHORT, OTHER
 	SubAcctFund   subAcctType   `xml:"SUBACCTFUND"`             // Where did the money for the transaction come from or go to? CASH, MARGIN, SHORT, OTHER
-	Currency      *Currency     `xml:"CURRENCY,omitempty"`      // Overriding currency for UNITPRICE
-	OrigCurrency  *Currency     `xml:"ORIGCURRENCY,omitempty"`  // Overriding currency for UNITPRICE
+	Currency      Currency      `xml:"CURRENCY,omitempty"`      // Represents the currency this transaction is in (instead of CURDEF in INVSTMTRS) if Valid()
+	OrigCurrency  Currency      `xml:"ORIGCURRENCY,omitempty"`  // Represents the currency this transaction was converted to INVSTMTRS' CURDEF from if Valid
 	Inv401kSource inv401kSource `xml:"INV401KSOURCE,omitempty"` // Source of money for this transaction. One of PRETAX, AFTERTAX, MATCH, PROFITSHARING, ROLLOVER, OTHERVEST, OTHERNONVEST for 401(k) accounts. Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST
 }
 
@@ -412,8 +412,8 @@ type Split struct {
 	NewUnits      Amount        `xml:"NEWUNITS"`                // number of shares after the split
 	Numerator     Int           `xml:"NUMERATOR"`               // split ratio numerator
 	Denominator   Int           `xml:"DENOMINATOR"`             // split ratio denominator
-	Currency      *Currency     `xml:"CURRENCY,omitempty"`      // Overriding currency for UNITPRICE
-	OrigCurrency  *Currency     `xml:"ORIGCURRENCY,omitempty"`  // Overriding currency for UNITPRICE
+	Currency      Currency      `xml:"CURRENCY,omitempty"`      // Represents the currency this transaction is in (instead of CURDEF in INVSTMTRS) if Valid()
+	OrigCurrency  Currency      `xml:"ORIGCURRENCY,omitempty"`  // Represents the currency this transaction was converted to INVSTMTRS' CURDEF from if Valid
 	FracCash      Amount        `xml:"FRACCASH,omitempty"`      // cash for fractional units
 	SubAcctFund   subAcctType   `xml:"SUBACCTFUND,omitempty"`   // Where did the money for the transaction come from or go to? CASH, MARGIN, SHORT, OTHER
 	Inv401kSource inv401kSource `xml:"INV401KSOURCE,omitempty"` // Source of money for this transaction. One of PRETAX, AFTERTAX, MATCH, PROFITSHARING, ROLLOVER, OTHERVEST, OTHERNONVEST for 401(k) accounts. Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST

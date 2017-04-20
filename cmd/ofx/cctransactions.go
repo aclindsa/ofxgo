@@ -62,8 +62,6 @@ func ccTransactions() {
 			currency := stmt.CurDef
 			if ok, _ := tran.Currency.Valid(); ok {
 				currency = tran.Currency.CurSym
-			} else if ok, _ := tran.OrigCurrency.Valid(); ok {
-				currency = tran.OrigCurrency.CurSym
 			}
 
 			var name string

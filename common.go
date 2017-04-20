@@ -310,10 +310,14 @@ type InvAcct struct {
 	AcctID   String   `xml:"ACCTID"`
 }
 
-// Currency represents one ISO-4217 currency
+// Currency represents one ISO-4217 currency. CURRENCY elements signify that
+// the transaction containing this Currency struct is in this currency instead
+// of being converted to the statement's default. ORIGCURRENCY elements signify
+// that the transaction containing this Currency struct was converted to the
+// statement's default from the specified currency.
 type Currency struct {
 	XMLName xml.Name   // CURRENCY or ORIGCURRENCY
-	CurRate Amount     `xml:"CURRATE"` // Ratio of <CURDEF> currency to <CURSYM> currency
+	CurRate Amount     `xml:"CURRATE"` // Ratio of statement's currency (CURDEF) to transaction currency (CURSYM)
 	CurSym  CurrSymbol `xml:"CURSYM"`  // ISO-4217 3-character currency identifier
 }
 
