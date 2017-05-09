@@ -11,7 +11,7 @@ There are three main top-level objects defined in ofxgo. These are Client,
 Request, and Response. The Request and Response objects represent OFX requests
 and responses as Golang structs. Client contains settings which control how
 requests and responses are marshalled and unmarshalled (the OFX version used,
-client id and version, whether to indent SGML/XML elements, etc.), and provides
+client id and version, whether to indent SGML/XML tags, etc.), and provides
 helper methods for making requests and optionally parsing the response using
 those settings.
 
@@ -49,7 +49,7 @@ Responses:
                              //   user
   var r CCStatementResponse  // (CreditCard) The balance (and optionally list of
                              //   transactions) for a credit card
-  var r StatementResponse    // (Bank): The balance (and optionally list of
+  var r StatementResponse    // (Bank) The balance (and optionally list of
                              //   transactions) for a bank account
   var r InvStatementResponse // (InvStmt) The balance, transactions, existing
                              //   positions, and/or open orders for an
@@ -65,5 +65,64 @@ Responses:
 When constructing a Request, simply append the desired message to the message
 set it belongs to. For Responses, it is the user's responsibility to make type
 assertions on objects found inside one of these message sets before using them.
+
+For example, the following code would request a bank statement for a checking
+account and print the balance:
+
+  import (
+    "fmt"
+    "github.com/aclindsa/ofxgo"
+    "os"
+  )
+
+  var client ofxgo.Client // By not initializing them, we accept all default
+                          // client values
+  var request ofxgo.Request
+
+  // These are all specific to you and your financial institution
+  request.URL = "https://ofx.example.com"
+  request.Signon.UserID = ofxgo.String("john")
+  request.Signon.UserPass = ofxgo.String("hunter2")
+  request.Signon.Org = ofxgo.String("MyBank")
+  request.Signon.Fid = ofxgo.String("0001")
+
+  uid, err := ofxgo.RandomUID()
+  if err != nil {
+    fmt.Println("Error creating uid for transaction:", err)
+    os.Exit(1)
+  }
+
+  statementRequest := ofxgo.StatementRequest{
+    TrnUID: *uid,
+    BankAcctFrom: ofxgo.BankAcct{
+      BankID:   ofxgo.String("123456789"),
+      AcctID:   ofxgo.String("11111111111"),
+      AcctType: ofxgo.AcctTypeChecking,
+    },
+  }
+
+  request.Bank = append(request.Bank, &statementRequest)
+
+  response, err := client.Request(request)
+  if err != nil {
+    fmt.Println("Error requesting account statement:", err)
+    os.Exit(1)
+  }
+
+  if response.Signon.Status.Code != 0 {
+    meaning, _ := response.Signon.Status.CodeMeaning()
+    fmt.Printf("Nonzero signon status (%d: %s) with message: %s\n", response.Signon.Status.Code, meaning, response.Signon.Status.Message)
+    os.Exit(1)
+  }
+
+  if len(response.Bank) < 1 {
+    fmt.Println("No banking messages received")
+  } else if stmt, ok := response.Bank[0].(*ofxgo.StatementResponse); ok {
+    fmt.Printf("Balance: %s %s (as of %s)\n", stmt.BalAmt, stmt.CurDef, stmt.DtAsOf)
+  }
+
+More usage examples may be found in the example command-line client provided
+with this library, in the cmd/ofx directory of the source.
+
 */
 package ofxgo
