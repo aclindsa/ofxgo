@@ -16,7 +16,9 @@ query financial information with OFX from the comfort of Golang, without having
 to marshal/unmarshal to SGML or XML. The library does *not* intend to abstract
 away all of the details of the OFX specification, which would be difficult to do
 well. Instead, it exposes the OFX SGML/XML hierarchy as structs which mostly
-resemble it.
+resemble it. Its primary goal is to enable the creation of other personal
+finance software in Go (as it was created to allow me to fetch OFX transactions
+for my own project, [MoneyGo](https://github.com/aclindsa/moneygo)).
 
 Because the OFX specification is rather... 'comprehensive,' it can be difficult
 for those unfamiliar with it to figure out where to start. To that end, I have
