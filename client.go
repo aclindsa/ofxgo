@@ -87,10 +87,37 @@ func RawRequest(URL string, r io.Reader) (*http.Response, error) {
 	return response, nil
 }
 
+// RawRequestCookies is RawRequest with the added feature of sending cookies
+func RawRequestCookies(URL string, r io.Reader, cookies []*http.Cookie) (*http.Response, error) {
+	if !strings.HasPrefix(URL, "https://") {
+		return nil, errors.New("Refusing to send OFX request with possible plain-text password over non-https protocol")
+	}
+
+	request, err := http.NewRequest("POST", URL, r)
+	if err != nil {
+		return nil, err
+	}
+	request.Header.Set("Content-Type", "application/x-ofx")
+	for _, cookie := range cookies {
+		request.AddCookie(cookie)
+	}
+
+	response, err := http.DefaultClient.Do(request)
+	if err != nil {
+		return nil, err
+	}
+
+	if response.StatusCode != 200 {
+		return nil, errors.New("OFXQuery request status: " + response.Status)
+	}
+
+	return response, nil
+}
+
 // RequestNoParse marshals a Request object into XML, makes an HTTP request,
 // and returns the raw HTTP response. Unlike RawRequest(), it takes client
 // settings into account. Unlike Request(), it doesn't parse the response into
-// a Request object.
+// an ofxgo.Request object.
 //
 // Caveat: The caller is responsible for closing the http Response.Body (see
 // the http module's documentation for more information)
@@ -102,7 +129,23 @@ func (c *Client) RequestNoParse(r *Request) (*http.Response, error) {
 		return nil, err
 	}
 
-	return RawRequest(r.URL, b)
+	response, err := RawRequest(r.URL, b)
+
+	// Some financial institutions (cough, Vanguard, cough), require a cookie
+	// to be set on the http request, or they return empty responses.
+	// Fortunately, the initial response contains the cookie we need, so if we
+	// detect an empty response with cookies set that didn't have any errors,
+	// re-try the request while sending their cookies back to them.
+	if err == nil && response.ContentLength <= 0 && len(response.Cookies()) > 0 {
+		b, err = r.Marshal()
+		if err != nil {
+			return nil, err
+		}
+
+		return RawRequestCookies(r.URL, b, response.Cookies())
+	}
+
+	return response, err
 }
 
 // Request marshals a Request object into XML, makes an HTTP request against
