@@ -2,7 +2,7 @@ package ofxgo_test
 
 import (
 	"fmt"
-	"github.com/aclindsa/go/src/encoding/xml"
+	"github.com/aclindsa/xml"
 	"github.com/aclindsa/ofxgo"
 	"reflect"
 	"testing"

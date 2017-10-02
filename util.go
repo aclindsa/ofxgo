@@ -2,7 +2,7 @@ package ofxgo
 
 import (
 	"bytes"
-	"github.com/aclindsa/go/src/encoding/xml"
+	"github.com/aclindsa/xml"
 )
 
 // Returns the next available Token from the xml.Decoder that is not CharData

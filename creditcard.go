@@ -1,7 +1,7 @@
 package ofxgo
 
 import (
-	"github.com/aclindsa/go/src/encoding/xml"
+	"github.com/aclindsa/xml"
 )
 
 // CCStatementRequest represents a request for a credit card statement. It is

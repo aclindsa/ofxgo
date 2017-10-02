@@ -4,7 +4,7 @@ package ofxgo
 
 import (
 	"errors"
-	"github.com/aclindsa/go/src/encoding/xml"
+	"github.com/aclindsa/xml"
 )
 
 // Message represents an OFX message in a message set. it is used to ease

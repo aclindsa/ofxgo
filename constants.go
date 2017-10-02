@@ -9,7 +9,7 @@ package ofxgo
 import (
 	"errors"
 	"fmt"
-	"github.com/aclindsa/go/src/encoding/xml"
+	"github.com/aclindsa/xml"
 	"strings"
 )
 
