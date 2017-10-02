@@ -2,7 +2,7 @@ package ofxgo
 
 import (
 	"fmt"
-	"github.com/aclindsa/go/src/encoding/xml"
+	"github.com/aclindsa/xml"
 )
 
 // AcctInfoRequest represents a request for the server to provide information

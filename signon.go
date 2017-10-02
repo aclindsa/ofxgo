@@ -3,7 +3,7 @@ package ofxgo
 import (
 	"errors"
 	"fmt"
-	"github.com/aclindsa/go/src/encoding/xml"
+	"github.com/aclindsa/xml"
 )
 
 // SignonRequest identifies and authenticates a user to their FI and is

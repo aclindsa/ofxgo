@@ -2,7 +2,7 @@ package ofxgo
 
 import (
 	"errors"
-	"github.com/aclindsa/go/src/encoding/xml"
+	"github.com/aclindsa/xml"
 )
 
 // ProfileRequest represents a request for a server to provide a profile of its

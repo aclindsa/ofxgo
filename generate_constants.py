@@ -65,7 +65,7 @@ header = """package ofxgo
 import (
 	"errors"
 	"fmt"
-	"github.com/aclindsa/go/src/encoding/xml"
+	"github.com/aclindsa/xml"
 	"strings"
 )
 """
@@ -173,7 +173,7 @@ test_header = """package ofxgo_test
  */
 
 import (
-	"github.com/aclindsa/go/src/encoding/xml"
+	"github.com/aclindsa/xml"
 	"github.com/aclindsa/ofxgo"
 	"strings"
 	"testing"

@@ -2,7 +2,7 @@ package ofxgo
 
 import (
 	"errors"
-	"github.com/aclindsa/go/src/encoding/xml"
+	"github.com/aclindsa/xml"
 )
 
 // StatementRequest represents a request for a bank statement. It is used to

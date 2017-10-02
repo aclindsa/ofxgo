@@ -2,7 +2,7 @@ package ofxgo
 
 import (
 	"errors"
-	"github.com/aclindsa/go/src/encoding/xml"
+	"github.com/aclindsa/xml"
 )
 
 // SecurityID identifies a security by its CUSIP (for US-based FI's, others may

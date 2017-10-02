@@ -2,7 +2,7 @@ package ofxgo
 
 import (
 	"errors"
-	"github.com/aclindsa/go/src/encoding/xml"
+	"github.com/aclindsa/xml"
 )
 
 // InvStatementRequest allows a customer to request transactions, positions,
