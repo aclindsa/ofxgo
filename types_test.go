@@ -23,6 +23,7 @@ func getTypeName(i interface{}) string {
 }
 
 func marshalHelper(t *testing.T, expected string, i interface{}) {
+	t.Helper()
 	typename := getTypeName(i)
 	expectedstring := fmt.Sprintf("<%s>%s</%s>", typename, expected, typename)
 	b, err := xml.Marshal(i)
@@ -35,6 +36,7 @@ func marshalHelper(t *testing.T, expected string, i interface{}) {
 }
 
 func unmarshalHelper2(t *testing.T, input string, expected interface{}, overwritten interface{}, eq func(a, b interface{}) bool) {
+	t.Helper()
 	typename := getTypeName(expected)
 	inputstring := fmt.Sprintf("<%s>%s</%s>", typename, input, typename)
 	err := xml.Unmarshal([]byte(inputstring), &overwritten)
@@ -47,6 +49,7 @@ func unmarshalHelper2(t *testing.T, input string, expected interface{}, overwrit
 }
 
 func unmarshalHelper(t *testing.T, input string, expected interface{}, overwritten interface{}) {
+	t.Helper()
 	eq := func(a, b interface{}) bool {
 		return reflect.DeepEqual(a, b)
 	}
