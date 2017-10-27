@@ -38,6 +38,10 @@ repository.
 Documentation can be found with the `go doc` tool, or at
 https://godoc.org/github.com/aclindsa/ofxgo
 
+## Requirements
+
+OFXGo requires go >= 1.9
+
 ## Using the command-line client
 
 To install the command-line client and test it out, you may do the following:
