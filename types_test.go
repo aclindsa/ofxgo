@@ -2,8 +2,8 @@ package ofxgo_test
 
 import (
 	"fmt"
-	"github.com/aclindsa/xml"
 	"github.com/aclindsa/ofxgo"
+	"github.com/aclindsa/xml"
 	"reflect"
 	"testing"
 	"time"

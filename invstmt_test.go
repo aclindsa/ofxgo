@@ -1,8 +1,8 @@
 package ofxgo_test
 
 import (
-	"github.com/aclindsa/xml"
 	"github.com/aclindsa/ofxgo"
+	"github.com/aclindsa/xml"
 	"reflect"
 	"strings"
 	"testing"
