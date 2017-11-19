@@ -38,6 +38,62 @@ repository.
 Documentation can be found with the `go doc` tool, or at
 https://godoc.org/github.com/aclindsa/ofxgo
 
+## Example Usage
+
+The following code snippet demonstrates how to use OFXGo to query and parse
+OFX code from a checking account, printing the balance and returned transactions:
+
+```go
+client := ofxgo.Client{} # Accept the default Client settings
+
+# These values are specific to your bank
+var query ofxgo.Request
+query.URL = "https://secu.example.com/ofx"
+query.Signon.Org = ofxgo.String("SECU")
+query.Signon.Fid = ofxgo.String("1234")
+
+# Set your username/password
+query.Signon.UserID = ofxgo.String("username")
+query.Signon.UserPass = ofxgo.String("hunter2")
+
+uid, _ := ofxgo.RandomUID() # Handle error in real code
+query.Bank = append(query.bank, &ofxgo.StatementRequest{
+	TrnUID: *uid,
+	BankAcctFrom: ofxgo.BankAcct{
+		BankID:   ofxgo.String("123456789"),   # Possibly your routing number
+		AcctID:   ofxgo.String("00011122233"), # Possibly your account number
+		AcctType: ofxgo.AcctTypeChecking,
+	},
+	Include: true, # Include transactions (instead of only balance information)
+})
+
+response, _ := client.Request(query) # Handle error in real code
+
+# Was there an OFX error while processing our request?
+if response.Signon.Status.Code != 0 {
+	meaning, _ := response.Signon.Status.CodeMeaning()
+	fmt.Printf("Nonzero signon status (%d: %s) with message: %s\n", response.Signon.Status.Code, meaning, response.Signon.Status.Message)
+	os.Exit(1)
+}
+
+if len(response.Bank) < 1 {
+	fmt.Println("No banking messages received")
+	os.Exit(1)
+}
+
+if stmt, ok := response.Bank[0].(*ofxgo.StatementResponse); ok {
+	fmt.Printf("Balance: %s %s (as of %s)\n", stmt.BalAmt, stmt.CurDef, stmt.DtAsOf)
+	fmt.Println("Transactions:")
+	for _, tran := range stmt.BankTranList.Transactions {
+		currency := defCurrency
+		if ok, _ := tran.Currency.Valid(); ok {
+			currency = tran.Currency.CurSym
+		}
+		fmt.Printf("%s %-15s %-11s %s%s%s\n", tran.DtPosted, tran.TrnAmt.String()+" "+currency.String(), tran.TrnType, tran.Name, tran.Payee.Name, tran.Memo)
+	}
+}
+```
+
 ## Requirements
 
 OFXGo requires go >= 1.9
