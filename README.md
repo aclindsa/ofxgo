@@ -85,7 +85,7 @@ if stmt, ok := response.Bank[0].(*ofxgo.StatementResponse); ok {
 	fmt.Printf("Balance: %s %s (as of %s)\n", stmt.BalAmt, stmt.CurDef, stmt.DtAsOf)
 	fmt.Println("Transactions:")
 	for _, tran := range stmt.BankTranList.Transactions {
-		var currency ofxgo.CurrSymbol
+		currency := stmt.CurDef
 		if ok, _ := tran.Currency.Valid(); ok {
 			currency = tran.Currency.CurSym
 		}
