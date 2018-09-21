@@ -1,9 +1,15 @@
 package ofxgo
 
 import (
+	"bufio"
+	"bytes"
+	"crypto/tls"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
+	"net/url"
+	"strconv"
 	"strings"
 )
 
@@ -75,7 +81,13 @@ func RawRequest(URL string, r io.Reader) (*http.Response, error) {
 		return nil, errors.New("Refusing to send OFX request with possible plain-text password over non-https protocol")
 	}
 
-	response, err := http.Post(URL, "application/x-ofx", r)
+	var response *http.Response
+	var err error
+	if strings.HasPrefix(URL, "https://ofx.discovercard.com") {
+		response, err = customHTTPRequest(URL, r)
+	} else {
+		response, err = http.Post(URL, "application/x-ofx", r)
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -85,6 +97,53 @@ func RawRequest(URL string, r io.Reader) (*http.Response, error) {
 	}
 
 	return response, nil
+}
+
+func customHTTPRequest(urlStr string, r io.Reader) (*http.Response, error) {
+	buf, ok := r.(*bytes.Buffer)
+	if !ok {
+		return nil, errors.New("Need to know request size")
+	}
+
+	url, err := url.Parse(urlStr)
+	if err != nil {
+		return nil, err
+	}
+
+	path := url.Path
+	if path == "" {
+		path = "/"
+	}
+
+	// Discover requires only these headers and in this exact order, or it returns 403
+	reqText := "POST " + path + " HTTP/1.1\r\n" +
+		"Content-Type: application/x-ofx\r\n" +
+		"Host: " + url.Hostname() + "\r\n" +
+		"Content-Length: " + strconv.Itoa(buf.Len()) + "\r\n" +
+		"Connection: Keep-Alive\r\n" +
+		"\r\n"
+
+	host := url.Host
+	if url.Port() == "" {
+		host += ":443"
+	}
+
+	conn, err := tls.Dial("tcp", host, nil)
+	if err != nil {
+		return nil, err
+	}
+	// BUGBUG: cannot do defer conn.Close() until body is read,
+	// we are "leaking" a socket here, but it will be finalized
+
+	// Send request and headers
+	fmt.Fprint(conn, reqText)
+	// Send body
+	_, err = io.Copy(conn, r)
+	if err != nil {
+		return nil, err
+	}
+
+	return http.ReadResponse(bufio.NewReader(conn), nil)
 }
 
 // RawRequestCookies is RawRequest with the added feature of sending cookies
@@ -136,7 +195,10 @@ func (c *Client) RequestNoParse(r *Request) (*http.Response, error) {
 	// Fortunately, the initial response contains the cookie we need, so if we
 	// detect an empty response with cookies set that didn't have any errors,
 	// re-try the request while sending their cookies back to them.
-	if err == nil && response.ContentLength <= 0 && len(response.Cookies()) > 0 {
+	if err == nil &&
+		response.ContentLength <= 0 &&
+		!strings.HasPrefix(r.URL, "https://ofx.discovercard.com") &&
+		len(response.Cookies()) > 0 {
 		b, err = r.Marshal()
 		if err != nil {
 			return nil, err
