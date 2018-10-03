@@ -41,7 +41,7 @@ func TestMarshalCCStatementRequest(t *testing.T) {
 	</CREDITCARDMSGSRQV1>
 </OFX>`
 
-	var client = ofxgo.Client{
+	var client = ofxgo.BasicClient{
 		AppID:       "OFXGO",
 		AppVer:      "0001",
 		SpecVersion: ofxgo.OfxVersion203,

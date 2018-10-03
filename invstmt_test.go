@@ -49,7 +49,7 @@ func TestMarshalInvStatementRequest(t *testing.T) {
 	</INVSTMTMSGSRQV1>
 </OFX>`
 
-	var client = ofxgo.Client{
+	var client = ofxgo.BasicClient{
 		AppID:       "MYAPP",
 		AppVer:      "1234",
 		SpecVersion: ofxgo.OfxVersion203,

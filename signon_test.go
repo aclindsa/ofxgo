@@ -6,7 +6,7 @@ import (
 )
 
 func TestMarshalInvalidSignons(t *testing.T) {
-	var client = ofxgo.Client{
+	var client = ofxgo.BasicClient{
 		AppID:       "OFXGO",
 		AppVer:      "0001",
 		SpecVersion: ofxgo.OfxVersion203,

@@ -6,13 +6,13 @@ import (
 	"os"
 )
 
-func newRequest() (*ofxgo.Client, *ofxgo.Request) {
+func newRequest() (ofxgo.Client, *ofxgo.Request) {
 	ver, err := ofxgo.NewOfxVersion(ofxVersion)
 	if err != nil {
 		fmt.Println("Error creating new OfxVersion enum:", err)
 		os.Exit(1)
 	}
-	var client = ofxgo.Client{
+	var client = ofxgo.BasicClient{
 		AppID:       appID,
 		AppVer:      appVer,
 		SpecVersion: ver,

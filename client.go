@@ -8,11 +8,25 @@ import (
 )
 
 // Client serves to aggregate OFX client settings that may be necessary to talk
-// to a particular server due to quirks in that server's implementation. Client
-// also provides the Request, RequestNoParse, and RawRequest helper methods to
-// aid in making and parsing requests. Client uses default, non-zero settings,
-// even if its fields are not initialized.
-type Client struct {
+// to a particular server due to quirks in that server's implementation.
+// Client also provides the Request and RequestNoParse helper methods to aid in
+// making and parsing requests.
+type Client interface {
+	// Used to fill out a Request object
+	OfxVersion() ofxVersion
+	ID() String
+	Version() String
+	IndentRequests() bool
+
+	// Used to initiate requests to servers
+	Request(r *Request) (*Response, error)
+	RequestNoParse(r *Request) (*http.Response, error)
+}
+
+// BasicClient provides a standard Client implementation suitable for most
+// financial institutions. BasicClient uses default, non-zero settings, even if
+// its fields are not initialized.
+type BasicClient struct {
 	// Request fields to overwrite with the client's values. If nonempty,
 	// defaults are used
 	SpecVersion ofxVersion // VERSION in header
@@ -23,27 +37,27 @@ type Client struct {
 	NoIndent bool
 }
 
-// OfxVersion returns the OFX specification version this Client will marshal
+// OfxVersion returns the OFX specification version this BasicClient will marshal
 // Requests as. Defaults to "203" if the client's SpecVersion field is empty.
-func (c *Client) OfxVersion() ofxVersion {
+func (c *BasicClient) OfxVersion() ofxVersion {
 	if c.SpecVersion.Valid() {
 		return c.SpecVersion
 	}
 	return OfxVersion203
 }
 
-// ID returns this Client's OFX AppID field, defaulting to "OFXGO" if
+// ID returns this BasicClient's OFX AppID field, defaulting to "OFXGO" if
 // unspecified.
-func (c *Client) ID() String {
+func (c *BasicClient) ID() String {
 	if len(c.AppID) > 0 {
 		return String(c.AppID)
 	}
 	return String("OFXGO")
 }
 
-// Version returns this Client's version number as a string, defaulting to
+// Version returns this BasicClient's version number as a string, defaulting to
 // "0001" if unspecified.
-func (c *Client) Version() String {
+func (c *BasicClient) Version() String {
 	if len(c.AppVer) > 0 {
 		return String(c.AppVer)
 	}
@@ -52,7 +66,7 @@ func (c *Client) Version() String {
 
 // IndentRequests returns true if the marshaled XML should be indented (and
 // contain newlines, since the two are linked in the current implementation)
-func (c *Client) IndentRequests() bool {
+func (c *BasicClient) IndentRequests() bool {
 	return !c.NoIndent
 }
 
@@ -65,9 +79,9 @@ func (c *Client) IndentRequests() bool {
 // like to try.
 //
 // Caveats: RawRequest does *not* take client settings into account as
-// Request() does, so your particular server may or may not like whatever we
-// read from 'r'. The caller is responsible for closing the http Response.Body
-// (see the http module's documentation for more information)
+// Client.Request() does, so your particular server may or may not like
+// whatever we read from 'r'. The caller is responsible for closing the http
+// Response.Body (see the http module's documentation for more information)
 func RawRequest(URL string, r io.Reader) (*http.Response, error) {
 	if !strings.HasPrefix(URL, "https://") {
 		return nil, errors.New("Refusing to send OFX request with possible plain-text password over non-https protocol")
@@ -119,7 +133,7 @@ func rawRequestCookies(URL string, r io.Reader, cookies []*http.Cookie) (*http.R
 //
 // Caveat: The caller is responsible for closing the http Response.Body (see
 // the http module's documentation for more information)
-func (c *Client) RequestNoParse(r *Request) (*http.Response, error) {
+func (c *BasicClient) RequestNoParse(r *Request) (*http.Response, error) {
 	r.SetClientFields(c)
 
 	b, err := r.Marshal()
@@ -150,11 +164,11 @@ func (c *Client) RequestNoParse(r *Request) (*http.Response, error) {
 // it's URL, and then unmarshals the response into a Response object.
 //
 // Before being marshaled, some of the the Request object's values are
-// overwritten, namely those dictated by the Client's configuration (Version,
-// AppID, AppVer fields), and the client's curren time (DtClient). These are
+// overwritten, namely those dictated by the BasicClient's configuration (Version,
+// AppID, AppVer fields), and the client's current time (DtClient). These are
 // updated in place in the supplied Request object so they may later be
 // inspected by the caller.
-func (c *Client) Request(r *Request) (*Response, error) {
+func (c *BasicClient) Request(r *Request) (*Response, error) {
 	response, err := c.RequestNoParse(r)
 	if err != nil {
 		return nil, err

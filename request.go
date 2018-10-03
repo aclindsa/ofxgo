@@ -63,7 +63,7 @@ func marshalMessageSet(e *xml.Encoder, requests []Message, set messageType, vers
 
 // SetClientFields overwrites the fields in this Request object controlled by
 // the Client
-func (oq *Request) SetClientFields(c *Client) {
+func (oq *Request) SetClientFields(c Client) {
 	oq.Signon.DtClient.Time = time.Now()
 
 	// Overwrite fields that the client controls
