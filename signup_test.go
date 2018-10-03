@@ -37,7 +37,7 @@ func TestMarshalAcctInfoRequest(t *testing.T) {
 
 	EST := time.FixedZone("EST", -5*60*60)
 
-	var client = ofxgo.Client{
+	var client = ofxgo.BasicClient{
 		AppID:       "OFXGO",
 		AppVer:      "0001",
 		SpecVersion: ofxgo.OfxVersion203,

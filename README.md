@@ -44,7 +44,7 @@ The following code snippet demonstrates how to use OFXGo to query and parse
 OFX code from a checking account, printing the balance and returned transactions:
 
 ```go
-client := ofxgo.Client{} // Accept the default Client settings
+client := ofxgo.BasicClient{} // Accept the default Client settings
 
 // These values are specific to your bank
 var query ofxgo.Request

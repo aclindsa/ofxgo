@@ -126,7 +126,7 @@ func tryProfile(appID, appVer, version string, noindent bool) bool {
 		fmt.Println("Error creating new OfxVersion enum:", err)
 		os.Exit(1)
 	}
-	var client = ofxgo.Client{
+	var client = ofxgo.BasicClient{
 		AppID:       appID,
 		AppVer:      appVer,
 		SpecVersion: ver,

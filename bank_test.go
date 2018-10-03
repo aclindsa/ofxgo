@@ -42,7 +42,7 @@ func TestMarshalBankStatementRequest(t *testing.T) {
 	</BANKMSGSRQV1>
 </OFX>`
 
-	var client = ofxgo.Client{
+	var client = ofxgo.BasicClient{
 		AppID:       "OFXGO",
 		AppVer:      "0001",
 		SpecVersion: ofxgo.OfxVersion203,
@@ -116,7 +116,7 @@ NEWFILEUID:NONE
 	</BANKMSGSRQV1>
 </OFX>`
 
-	var client = ofxgo.Client{
+	var client = ofxgo.BasicClient{
 		AppID:       "OFXGO",
 		AppVer:      "0001",
 		SpecVersion: ofxgo.OfxVersion103,
