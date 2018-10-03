@@ -126,12 +126,13 @@ func tryProfile(appID, appVer, version string, noindent bool) bool {
 		fmt.Println("Error creating new OfxVersion enum:", err)
 		os.Exit(1)
 	}
-	var client = ofxgo.BasicClient{
-		AppID:       appID,
-		AppVer:      appVer,
-		SpecVersion: ver,
-		NoIndent:    noindent,
-	}
+	var client = ofxgo.GetClient(serverURL,
+		&ofxgo.BasicClient{
+			AppID:       appID,
+			AppVer:      appVer,
+			SpecVersion: ver,
+			NoIndent:    noindent,
+		})
 
 	var query ofxgo.Request
 	query.URL = serverURL
