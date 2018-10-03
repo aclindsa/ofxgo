@@ -23,8 +23,6 @@ type Client struct {
 	NoIndent bool
 }
 
-var defaultClient Client
-
 // OfxVersion returns the OFX specification version this Client will marshal
 // Requests as. Defaults to "203" if the client's SpecVersion field is empty.
 func (c *Client) OfxVersion() ofxVersion {
