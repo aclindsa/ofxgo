@@ -87,8 +87,8 @@ func RawRequest(URL string, r io.Reader) (*http.Response, error) {
 	return response, nil
 }
 
-// RawRequestCookies is RawRequest with the added feature of sending cookies
-func RawRequestCookies(URL string, r io.Reader, cookies []*http.Cookie) (*http.Response, error) {
+// rawRequestCookies is RawRequest with the added feature of sending cookies
+func rawRequestCookies(URL string, r io.Reader, cookies []*http.Cookie) (*http.Response, error) {
 	if !strings.HasPrefix(URL, "https://") {
 		return nil, errors.New("Refusing to send OFX request with possible plain-text password over non-https protocol")
 	}
@@ -142,7 +142,7 @@ func (c *Client) RequestNoParse(r *Request) (*http.Response, error) {
 			return nil, err
 		}
 
-		return RawRequestCookies(r.URL, b, response.Cookies())
+		return rawRequestCookies(r.URL, b, response.Cookies())
 	}
 
 	return response, err
