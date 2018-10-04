@@ -43,6 +43,8 @@ var appVersions = map[string][]string{
 		"0001",
 	},
 	"QWIN": { // Intuit Quicken Windows
+		"2600", // 2017
+		"2500", // 2016
 		"2400", // 2015
 		"2300", // 2014
 		"2200", // 2013
