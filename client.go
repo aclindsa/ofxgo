@@ -63,6 +63,7 @@ func GetClient(URL string, bc *BasicClient) Client {
 		URL  string
 		Func clientCreationFunc
 	}{
+		{"https://ofx.discovercard.com", NewDiscoverCardClient},
 		{"https://vesnc.vanguard.com/us/OfxDirectConnectServlet", NewVanguardClient},
 	}
 	for _, client := range clients {
