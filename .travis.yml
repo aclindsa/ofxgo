@@ -7,20 +7,11 @@ go:
   - 1.9.x
   - master
 
-env:
-  - DEP_VERSION="0.3.2"
-
 before_install:
   # Fetch/build coverage reporting tools
   - go get golang.org/x/tools/cmd/cover
   - go get github.com/mattn/goveralls
   - go install github.com/mattn/goveralls
-  # Download `dep` and ensure it's executable
-  - curl -L -s https://github.com/golang/dep/releases/download/v${DEP_VERSION}/dep-linux-amd64 -o $GOPATH/bin/dep
-  - chmod +x $GOPATH/bin/dep
-
-install:
-  - dep ensure
 
 script:
   - go test -v -covermode=count -coverprofile=coverage.out

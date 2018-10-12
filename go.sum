@@ -1,0 +1,8 @@
+github.com/aclindsa/xml v0.0.0-20171002130543-5d4402bb4a20 h1:wN3KlzWq56AIgOqFzYLYVih4zVyPDViCUeG5uZxJHq4=
+github.com/aclindsa/xml v0.0.0-20171002130543-5d4402bb4a20/go.mod h1:DiEHtTD+e6zS3+R95F05Bfbcsfv13wZTi2M4LfAFLBE=
+golang.org/x/crypto v0.0.0-20181001203147-e3636079e1a4 h1:Vk3wNqEZwyGyei9yq5ekj7frek2u7HUfffJ1/opblzc=
+golang.org/x/crypto v0.0.0-20181001203147-e3636079e1a4/go.mod h1:6SG95UA2DQfeDnfUPMdvaQW0Q7yPrPDi9nlGo2tz2b4=
+golang.org/x/sys v0.0.0-20180928133829-e4b3c5e90611 h1:O33LKL7WyJgjN9CvxfTIomjIClbd/Kq86/iipowHQU0=
+golang.org/x/sys v0.0.0-20180928133829-e4b3c5e90611/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+golang.org/x/text v0.0.0-20180911161511-905a57155faa h1:uIJ7KxPgS7ODNO//HqlPfjWmWDGRsoONAVcEVaJNWNs=
+golang.org/x/text v0.0.0-20180911161511-905a57155faa/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
