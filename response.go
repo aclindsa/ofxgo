@@ -36,6 +36,15 @@ type Response struct {
 func (or *Response) readSGMLHeaders(r *bufio.Reader) error {
 	var seenHeader, seenVersion bool = false, false
 	for {
+		// sometimes there's no newline between the SGML headers and the XML payload
+		next, err := r.Peek(1)
+		if err != nil {
+			return err
+		}
+		if next[0] == '<' {
+			break
+		}
+
 		line, err := r.ReadString('\n')
 		if err != nil {
 			return err
@@ -49,10 +58,6 @@ func (or *Response) readSGMLHeaders(r *bufio.Reader) error {
 			} else {
 				continue
 			}
-		}
-		// sometimes there's no newline between the SGML headers and the XML
-		if line[0] == '<' {
-			break
 		}
 		header := strings.SplitN(line, ":", 2)
 		if header == nil || len(header) != 2 {
