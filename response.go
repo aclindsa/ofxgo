@@ -4,10 +4,11 @@ import (
 	"bufio"
 	"bytes"
 	"errors"
-	"github.com/aclindsa/xml"
 	"io"
 	"reflect"
 	"strings"
+
+	"github.com/aclindsa/xml"
 )
 
 // Response is the top-level object returned from a parsed OFX response file.
@@ -48,6 +49,10 @@ func (or *Response) readSGMLHeaders(r *bufio.Reader) error {
 			} else {
 				continue
 			}
+		}
+		// sometimes there's no newline between the SGML headers and the XML
+		if line[0] == '<' {
+			break
 		}
 		header := strings.SplitN(line, ":", 2)
 		if header == nil || len(header) != 2 {
