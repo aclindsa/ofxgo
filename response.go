@@ -35,6 +35,16 @@ type Response struct {
 func (or *Response) readSGMLHeaders(r *bufio.Reader) error {
 	var seenHeader, seenVersion bool = false, false
 	for {
+		// Some financial institutions do not properly leave an empty line after the last header.
+		// Avoid attempting to read another header in that case.
+		next, err := r.Peek(1)
+		if err != nil {
+			return err
+		}
+		if next[0] == '<' {
+			break
+		}
+
 		line, err := r.ReadString('\n')
 		if err != nil {
 			return err

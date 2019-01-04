@@ -140,10 +140,9 @@ func TestValidSamples(t *testing.T) {
 	fn := func(path string, info os.FileInfo, err error) error {
 		if info.IsDir() {
 			return nil
-		} else if filepath.Ext(path) != ".ofx" {
+		} else if ext := filepath.Ext(path); ext != ".ofx" && ext != ".qfx" {
 			return nil
 		}
-
 		file, err := os.Open(path)
 		if err != nil {
 			t.Fatalf("Unexpected error opening %s: %s\n", path, err)
@@ -155,4 +154,5 @@ func TestValidSamples(t *testing.T) {
 		return nil
 	}
 	filepath.Walk("samples/valid_responses", fn)
+	filepath.Walk("samples/busted_responses", fn)
 }
