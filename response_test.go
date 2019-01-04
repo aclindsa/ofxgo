@@ -2,13 +2,12 @@ package ofxgo_test
 
 import (
 	"fmt"
+	"github.com/aclindsa/ofxgo"
+	"github.com/aclindsa/xml"
 	"os"
 	"path/filepath"
 	"reflect"
 	"testing"
-
-	"github.com/aclindsa/ofxgo"
-	"github.com/aclindsa/xml"
 )
 
 // Attempt to find a method on the provided Value called 'Equal' which is a

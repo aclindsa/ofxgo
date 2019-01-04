@@ -4,11 +4,10 @@ import (
 	"bufio"
 	"bytes"
 	"errors"
+	"github.com/aclindsa/xml"
 	"io"
 	"reflect"
 	"strings"
-
-	"github.com/aclindsa/xml"
 )
 
 // Response is the top-level object returned from a parsed OFX response file.
@@ -36,7 +35,8 @@ type Response struct {
 func (or *Response) readSGMLHeaders(r *bufio.Reader) error {
 	var seenHeader, seenVersion bool = false, false
 	for {
-		// sometimes there's no newline between the SGML headers and the XML payload
+		// Some financial institutions do not properly leave an empty line after the last header.
+		// Avoid attempting to read another header in that case.
 		next, err := r.Peek(1)
 		if err != nil {
 			return err
