@@ -2,12 +2,13 @@ package ofxgo_test
 
 import (
 	"fmt"
-	"github.com/aclindsa/ofxgo"
-	"github.com/aclindsa/xml"
 	"os"
 	"path/filepath"
 	"reflect"
 	"testing"
+
+	"github.com/aclindsa/ofxgo"
+	"github.com/aclindsa/xml"
 )
 
 // Attempt to find a method on the provided Value called 'Equal' which is a
@@ -140,10 +141,10 @@ func TestValidSamples(t *testing.T) {
 	fn := func(path string, info os.FileInfo, err error) error {
 		if info.IsDir() {
 			return nil
-		} else if filepath.Ext(path) != ".ofx" {
+		} else if ext := filepath.Ext(path); ext != ".ofx" && ext != ".qfx" {
 			return nil
 		}
-
+		fmt.Println("Checking file", path)
 		file, err := os.Open(path)
 		if err != nil {
 			t.Fatalf("Unexpected error opening %s: %s\n", path, err)
@@ -155,4 +156,5 @@ func TestValidSamples(t *testing.T) {
 		return nil
 	}
 	filepath.Walk("samples/valid_responses", fn)
+	filepath.Walk("samples/busted_responses", fn)
 }
