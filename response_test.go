@@ -144,7 +144,6 @@ func TestValidSamples(t *testing.T) {
 		} else if ext := filepath.Ext(path); ext != ".ofx" && ext != ".qfx" {
 			return nil
 		}
-		fmt.Println("Checking file", path)
 		file, err := os.Open(path)
 		if err != nil {
 			t.Fatalf("Unexpected error opening %s: %s\n", path, err)
