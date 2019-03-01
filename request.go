@@ -3,7 +3,6 @@ package ofxgo
 import (
 	"bytes"
 	"errors"
-	"fmt"
 	"github.com/aclindsa/xml"
 	"time"
 )
@@ -35,7 +34,7 @@ type Request struct {
 	indent bool // Whether to indent the marshaled XML
 }
 
-func marshalMessageSet(e *xml.Encoder, requests []Message, set messageType, version ofxVersion) error {
+func encodeMessageSet(e *xml.Encoder, requests []Message, set messageType, version ofxVersion) error {
 	if len(requests) > 0 {
 		messageSetElement := xml.StartElement{Name: xml.Name{Local: set.String()}}
 		if err := e.EncodeToken(messageSetElement); err != nil {
@@ -80,25 +79,7 @@ func (oq *Request) Marshal() (*bytes.Buffer, error) {
 	var b bytes.Buffer
 
 	// Write the header appropriate to our version
-	switch oq.Version {
-	case OfxVersion102, OfxVersion103, OfxVersion151, OfxVersion160:
-		b.WriteString(`OFXHEADER:100
-DATA:OFXSGML
-VERSION:` + oq.Version.String() + `
-SECURITY:NONE
-ENCODING:USASCII
-CHARSET:1252
-COMPRESSION:NONE
-OLDFILEUID:NONE
-NEWFILEUID:NONE
-
-`)
-	case OfxVersion200, OfxVersion201, OfxVersion202, OfxVersion203, OfxVersion210, OfxVersion211, OfxVersion220:
-		b.WriteString(`<?xml version="1.0" encoding="UTF-8" standalone="no"?>` + "\n")
-		b.WriteString(`<?OFX OFXHEADER="200" VERSION="` + oq.Version.String() + `" SECURITY="NONE" OLDFILEUID="NONE" NEWFILEUID="NONE"?>` + "\n")
-	default:
-		return nil, fmt.Errorf("%d is not a valid OFX version string", oq.Version)
-	}
+	writeHeader(&b, oq.Version)
 
 	encoder := xml.NewEncoder(&b)
 	if oq.indent {
@@ -145,7 +126,7 @@ NEWFILEUID:NONE
 		{oq.Image, ImageRq},
 	}
 	for _, set := range messageSets {
-		if err := marshalMessageSet(encoder, set.Messages, set.Type, oq.Version); err != nil {
+		if err := encodeMessageSet(encoder, set.Messages, set.Type, oq.Version); err != nil {
 			return nil, err
 		}
 	}
