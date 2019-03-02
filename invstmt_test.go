@@ -602,6 +602,7 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 	}
 
 	checkResponsesEqual(t, &expected, response)
+	checkResponseRoundTrip(t, response)
 }
 
 func TestUnmarshalInvStatementResponse102(t *testing.T) {
@@ -957,6 +958,7 @@ NEWFILEUID: NONE
 	}
 
 	checkResponsesEqual(t, &expected, response)
+	checkResponseRoundTrip(t, response)
 }
 
 func TestUnmarshalInvTranList(t *testing.T) {

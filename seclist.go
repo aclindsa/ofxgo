@@ -221,6 +221,7 @@ func (i StockInfo) SecurityType() string {
 // SecurityList is a container for Security objects containaing information
 // about securities
 type SecurityList struct {
+	XMLName    xml.Name `xml:"SECLIST"`
 	Securities []Security
 }
 
@@ -289,4 +290,43 @@ func (r *SecurityList) UnmarshalXML(d *xml.Decoder, start xml.StartElement) erro
 			return errors.New("Didn't find an opening element")
 		}
 	}
+}
+
+// MarshalXML handles marshalling a SecurityList to an SGML/XML string
+func (r *SecurityList) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	secListElement := xml.StartElement{Name: xml.Name{Local: "SECLIST"}}
+	if err := e.EncodeToken(secListElement); err != nil {
+		return err
+	}
+	for _, s := range r.Securities {
+		start := xml.StartElement{Name: xml.Name{Local: s.SecurityType()}}
+		switch sec := s.(type) {
+		case DebtInfo:
+			if err := e.EncodeElement(&sec, start); err != nil {
+				return err
+			}
+		case MFInfo:
+			if err := e.EncodeElement(&sec, start); err != nil {
+				return err
+			}
+		case OptInfo:
+			if err := e.EncodeElement(&sec, start); err != nil {
+				return err
+			}
+		case OtherInfo:
+			if err := e.EncodeElement(&sec, start); err != nil {
+				return err
+			}
+		case StockInfo:
+			if err := e.EncodeElement(&sec, start); err != nil {
+				return err
+			}
+		default:
+			return errors.New("Invalid SECLIST child type: " + sec.SecurityType())
+		}
+	}
+	if err := e.EncodeToken(secListElement.End()); err != nil {
+		return err
+	}
+	return nil
 }

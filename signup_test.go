@@ -155,4 +155,5 @@ func TestUnmarshalAcctInfoResponse(t *testing.T) {
 	}
 
 	checkResponsesEqual(t, &expected, response)
+	checkResponseRoundTrip(t, response)
 }

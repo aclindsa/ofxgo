@@ -465,6 +465,7 @@ type InvBankTransaction struct {
 // security-related transactions themselves. It must be unmarshalled manually
 // due to the structure (don't know what kind of InvTransaction is coming next)
 type InvTranList struct {
+	XMLName          xml.Name `xml:"INVTRANLIST"`
 	DtStart          Date
 	DtEnd            Date // This is the value that should be sent as <DTSTART> in the next InvStatementRequest to ensure that no transactions are missed
 	InvTransactions  []InvTransaction
@@ -630,6 +631,119 @@ func (l *InvTranList) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error
 	}
 }
 
+// MarshalXML handles marshalling an InvTranList element to an SGML/XML string
+func (l *InvTranList) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	invTranListElement := xml.StartElement{Name: xml.Name{Local: "INVTRANLIST"}}
+	if err := e.EncodeToken(invTranListElement); err != nil {
+		return err
+	}
+	err := e.EncodeElement(&l.DtStart, xml.StartElement{Name: xml.Name{Local: "DTSTART"}})
+	if err != nil {
+		return err
+	}
+	err = e.EncodeElement(&l.DtEnd, xml.StartElement{Name: xml.Name{Local: "DTEND"}})
+	if err != nil {
+		return err
+	}
+	for _, t := range l.InvTransactions {
+		start := xml.StartElement{Name: xml.Name{Local: t.TransactionType()}}
+		switch tran := t.(type) {
+		case BuyDebt:
+			if err := e.EncodeElement(&tran, start); err != nil {
+				return err
+			}
+		case BuyMF:
+			if err := e.EncodeElement(&tran, start); err != nil {
+				return err
+			}
+		case BuyOpt:
+			if err := e.EncodeElement(&tran, start); err != nil {
+				return err
+			}
+		case BuyOther:
+			if err := e.EncodeElement(&tran, start); err != nil {
+				return err
+			}
+		case BuyStock:
+			if err := e.EncodeElement(&tran, start); err != nil {
+				return err
+			}
+		case ClosureOpt:
+			if err := e.EncodeElement(&tran, start); err != nil {
+				return err
+			}
+		case Income:
+			if err := e.EncodeElement(&tran, start); err != nil {
+				return err
+			}
+		case InvExpense:
+			if err := e.EncodeElement(&tran, start); err != nil {
+				return err
+			}
+		case JrnlFund:
+			if err := e.EncodeElement(&tran, start); err != nil {
+				return err
+			}
+		case JrnlSec:
+			if err := e.EncodeElement(&tran, start); err != nil {
+				return err
+			}
+		case MarginInterest:
+			if err := e.EncodeElement(&tran, start); err != nil {
+				return err
+			}
+		case Reinvest:
+			if err := e.EncodeElement(&tran, start); err != nil {
+				return err
+			}
+		case RetOfCap:
+			if err := e.EncodeElement(&tran, start); err != nil {
+				return err
+			}
+		case SellDebt:
+			if err := e.EncodeElement(&tran, start); err != nil {
+				return err
+			}
+		case SellMF:
+			if err := e.EncodeElement(&tran, start); err != nil {
+				return err
+			}
+		case SellOpt:
+			if err := e.EncodeElement(&tran, start); err != nil {
+				return err
+			}
+		case SellOther:
+			if err := e.EncodeElement(&tran, start); err != nil {
+				return err
+			}
+		case SellStock:
+			if err := e.EncodeElement(&tran, start); err != nil {
+				return err
+			}
+		case Split:
+			if err := e.EncodeElement(&tran, start); err != nil {
+				return err
+			}
+		case Transfer:
+			if err := e.EncodeElement(&tran, start); err != nil {
+				return err
+			}
+		default:
+			return errors.New("Invalid INVTRANLIST child type: " + tran.TransactionType())
+		}
+	}
+	for _, tran := range l.BankTransactions {
+		err = e.EncodeElement(&tran, xml.StartElement{Name: xml.Name{Local: "INVBANKTRAN"}})
+		if err != nil {
+			return err
+		}
+	}
+	if err := e.EncodeToken(invTranListElement.End()); err != nil {
+		return err
+	}
+	return nil
+}
+
 // InvPosition contains generic position information included in each of the
 // other *Position types
 type InvPosition struct {
@@ -768,6 +882,45 @@ func (p *PositionList) UnmarshalXML(d *xml.Decoder, start xml.StartElement) erro
 			return errors.New("Didn't find an opening element")
 		}
 	}
+}
+
+// MarshalXML handles marshalling a PositionList to an XML string
+func (p *PositionList) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	invPosListElement := xml.StartElement{Name: xml.Name{Local: "INVPOSLIST"}}
+	if err := e.EncodeToken(invPosListElement); err != nil {
+		return err
+	}
+	for _, position := range *p {
+		start := xml.StartElement{Name: xml.Name{Local: position.PositionType()}}
+		switch pos := position.(type) {
+		case DebtPosition:
+			if err := e.EncodeElement(&pos, start); err != nil {
+				return err
+			}
+		case MFPosition:
+			if err := e.EncodeElement(&pos, start); err != nil {
+				return err
+			}
+		case OptPosition:
+			if err := e.EncodeElement(&pos, start); err != nil {
+				return err
+			}
+		case OtherPosition:
+			if err := e.EncodeElement(&pos, start); err != nil {
+				return err
+			}
+		case StockPosition:
+			if err := e.EncodeElement(&pos, start); err != nil {
+				return err
+			}
+		default:
+			return errors.New("Invalid INVPOSLIST child type: " + pos.PositionType())
+		}
+	}
+	if err := e.EncodeToken(invPosListElement.End()); err != nil {
+		return err
+	}
+	return nil
 }
 
 // InvBalance contains three (or optionally four) specified balances as well as
@@ -1034,6 +1187,69 @@ func (o *OOList) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 			return errors.New("Didn't find an opening element")
 		}
 	}
+}
+
+// MarshalXML handles marshalling an OOList to an XML string
+func (o *OOList) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	ooListElement := xml.StartElement{Name: xml.Name{Local: "INVOOLIST"}}
+	if err := e.EncodeToken(ooListElement); err != nil {
+		return err
+	}
+	for _, openorder := range *o {
+		start := xml.StartElement{Name: xml.Name{Local: openorder.OrderType()}}
+		switch oo := openorder.(type) {
+		case OOBuyDebt:
+			if err := e.EncodeElement(&oo, start); err != nil {
+				return err
+			}
+		case OOBuyMF:
+			if err := e.EncodeElement(&oo, start); err != nil {
+				return err
+			}
+		case OOBuyOpt:
+			if err := e.EncodeElement(&oo, start); err != nil {
+				return err
+			}
+		case OOBuyOther:
+			if err := e.EncodeElement(&oo, start); err != nil {
+				return err
+			}
+		case OOBuyStock:
+			if err := e.EncodeElement(&oo, start); err != nil {
+				return err
+			}
+		case OOSellDebt:
+			if err := e.EncodeElement(&oo, start); err != nil {
+				return err
+			}
+		case OOSellMF:
+			if err := e.EncodeElement(&oo, start); err != nil {
+				return err
+			}
+		case OOSellOpt:
+			if err := e.EncodeElement(&oo, start); err != nil {
+				return err
+			}
+		case OOSellOther:
+			if err := e.EncodeElement(&oo, start); err != nil {
+				return err
+			}
+		case OOSellStock:
+			if err := e.EncodeElement(&oo, start); err != nil {
+				return err
+			}
+		case OOSwitchMF:
+			if err := e.EncodeElement(&oo, start); err != nil {
+				return err
+			}
+		default:
+			return errors.New("Invalid OOLIST child type: " + oo.OrderType())
+		}
+	}
+	if err := e.EncodeToken(ooListElement.End()); err != nil {
+		return err
+	}
+	return nil
 }
 
 // ContribSecurity identifies current contribution allocation for a security in

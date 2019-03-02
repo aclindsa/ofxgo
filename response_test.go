@@ -136,6 +136,20 @@ func checkResponsesEqual(t *testing.T, expected, actual *ofxgo.Response) {
 	checkEqual(t, "", reflect.ValueOf(expected), reflect.ValueOf(actual))
 }
 
+func checkResponseRoundTrip(t *testing.T, response *ofxgo.Response) {
+	b, err := response.Marshal()
+	if err != nil {
+		t.Fatalf("Unexpected error re-marshaling OFX response: %s\n", err)
+	}
+	roundtripped, err := ofxgo.ParseResponse(b)
+	if err != nil {
+		t.Fatalf("Unexpected error re-parsing OFX response: %s\n", err)
+	}
+	checkResponsesEqual(t, response, roundtripped)
+}
+
+// Ensure that these samples both parse without errors, and can be converted
+// back and forth without changing.
 func TestValidSamples(t *testing.T) {
 	fn := func(path string, info os.FileInfo, err error) error {
 		if info.IsDir() {
@@ -147,10 +161,11 @@ func TestValidSamples(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Unexpected error opening %s: %s\n", path, err)
 		}
-		_, err = ofxgo.ParseResponse(file)
+		response, err := ofxgo.ParseResponse(file)
 		if err != nil {
 			t.Fatalf("Unexpected error parsing OFX response in %s: %s\n", path, err)
 		}
+		checkResponseRoundTrip(t, response)
 		return nil
 	}
 	filepath.Walk("samples/valid_responses", fn)

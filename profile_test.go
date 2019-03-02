@@ -325,4 +325,5 @@ NEWFILEUID:NONE
 	}
 
 	checkResponsesEqual(t, &expected, response)
+	checkResponseRoundTrip(t, response)
 }
