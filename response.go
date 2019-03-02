@@ -369,3 +369,70 @@ func ParseResponse(reader io.Reader) (*Response, error) {
 		}
 	}
 }
+
+// Marshal this Response into its SGML/XML representation held in a bytes.Buffer
+//
+// If error is non-nil, this bytes.Buffer is ready to be sent to an OFX client
+func (or *Response) Marshal() (*bytes.Buffer, error) {
+	var b bytes.Buffer
+
+	// Write the header appropriate to our version
+	writeHeader(&b, or.Version)
+
+	encoder := xml.NewEncoder(&b)
+	encoder.Indent("", "    ")
+
+	ofxElement := xml.StartElement{Name: xml.Name{Local: "OFX"}}
+
+	if err := encoder.EncodeToken(ofxElement); err != nil {
+		return nil, err
+	}
+
+	if ok, err := or.Signon.Valid(or.Version); !ok {
+		return nil, err
+	}
+	signonMsgSet := xml.StartElement{Name: xml.Name{Local: SignonRs.String()}}
+	if err := encoder.EncodeToken(signonMsgSet); err != nil {
+		return nil, err
+	}
+	if err := encoder.Encode(&or.Signon); err != nil {
+		return nil, err
+	}
+	if err := encoder.EncodeToken(signonMsgSet.End()); err != nil {
+		return nil, err
+	}
+
+	messageSets := []struct {
+		Messages []Message
+		Type     messageType
+	}{
+		{or.Signup, SignupRs},
+		{or.Bank, BankRs},
+		{or.CreditCard, CreditCardRs},
+		{or.Loan, LoanRs},
+		{or.InvStmt, InvStmtRs},
+		{or.InterXfer, InterXferRs},
+		{or.WireXfer, WireXferRs},
+		{or.Billpay, BillpayRs},
+		{or.Email, EmailRs},
+		{or.SecList, SecListRs},
+		{or.PresDir, PresDirRs},
+		{or.PresDlv, PresDlvRs},
+		{or.Prof, ProfRs},
+		{or.Image, ImageRs},
+	}
+	for _, set := range messageSets {
+		if err := encodeMessageSet(encoder, set.Messages, set.Type, or.Version); err != nil {
+			return nil, err
+		}
+	}
+
+	if err := encoder.EncodeToken(ofxElement.End()); err != nil {
+		return nil, err
+	}
+
+	if err := encoder.Flush(); err != nil {
+		return nil, err
+	}
+	return &b, nil
+}

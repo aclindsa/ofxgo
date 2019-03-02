@@ -3,6 +3,7 @@ package ofxgo
 import (
 	"errors"
 	"github.com/aclindsa/xml"
+	"strings"
 )
 
 // ProfileRequest represents a request for a server to provide a profile of its
@@ -124,6 +125,35 @@ func (msl *MessageSetList) UnmarshalXML(d *xml.Decoder, start xml.StartElement) 
 		}
 		*msl = MessageSetList(append(*(*[]MessageSet)(msl), msgset))
 	}
+}
+
+// MarshalXML handles marshalling a MessageSetList element to an XML string
+func (msl *MessageSetList) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	messageSetListElement := xml.StartElement{Name: xml.Name{Local: "MSGSETLIST"}}
+	if err := e.EncodeToken(messageSetListElement); err != nil {
+		return err
+	}
+	for _, messageset := range *msl {
+		if !strings.HasSuffix(messageset.Name, "V1") {
+			return errors.New("Expected MessageSet.Name to end with \"V1\"")
+		}
+		messageSetName := strings.TrimSuffix(messageset.Name, "V1")
+		messageSetElement := xml.StartElement{Name: xml.Name{Local: messageSetName}}
+		if err := e.EncodeToken(messageSetElement); err != nil {
+			return err
+		}
+		start := xml.StartElement{Name: xml.Name{Local: messageset.Name}}
+		if err := e.EncodeElement(&messageset, start); err != nil {
+			return err
+		}
+		if err := e.EncodeToken(messageSetElement.End()); err != nil {
+			return err
+		}
+	}
+	if err := e.EncodeToken(messageSetListElement.End()); err != nil {
+		return err
+	}
+	return nil
 }
 
 // ProfileResponse contains a requested profile of the server's capabilities
