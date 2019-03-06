@@ -5,6 +5,7 @@ os:
 
 go:
   - 1.9.x
+  - 1.12.x
   - master
 
 before_install:
