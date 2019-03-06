@@ -126,8 +126,8 @@ type Transaction struct {
 	ImageData  []ImageData `xml:"IMAGEDATA,omitempty"`
 
 	// Only one of Currency and OrigCurrency can ever be Valid() for the same transaction
-	Currency      Currency      `xml:"CURRENCY,omitempty"`      // Represents the currency of TrnAmt (instead of CURDEF in STMTRS) if Valid
-	OrigCurrency  Currency      `xml:"ORIGCURRENCY,omitempty"`  // Represents the currency TrnAmt was converted to STMTRS' CURDEF from if Valid
+	Currency      *Currency     `xml:"CURRENCY,omitempty"`      // Represents the currency of TrnAmt (instead of CURDEF in STMTRS) if Valid
+	OrigCurrency  *Currency     `xml:"ORIGCURRENCY,omitempty"`  // Represents the currency TrnAmt was converted to STMTRS' CURDEF from if Valid
 	Inv401kSource inv401kSource `xml:"INV401KSOURCE,omitempty"` // One of PRETAX, AFTERTAX, MATCH, PROFITSHARING, ROLLOVER, OTHERVEST, OTHERNONVEST (Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST.)
 }
 
@@ -166,8 +166,13 @@ func (t Transaction) Valid(version ofxVersion) (bool, error) {
 	} else if len(t.ImageData) > 2 {
 		return false, errors.New("Only 2 of ImageData allowed in Transaction")
 	}
-	ok1, _ := t.Currency.Valid()
-	ok2, _ := t.OrigCurrency.Valid()
+	var ok1, ok2 bool
+	if t.Currency != nil {
+		ok1, _ = t.Currency.Valid()
+	}
+	if t.OrigCurrency != nil {
+		ok2, _ = t.OrigCurrency.Valid()
+	}
 	if ok1 && ok2 {
 		return false, errors.New("Currency and OrigCurrency both supplied for Pending Transaction, only one allowed")
 	}
