@@ -6,14 +6,16 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"strings"
+
 	"github.com/aclindsa/xml"
 )
 
-func writeHeader(b *bytes.Buffer, v ofxVersion) error {
+func writeHeader(b *bytes.Buffer, v ofxVersion, carriageReturn bool) error {
 	// Write the header appropriate to our version
 	switch v {
 	case OfxVersion102, OfxVersion103, OfxVersion151, OfxVersion160:
-		b.WriteString(`OFXHEADER:100
+		header := `OFXHEADER:100
 DATA:OFXSGML
 VERSION:` + v.String() + `
 SECURITY:NONE
@@ -23,10 +25,22 @@ COMPRESSION:NONE
 OLDFILEUID:NONE
 NEWFILEUID:NONE
 
-`)
+`
+		if carriageReturn {
+			header = strings.Replace(header, "\n", "\r\n", -1)
+		}
+		b.WriteString(header)
 	case OfxVersion200, OfxVersion201, OfxVersion202, OfxVersion203, OfxVersion210, OfxVersion211, OfxVersion220:
-		b.WriteString(`<?xml version="1.0" encoding="UTF-8" standalone="no"?>` + "\n")
-		b.WriteString(`<?OFX OFXHEADER="200" VERSION="` + v.String() + `" SECURITY="NONE" OLDFILEUID="NONE" NEWFILEUID="NONE"?>` + "\n")
+		b.WriteString(`<?xml version="1.0" encoding="UTF-8" standalone="no"?>`)
+		if carriageReturn {
+			b.WriteByte('\r')
+		}
+		b.WriteByte('\n')
+		b.WriteString(`<?OFX OFXHEADER="200" VERSION="` + v.String() + `" SECURITY="NONE" OLDFILEUID="NONE" NEWFILEUID="NONE"?>`)
+		if carriageReturn {
+			b.WriteByte('\r')
+		}
+		b.WriteByte('\n')
 	default:
 		return fmt.Errorf("%d is not a valid OFX version string", v)
 	}

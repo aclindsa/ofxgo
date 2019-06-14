@@ -31,7 +31,8 @@ type Request struct {
 	Prof       []Message     //<PROFMSGSETV1>
 	Image      []Message     //<IMAGEMSGSETV1>
 
-	indent bool // Whether to indent the marshaled XML
+	indent         bool // Whether to indent the marshaled XML
+	carriageReturn bool // Whether to user carriage returns in new lines for marshaled XML
 }
 
 func encodeMessageSet(e *xml.Encoder, requests []Message, set messageType, version ofxVersion) error {
@@ -70,6 +71,7 @@ func (oq *Request) SetClientFields(c Client) {
 	oq.Signon.AppID = c.ID()
 	oq.Signon.AppVer = c.Version()
 	oq.indent = c.IndentRequests()
+	oq.carriageReturn = c.CarriageReturnNewLines()
 }
 
 // Marshal this Request into its SGML/XML representation held in a bytes.Buffer
@@ -79,11 +81,14 @@ func (oq *Request) Marshal() (*bytes.Buffer, error) {
 	var b bytes.Buffer
 
 	// Write the header appropriate to our version
-	writeHeader(&b, oq.Version)
+	writeHeader(&b, oq.Version, oq.carriageReturn)
 
 	encoder := xml.NewEncoder(&b)
 	if oq.indent {
 		encoder.Indent("", "    ")
+	}
+	if oq.carriageReturn {
+		encoder.CarriageReturn(true)
 	}
 
 	ofxElement := xml.StartElement{Name: xml.Name{Local: "OFX"}}

@@ -19,6 +19,8 @@ type BasicClient struct {
 
 	// Don't insert newlines or indentation when marshalling to SGML/XML
 	NoIndent bool
+	// Use carriage returns on new lines
+	CarriageReturn bool
 }
 
 // OfxVersion returns the OFX specification version this BasicClient will marshal
@@ -52,6 +54,11 @@ func (c *BasicClient) Version() String {
 // contain newlines, since the two are linked in the current implementation)
 func (c *BasicClient) IndentRequests() bool {
 	return !c.NoIndent
+}
+
+// CarriageReturnNewLines returns true if carriage returns should be used on new lines, false otherwise
+func (c *BasicClient) CarriageReturnNewLines() bool {
+	return c.CarriageReturn
 }
 
 func (c *BasicClient) RawRequest(URL string, r io.Reader) (*http.Response, error) {
