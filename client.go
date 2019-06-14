@@ -16,6 +16,7 @@ type Client interface {
 	ID() String
 	Version() String
 	IndentRequests() bool
+	CarriageReturnNewLines() bool
 
 	// Request marshals a Request object into XML, makes an HTTP request
 	// against it's URL, and then unmarshals the response into a Response
