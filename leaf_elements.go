@@ -172,6 +172,7 @@ var ofxLeafElements = []string{
 	"IDSCOPE",
 	"INCBAL",
 	"INCIMAGES",
+	"INCLUDE",
 	"INCOMETYPE",
 	"INCOO",
 	"INITIALAMT",

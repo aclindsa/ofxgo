@@ -90,6 +90,10 @@ func (oq *Request) Marshal() (*bytes.Buffer, error) {
 	if oq.carriageReturn {
 		encoder.CarriageReturn(true)
 	}
+	if oq.Version < OfxVersion200 {
+		// OFX 100 series versions should avoid element close tags for compatibility
+		encoder.SetDisableAutoClose(ofxLeafElements...)
+	}
 
 	ofxElement := xml.StartElement{Name: xml.Name{Local: "OFX"}}
 
