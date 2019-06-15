@@ -85,6 +85,10 @@ func (oq *Request) Marshal() (*bytes.Buffer, error) {
 	if oq.indent {
 		encoder.Indent("", "    ")
 	}
+	if oq.Version < OfxVersion200 {
+		// OFX 100 series versions should avoid element close tags for compatibility
+		encoder.SetDisableAutoClose(ofxLeafElements...)
+	}
 
 	ofxElement := xml.StartElement{Name: xml.Name{Local: "OFX"}}
 

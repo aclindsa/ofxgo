@@ -7,9 +7,11 @@ import (
 	"testing"
 )
 
-var ignoreSpacesRe = regexp.MustCompile(">[ \t\r\n]+<")
+// match leading and trailing whitespace on each line
+var ignoreSpacesRe = regexp.MustCompile("(?m)^[ \t]+|$[\r\n]+")
 
 func marshalCheckRequest(t *testing.T, request *ofxgo.Request, expected string) {
+	t.Helper()
 	buf, err := request.Marshal()
 	if err != nil {
 		t.Fatalf("%s: Unexpected error marshalling request: %s\n", t.Name(), err)
@@ -17,8 +19,8 @@ func marshalCheckRequest(t *testing.T, request *ofxgo.Request, expected string) 
 	actualString := buf.String()
 
 	// Ignore spaces between XML elements
-	expectedString := ignoreSpacesRe.ReplaceAllString(expected, "><")
-	actualString = ignoreSpacesRe.ReplaceAllString(actualString, "><")
+	expectedString := ignoreSpacesRe.ReplaceAllString(expected, "")
+	actualString = ignoreSpacesRe.ReplaceAllString(actualString, "")
 
 	if expectedString != actualString {
 		compareLength := len(expectedString)
