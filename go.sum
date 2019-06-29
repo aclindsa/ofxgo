@@ -1,7 +1,5 @@
 github.com/aclindsa/xml v0.0.0-20171002130543-5d4402bb4a20 h1:wN3KlzWq56AIgOqFzYLYVih4zVyPDViCUeG5uZxJHq4=
 github.com/aclindsa/xml v0.0.0-20171002130543-5d4402bb4a20/go.mod h1:DiEHtTD+e6zS3+R95F05Bfbcsfv13wZTi2M4LfAFLBE=
-github.com/aclindsa/xml v0.0.0-20190614100215-564dc705a222 h1:KF5DYtOrl6QZ/vlVZPzHGRr7xLakO8Ye0I+JoiV3PNg=
-github.com/aclindsa/xml v0.0.0-20190614100215-564dc705a222/go.mod h1:GjqOUT8xlg5+T19lFv6yAGNrtMKkZ839Gt4e16mBXlY=
 github.com/aclindsa/xml v0.0.0-20190625094425-0aa7a3409cf4 h1:STo5wlCItpgL9LFBui17kZ/N1iKQk+UztLRj2cVkSXQ=
 github.com/aclindsa/xml v0.0.0-20190625094425-0aa7a3409cf4/go.mod h1:GjqOUT8xlg5+T19lFv6yAGNrtMKkZ839Gt4e16mBXlY=
 github.com/howeyc/gopass v0.0.0-20170109162249-bf9dde6d0d2c h1:kQWxfPIHVLbgLzphqk3QUflDy9QdksZR4ygR807bpy0=
