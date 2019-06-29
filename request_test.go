@@ -8,7 +8,7 @@ import (
 )
 
 // match leading and trailing whitespace on each line
-var ignoreSpacesRe = regexp.MustCompile("(?m)^[ \t]+|$[\r\n]+")
+var ignoreSpacesRe = regexp.MustCompile("(?m)^[ \t]+|[ \t]*$[\r\n]+")
 
 func marshalCheckRequest(t *testing.T, request *ofxgo.Request, expected string) {
 	t.Helper()
