@@ -8,10 +8,6 @@ go:
   - 1.12.x
   - master
 
-matrix:
-  allow_failures:
-    - go: master
-
 before_install:
   # Fetch/build coverage reporting tools
   - go get github.com/mattn/goveralls
