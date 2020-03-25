@@ -4,10 +4,12 @@ import (
 	"bufio"
 	"bytes"
 	"errors"
-	"github.com/aclindsa/xml"
+	"fmt"
 	"io"
 	"reflect"
 	"strings"
+
+	"github.com/aclindsa/xml"
 )
 
 // Response is the top-level object returned from a parsed OFX response file.
@@ -234,13 +236,14 @@ func decodeMessageSet(d *xml.Decoder, start xml.StartElement, msgs *[]Message, v
 	if !ok {
 		return errors.New("Invalid message set: " + start.Name.Local)
 	}
+	var errs ErrInvalid
 	for {
 		tok, err := nextNonWhitespaceToken(d)
 		if err != nil {
 			return err
 		} else if end, ok := tok.(xml.EndElement); ok && end.Name.Local == start.Name.Local {
 			// If we found the end of our starting element, we're done parsing
-			return nil
+			return errs.ErrOrNil()
 		} else if startElement, ok := tok.(xml.StartElement); ok {
 			responseType, ok := setTypes[startElement.Name.Local]
 			if !ok {
@@ -256,7 +259,7 @@ func decodeMessageSet(d *xml.Decoder, start xml.StartElement, msgs *[]Message, v
 				return err
 			}
 			if ok, err := responseMessage.Valid(version); !ok {
-				return err
+				errs.AddErr(err)
 			}
 			*msgs = append(*msgs, responseMessage)
 		} else {
@@ -323,6 +326,8 @@ func ParseResponse(reader io.Reader) (*Response, error) {
 		return nil, errors.New("Missing opening SIGNONMSGSRSV1 xml element")
 	}
 
+	var errs ErrInvalid
+
 	tok, err = nextNonWhitespaceToken(decoder)
 	if err != nil {
 		return nil, err
@@ -330,7 +335,7 @@ func ParseResponse(reader io.Reader) (*Response, error) {
 		return nil, errors.New("Missing closing SIGNONMSGSRSV1 xml element")
 	}
 	if ok, err := or.Signon.Valid(or.Version); !ok {
-		return nil, err
+		errs.AddErr(err)
 	}
 
 	var messageSlices = map[string]*[]Message{
@@ -355,14 +360,17 @@ func ParseResponse(reader io.Reader) (*Response, error) {
 		if err != nil {
 			return nil, err
 		} else if ofxEnd, ok := tok.(xml.EndElement); ok && ofxEnd.Name.Local == "OFX" {
-			return &or, nil // found closing XML element, so we're done
+			return &or, errs.ErrOrNil() // found closing XML element, so we're done
 		} else if start, ok := tok.(xml.StartElement); ok {
 			slice, ok := messageSlices[start.Name.Local]
 			if !ok {
 				return nil, errors.New("Invalid message set: " + start.Name.Local)
 			}
 			if err := decodeMessageSet(decoder, start, slice, or.Version); err != nil {
-				return nil, err
+				if _, ok := err.(ErrInvalid); !ok {
+					return nil, err
+				}
+				errs.AddErr(err)
 			}
 		} else {
 			return nil, errors.New("Found unexpected token")
@@ -435,4 +443,33 @@ func (or *Response) Marshal() (*bytes.Buffer, error) {
 		return nil, err
 	}
 	return &b, nil
+}
+
+// ErrInvalid represents validation failures while parsing an OFX response
+// If an institution returns slightly malformed data, ParseResponse will return a best-effort parsed response and a validation error.
+type ErrInvalid []error
+
+func (e ErrInvalid) Error() string {
+	var errStrings []string
+	for _, err := range e {
+		errStrings = append(errStrings, err.Error())
+	}
+	return fmt.Sprintf("Validation failed: %s", strings.Join(errStrings, "; "))
+}
+
+func (e *ErrInvalid) AddErr(err error) {
+	if err != nil {
+		if errs, ok := err.(ErrInvalid); ok {
+			*e = append(*e, errs...)
+		} else {
+			*e = append(*e, err)
+		}
+	}
+}
+
+func (e ErrInvalid) ErrOrNil() error {
+	if len(e) > 0 {
+		return e
+	}
+	return nil
 }

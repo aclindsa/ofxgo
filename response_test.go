@@ -1,13 +1,16 @@
 package ofxgo_test
 
 import (
+	"bytes"
+	"errors"
 	"fmt"
-	"github.com/aclindsa/ofxgo"
-	"github.com/aclindsa/xml"
 	"os"
 	"path/filepath"
 	"reflect"
 	"testing"
+
+	"github.com/aclindsa/ofxgo"
+	"github.com/aclindsa/xml"
 )
 
 // Attempt to find a method on the provided Value called 'Equal' which is a
@@ -170,4 +173,115 @@ func TestValidSamples(t *testing.T) {
 	}
 	filepath.Walk("samples/valid_responses", fn)
 	filepath.Walk("samples/busted_responses", fn)
+}
+
+func TestInvalidResponse(t *testing.T) {
+	// in this example, the severity is invalid due to mixed upper and lower case letters
+	resp, err := ofxgo.ParseResponse(bytes.NewReader([]byte(`
+OFXHEADER:100
+DATA:OFXSGML
+VERSION:102
+SECURITY:NONE
+ENCODING:USASCII
+CHARSET:1252
+COMPRESSION:NONE
+OLDFILEUID:NONE
+NEWFILEUID:NONE
+
+<OFX>
+	<SIGNONMSGSRSV1>
+		<SONRS>
+			<STATUS>
+				<CODE>0</CODE>
+				<SEVERITY>Info</SEVERITY>
+			</STATUS>
+			<LANGUAGE>ENG</LANGUAGE>
+		</SONRS>
+	</SIGNONMSGSRSV1>
+	<BANKMSGSRSV1>
+		<STMTTRNRS>
+			<TRNUID>0</TRNUID>
+			<STATUS>
+				<CODE>0</CODE>
+				<SEVERITY>Info</SEVERITY>
+			</STATUS>
+		</STMTTRNRS>
+	</BANKMSGSRSV1>
+</OFX>
+`)))
+	expectedErr := "Validation failed: Invalid STATUS>SEVERITY; Invalid STATUS>SEVERITY"
+	if err == nil {
+		t.Fatalf("ParseResponse should fail with %q, found nil", expectedErr)
+	}
+	if _, ok := err.(ofxgo.ErrInvalid); !ok {
+		t.Errorf("ParseResponse should return an error with type ErrInvalid, found %T", err)
+	}
+	if err.Error() != expectedErr {
+		t.Errorf("ParseResponse should fail with %q, found %v", expectedErr, err)
+	}
+	if resp == nil {
+		t.Errorf("Response must not be nil if only validation errors are present")
+	}
+}
+
+func TestErrInvalidError(t *testing.T) {
+	expectedErr := `Validation failed: A; B; C`
+	actualErr := ofxgo.ErrInvalid{
+		errors.New("A"),
+		errors.New("B"),
+		errors.New("C"),
+	}.Error()
+	if expectedErr != actualErr {
+		t.Errorf("Unexpected invalid error message to be %q, but was: %s", expectedErr, actualErr)
+	}
+}
+
+func TestErrInvalidAddErr(t *testing.T) {
+	t.Run("nil error should be a no-op", func(t *testing.T) {
+		var errs ofxgo.ErrInvalid
+		errs.AddErr(nil)
+		if len(errs) != 0 {
+			t.Errorf("Nil err should not be added")
+		}
+	})
+
+	t.Run("adds an error normally", func(t *testing.T) {
+		var errs ofxgo.ErrInvalid
+		errs.AddErr(errors.New("some error"))
+
+	})
+
+	t.Run("adding the same type should flatten the errors", func(t *testing.T) {
+		var errs ofxgo.ErrInvalid
+		errs.AddErr(ofxgo.ErrInvalid{
+			errors.New("A"),
+			errors.New("B"),
+		})
+		errs.AddErr(ofxgo.ErrInvalid{
+			errors.New("C"),
+		})
+		if len(errs) != 3 {
+			t.Errorf("Errors should be flattened like [A, B, C], but found: %+v", errs)
+		}
+	})
+}
+
+func TestErrInvalidErrOrNil(t *testing.T) {
+	var errs ofxgo.ErrInvalid
+	if err := errs.ErrOrNil(); err != nil {
+		t.Errorf("No added errors should return nil, found: %v", err)
+	}
+	someError := errors.New("some error")
+	errs.AddErr(someError)
+	err := errs.ErrOrNil()
+	if err == nil {
+		t.Fatal("Expected an error, found nil.")
+	}
+	if _, ok := err.(ofxgo.ErrInvalid); !ok {
+		t.Fatalf("Expected err to be of type ErrInvalid, found: %T", err)
+	}
+	errInvalid := err.(ofxgo.ErrInvalid)
+	if len(errInvalid) != 1 || errInvalid[0] != someError {
+		t.Errorf("Expected ErrOrNil to return itself, found: %v", err)
+	}
 }
