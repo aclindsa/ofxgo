@@ -7,3 +7,5 @@ require (
 	golang.org/x/sys v0.0.0-20180928133829-e4b3c5e90611 // indirect
 	golang.org/x/text v0.0.0-20180911161511-905a57155faa
 )
+
+go 1.9
