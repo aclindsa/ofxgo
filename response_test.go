@@ -177,7 +177,7 @@ func TestValidSamples(t *testing.T) {
 
 func TestInvalidResponse(t *testing.T) {
 	// in this example, the severity is invalid due to mixed upper and lower case letters
-	resp, err := ofxgo.ParseResponse(bytes.NewReader([]byte(`
+	const invalidResponse = `
 OFXHEADER:100
 DATA:OFXSGML
 VERSION:102
@@ -208,20 +208,58 @@ NEWFILEUID:NONE
 		</STMTTRNRS>
 	</BANKMSGSRSV1>
 </OFX>
-`)))
-	expectedErr := "Validation failed: Invalid STATUS>SEVERITY; Invalid STATUS>SEVERITY"
-	if err == nil {
-		t.Fatalf("ParseResponse should fail with %q, found nil", expectedErr)
-	}
-	if _, ok := err.(ofxgo.ErrInvalid); !ok {
-		t.Errorf("ParseResponse should return an error with type ErrInvalid, found %T", err)
-	}
-	if err.Error() != expectedErr {
-		t.Errorf("ParseResponse should fail with %q, found %v", expectedErr, err)
-	}
-	if resp == nil {
-		t.Errorf("Response must not be nil if only validation errors are present")
-	}
+`
+	const expectedErr = "Validation failed: Invalid STATUS>SEVERITY; Invalid STATUS>SEVERITY"
+
+	t.Run("parse response", func(t *testing.T) {
+		resp, err := ofxgo.ParseResponse(bytes.NewReader([]byte(invalidResponse)))
+		expectedErr := "Validation failed: Invalid STATUS>SEVERITY; Invalid STATUS>SEVERITY"
+		if err == nil {
+			t.Fatalf("ParseResponse should fail with %q, found nil", expectedErr)
+		}
+		if _, ok := err.(ofxgo.ErrInvalid); !ok {
+			t.Errorf("ParseResponse should return an error with type ErrInvalid, found %T", err)
+		}
+		if err.Error() != expectedErr {
+			t.Errorf("ParseResponse should fail with %q, found %v", expectedErr, err)
+		}
+		if resp == nil {
+			t.Errorf("Response must not be nil if only validation errors are present")
+		}
+	})
+
+	t.Run("parse failed", func(t *testing.T) {
+		resp, err := ofxgo.ParseResponse(bytes.NewReader(nil))
+		if err == nil {
+			t.Error("ParseResponse should fail to decode")
+		}
+		if resp != nil {
+			t.Errorf("ParseResponse should return a nil response, found: %v", resp)
+		}
+	})
+
+	t.Run("decode, then validate response", func(t *testing.T) {
+		resp, err := ofxgo.DecodeResponse(bytes.NewReader([]byte(invalidResponse)))
+		if err != nil {
+			t.Errorf("Unexpected error: %s", err.Error())
+		}
+		if resp == nil {
+			t.Fatal("Response should not be nil from successful decode")
+		}
+		valid, err := resp.Valid()
+		if valid {
+			t.Error("Response should not be valid")
+		}
+		if err == nil {
+			t.Fatalf("response.Valid() should fail with %q, found nil", expectedErr)
+		}
+		if _, ok := err.(ofxgo.ErrInvalid); !ok {
+			t.Errorf("response.Valid() should return an error of type ErrInvalid, found: %T", err)
+		}
+		if err.Error() != expectedErr {
+			t.Errorf("response.Valid() should return an error with message %q, but found %q", expectedErr, err.Error())
+		}
+	})
 }
 
 func TestErrInvalidError(t *testing.T) {
