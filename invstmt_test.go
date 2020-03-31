@@ -1,7 +1,6 @@
-package ofxgo_test
+package ofxgo
 
 import (
-	"github.com/aclindsa/ofxgo"
 	"github.com/aclindsa/xml"
 	"reflect"
 	"strings"
@@ -49,13 +48,13 @@ func TestMarshalInvStatementRequest(t *testing.T) {
 	</INVSTMTMSGSRQV1>
 </OFX>`
 
-	var client = ofxgo.BasicClient{
+	var client = BasicClient{
 		AppID:       "MYAPP",
 		AppVer:      "1234",
-		SpecVersion: ofxgo.OfxVersion203,
+		SpecVersion: OfxVersion203,
 	}
 
-	var request ofxgo.Request
+	var request Request
 	request.Signon.UserID = "1998124"
 	request.Signon.UserPass = "Sup3eSekrit"
 	request.Signon.Org = "First Bank"
@@ -63,13 +62,13 @@ func TestMarshalInvStatementRequest(t *testing.T) {
 
 	EST := time.FixedZone("EST", -5*60*60)
 
-	statementRequest := ofxgo.InvStatementRequest{
+	statementRequest := InvStatementRequest{
 		TrnUID: "382827d6-e2d0-4396-bf3b-665979285420",
-		InvAcctFrom: ofxgo.InvAcct{
+		InvAcctFrom: InvAcct{
 			BrokerID: "fi.example.com",
 			AcctID:   "82736664",
 		},
-		DtStart:        ofxgo.NewDate(2016, 1, 1, 0, 0, 0, 0, EST),
+		DtStart:        NewDate(2016, 1, 1, 0, 0, 0, 0, EST),
 		Include:        true,
 		IncludeOO:      true,
 		IncludePos:     true,
@@ -79,7 +78,7 @@ func TestMarshalInvStatementRequest(t *testing.T) {
 
 	request.SetClientFields(&client)
 	// Overwrite the DtClient value set by SetClientFields to time.Now()
-	request.Signon.DtClient = *ofxgo.NewDate(2016, 2, 24, 13, 19, 5, 0, EST)
+	request.Signon.DtClient = *NewDate(2016, 2, 24, 13, 19, 5, 0, EST)
 
 	marshalCheckRequest(t, &request, expectedString)
 }
@@ -320,35 +319,35 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 		</SECLIST>
 	</SECLISTMSGSRSV1>
 </OFX>`)
-	var expected ofxgo.Response
+	var expected Response
 
-	expected.Version = ofxgo.OfxVersion203
+	expected.Version = OfxVersion203
 	expected.Signon.Status.Code = 0
 	expected.Signon.Status.Severity = "INFO"
-	expected.Signon.DtServer = *ofxgo.NewDateGMT(2017, 4, 1, 20, 12, 44, 0)
+	expected.Signon.DtServer = *NewDateGMT(2017, 4, 1, 20, 12, 44, 0)
 	expected.Signon.Language = "ENG"
 	expected.Signon.Org = "INVSTRUS"
 	expected.Signon.Fid = "9999"
 
-	var units1, unitprice1, commission1, total1, amount2 ofxgo.Amount
+	var units1, unitprice1, commission1, total1, amount2 Amount
 	units1.SetFrac64(100, 1)
 	unitprice1.SetFrac64(229, 1)
 	commission1.SetFrac64(9, 1)
 	total1.SetFrac64(-22909, 1)
 	amount2.SetFrac64(22000, 1)
 
-	invtranlist := ofxgo.InvTranList{
-		DtStart: *ofxgo.NewDateGMT(2017, 1, 1, 0, 0, 0, 0),
-		DtEnd:   *ofxgo.NewDateGMT(2017, 3, 31, 0, 0, 0, 0),
-		InvTransactions: []ofxgo.InvTransaction{
-			ofxgo.BuyStock{
-				InvBuy: ofxgo.InvBuy{
-					InvTran: ofxgo.InvTran{
+	invtranlist := InvTranList{
+		DtStart: *NewDateGMT(2017, 1, 1, 0, 0, 0, 0),
+		DtEnd:   *NewDateGMT(2017, 3, 31, 0, 0, 0, 0),
+		InvTransactions: []InvTransaction{
+			BuyStock{
+				InvBuy: InvBuy{
+					InvTran: InvTran{
 						FiTID:    "729483191",
-						DtTrade:  *ofxgo.NewDateGMT(2017, 2, 3, 0, 0, 0, 0),
-						DtSettle: ofxgo.NewDateGMT(2017, 2, 7, 0, 0, 0, 0),
+						DtTrade:  *NewDateGMT(2017, 2, 3, 0, 0, 0, 0),
+						DtSettle: NewDateGMT(2017, 2, 7, 0, 0, 0, 0),
 					},
-					SecID: ofxgo.SecurityID{
+					SecID: SecurityID{
 						UniqueID:     "78462F103",
 						UniqueIDType: "CUSIP",
 					},
@@ -356,20 +355,20 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 					UnitPrice:   unitprice1,
 					Commission:  commission1,
 					Total:       total1,
-					SubAcctSec:  ofxgo.SubAcctTypeCash,
-					SubAcctFund: ofxgo.SubAcctTypeCash,
+					SubAcctSec:  SubAcctTypeCash,
+					SubAcctFund: SubAcctTypeCash,
 				},
-				BuyType: ofxgo.BuyTypeBuy,
+				BuyType: BuyTypeBuy,
 			},
 		},
-		BankTransactions: []ofxgo.InvBankTransaction{
+		BankTransactions: []InvBankTransaction{
 			{
-				Transactions: []ofxgo.Transaction{
+				Transactions: []Transaction{
 					{
-						TrnType:  ofxgo.TrnTypeCredit,
-						DtPosted: *ofxgo.NewDateGMT(2017, 1, 20, 0, 0, 0, 0),
-						DtUser:   ofxgo.NewDateGMT(2017, 1, 18, 0, 0, 0, 0),
-						DtAvail:  ofxgo.NewDateGMT(2017, 1, 23, 0, 0, 0, 0),
+						TrnType:  TrnTypeCredit,
+						DtPosted: *NewDateGMT(2017, 1, 20, 0, 0, 0, 0),
+						DtUser:   NewDateGMT(2017, 1, 18, 0, 0, 0, 0),
+						DtAvail:  NewDateGMT(2017, 1, 23, 0, 0, 0, 0),
 
 						TrnAmt: amount2,
 						FiTID:  "993838",
@@ -377,33 +376,33 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 						Memo:   "CHECK 19980",
 					},
 				},
-				SubAcctFund: ofxgo.SubAcctTypeCash,
+				SubAcctFund: SubAcctTypeCash,
 			},
 		},
 	}
 
-	var availcash, marginbalance, shortbalance, balvalue ofxgo.Amount
+	var availcash, marginbalance, shortbalance, balvalue Amount
 	availcash.SetFrac64(1673, 100)
 	marginbalance.SetFrac64(-8192, 10)
 	shortbalance.SetFrac64(0, 1)
 	balvalue.SetFrac64(25, 100)
 
-	invbalance := ofxgo.InvBalance{
+	invbalance := InvBalance{
 		AvailCash:     availcash,
 		MarginBalance: marginbalance,
 		ShortBalance:  shortbalance,
-		BalList: []ofxgo.Balance{
+		BalList: []Balance{
 			{
 				Name:    "Sweep Int Rate",
 				Desc:    "Current interest rate for sweep account balances",
-				BalType: ofxgo.BalTypePercent,
+				BalType: BalTypePercent,
 				Value:   balvalue,
-				DtAsOf:  ofxgo.NewDateGMT(2017, 4, 1, 0, 0, 0, 0),
+				DtAsOf:  NewDateGMT(2017, 4, 1, 0, 0, 0, 0),
 			},
 		},
 	}
 
-	var balamt, availbalamt, posunits1, posunitprice1, posmktval1, posunits2, posunitprice2, posmktval2, oounits1, oolimitprice1, oounits2, oolimitprice2 ofxgo.Amount
+	var balamt, availbalamt, posunits1, posunitprice1, posmktval1, posunits2, posunitprice2, posmktval2, oounits1, oolimitprice1, oounits2, oolimitprice2 Amount
 	balamt.SetFrac64(20029, 100)
 	availbalamt.SetFrac64(20029, 100)
 	posunits1.SetFrac64(200, 1)
@@ -417,105 +416,105 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 	oounits2.SetFrac64(25, 1)
 	oolimitprice2.SetFrac64(1975, 100)
 
-	usd, err := ofxgo.NewCurrSymbol("USD")
+	usd, err := NewCurrSymbol("USD")
 	if err != nil {
 		t.Fatalf("Unexpected error creating CurrSymbol for USD\n")
 	}
 
-	statementResponse := ofxgo.InvStatementResponse{
+	statementResponse := InvStatementResponse{
 		TrnUID: "1a0117ad-692b-4c6a-a21b-020d37d34d49",
-		Status: ofxgo.Status{
+		Status: Status{
 			Code:     0,
 			Severity: "INFO",
 		},
-		DtAsOf: *ofxgo.NewDateGMT(2017, 3, 31, 0, 0, 0, 0),
+		DtAsOf: *NewDateGMT(2017, 3, 31, 0, 0, 0, 0),
 		CurDef: *usd,
-		InvAcctFrom: ofxgo.InvAcct{
+		InvAcctFrom: InvAcct{
 			BrokerID: "invstrus.com",
 			AcctID:   "91827364",
 		},
 		InvTranList: &invtranlist,
-		InvPosList: ofxgo.PositionList{
-			ofxgo.StockPosition{
-				InvPos: ofxgo.InvPosition{
-					SecID: ofxgo.SecurityID{
+		InvPosList: PositionList{
+			StockPosition{
+				InvPos: InvPosition{
+					SecID: SecurityID{
 						UniqueID:     "78462F103",
 						UniqueIDType: "CUSIP",
 					},
-					HeldInAcct:  ofxgo.SubAcctTypeCash,
-					PosType:     ofxgo.PosTypeLong,
+					HeldInAcct:  SubAcctTypeCash,
+					PosType:     PosTypeLong,
 					Units:       posunits1,
 					UnitPrice:   posunitprice1,
 					MktVal:      posmktval1,
-					DtPriceAsOf: *ofxgo.NewDateGMT(2017, 3, 31, 16, 0, 0, 0),
+					DtPriceAsOf: *NewDateGMT(2017, 3, 31, 16, 0, 0, 0),
 					Memo:        "Price as of previous close",
 				},
 			},
-			ofxgo.OptPosition{
-				InvPos: ofxgo.InvPosition{
-					SecID: ofxgo.SecurityID{
+			OptPosition{
+				InvPos: InvPosition{
+					SecID: SecurityID{
 						UniqueID:     "129887339",
 						UniqueIDType: "CUSIP",
 					},
-					HeldInAcct:  ofxgo.SubAcctTypeCash,
-					PosType:     ofxgo.PosTypeLong,
+					HeldInAcct:  SubAcctTypeCash,
+					PosType:     PosTypeLong,
 					Units:       posunits2,
 					UnitPrice:   posunitprice2,
 					MktVal:      posmktval2,
-					DtPriceAsOf: *ofxgo.NewDateGMT(2017, 3, 31, 16, 0, 0, 0),
+					DtPriceAsOf: *NewDateGMT(2017, 3, 31, 16, 0, 0, 0),
 				},
 			},
 		},
 		InvBal: &invbalance,
-		InvOOList: ofxgo.OOList{
-			ofxgo.OOBuyMF{
-				OO: ofxgo.OO{
+		InvOOList: OOList{
+			OOBuyMF{
+				OO: OO{
 					FiTID: "76464632",
-					SecID: ofxgo.SecurityID{
+					SecID: SecurityID{
 						UniqueID:     "922908645",
 						UniqueIDType: "CUSIP",
 					},
-					DtPlaced:    *ofxgo.NewDateGMT(2017, 3, 10, 12, 44, 45, 0),
+					DtPlaced:    *NewDateGMT(2017, 3, 10, 12, 44, 45, 0),
 					Units:       oounits1,
-					SubAcct:     ofxgo.SubAcctTypeCash,
-					Duration:    ofxgo.DurationGoodTilCancel,
-					Restriction: ofxgo.RestrictionNone,
+					SubAcct:     SubAcctTypeCash,
+					Duration:    DurationGoodTilCancel,
+					Restriction: RestrictionNone,
 					LimitPrice:  oolimitprice1,
 				},
-				BuyType:  ofxgo.BuyTypeBuy,
-				UnitType: ofxgo.UnitTypeShares,
+				BuyType:  BuyTypeBuy,
+				UnitType: UnitTypeShares,
 			},
-			ofxgo.OOBuyStock{
-				OO: ofxgo.OO{
+			OOBuyStock{
+				OO: OO{
 					FiTID: "999387423",
-					SecID: ofxgo.SecurityID{
+					SecID: SecurityID{
 						UniqueID:     "899422348",
 						UniqueIDType: "CUSIP",
 					},
-					DtPlaced:    *ofxgo.NewDateGMT(2017, 3, 24, 3, 19, 0, 0),
+					DtPlaced:    *NewDateGMT(2017, 3, 24, 3, 19, 0, 0),
 					Units:       oounits2,
-					SubAcct:     ofxgo.SubAcctTypeCash,
-					Duration:    ofxgo.DurationGoodTilCancel,
-					Restriction: ofxgo.RestrictionAllOrNone,
+					SubAcct:     SubAcctTypeCash,
+					Duration:    DurationGoodTilCancel,
+					Restriction: RestrictionAllOrNone,
 					LimitPrice:  oolimitprice2,
 				},
-				BuyType: ofxgo.BuyTypeBuy,
+				BuyType: BuyTypeBuy,
 			},
 		},
 	}
 	expected.InvStmt = append(expected.InvStmt, &statementResponse)
 
-	var yield1, yield2, strikeprice, parvalue ofxgo.Amount
+	var yield1, yield2, strikeprice, parvalue Amount
 	yield1.SetFrac64(192, 100)
 	yield2.SetFrac64(17, 1)
 	strikeprice.SetFrac64(79, 1)
 	parvalue.SetFrac64(10029, 100)
 
-	seclist := ofxgo.SecurityList{
-		Securities: []ofxgo.Security{
-			ofxgo.StockInfo{
-				SecInfo: ofxgo.SecInfo{
-					SecID: ofxgo.SecurityID{
+	seclist := SecurityList{
+		Securities: []Security{
+			StockInfo{
+				SecInfo: SecInfo{
+					SecID: SecurityID{
 						UniqueID:     "78462F103",
 						UniqueIDType: "CUSIP",
 					},
@@ -524,11 +523,11 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 					FiID:    "99184",
 				},
 				Yield:      yield1,
-				AssetClass: ofxgo.AssetClassOther,
+				AssetClass: AssetClassOther,
 			},
-			ofxgo.OptInfo{
-				SecInfo: ofxgo.SecInfo{
-					SecID: ofxgo.SecurityID{
+			OptInfo{
+				SecInfo: SecInfo{
+					SecID: SecurityID{
 						UniqueID:     "129887339",
 						UniqueIDType: "CUSIP",
 					},
@@ -536,19 +535,19 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 					Ticker:  "FERTP",
 					FiID:    "882919",
 				},
-				OptType:     ofxgo.OptTypePut,
+				OptType:     OptTypePut,
 				StrikePrice: strikeprice,
-				DtExpire:    *ofxgo.NewDateGMT(2017, 9, 1, 0, 0, 0, 0),
+				DtExpire:    *NewDateGMT(2017, 9, 1, 0, 0, 0, 0),
 				ShPerCtrct:  100,
-				SecID: &ofxgo.SecurityID{
+				SecID: &SecurityID{
 					UniqueID:     "983322180",
 					UniqueIDType: "CUSIP",
 				},
-				AssetClass: ofxgo.AssetClassLargeStock,
+				AssetClass: AssetClassLargeStock,
 			},
-			ofxgo.StockInfo{
-				SecInfo: ofxgo.SecInfo{
-					SecID: ofxgo.SecurityID{
+			StockInfo{
+				SecInfo: SecInfo{
+					SecID: SecurityID{
 						UniqueID:     "899422348",
 						UniqueIDType: "CUSIP",
 					},
@@ -557,11 +556,11 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 					FiID:    "883897",
 				},
 				Yield:      yield2,
-				AssetClass: ofxgo.AssetClassSmallStock,
+				AssetClass: AssetClassSmallStock,
 			},
-			ofxgo.MFInfo{
-				SecInfo: ofxgo.SecInfo{
-					SecID: ofxgo.SecurityID{
+			MFInfo{
+				SecInfo: SecInfo{
+					SecID: SecurityID{
 						UniqueID:     "922908645",
 						UniqueIDType: "CUSIP",
 					},
@@ -569,22 +568,22 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 					Ticker:  "VIMAX",
 				},
 			},
-			ofxgo.DebtInfo{
-				SecInfo: ofxgo.SecInfo{
-					SecID: ofxgo.SecurityID{
+			DebtInfo{
+				SecInfo: SecInfo{
+					SecID: SecurityID{
 						UniqueID:     "99182828",
 						UniqueIDType: "CUSIP",
 					},
 					SecName: "Someone's Class B Debt",
 				},
 				ParValue:   parvalue,
-				DebtType:   ofxgo.DebtTypeCoupon,
-				DtCoupon:   ofxgo.NewDateGMT(2017, 9, 1, 0, 0, 0, 0),
-				CouponFreq: ofxgo.CouponFreqQuarterly,
+				DebtType:   DebtTypeCoupon,
+				DtCoupon:   NewDateGMT(2017, 9, 1, 0, 0, 0, 0),
+				CouponFreq: CouponFreqQuarterly,
 			},
-			ofxgo.OtherInfo{
-				SecInfo: ofxgo.SecInfo{
-					SecID: ofxgo.SecurityID{
+			OtherInfo{
+				SecInfo: SecInfo{
+					SecID: SecurityID{
 						UniqueID:     "88181818",
 						UniqueIDType: "CUSIP",
 					},
@@ -596,7 +595,7 @@ func TestUnmarshalInvStatementResponse(t *testing.T) {
 	}
 	expected.SecList = append(expected.SecList, &seclist)
 
-	response, err := ofxgo.ParseResponse(responseReader)
+	response, err := ParseResponse(responseReader)
 	if err != nil {
 		t.Fatalf("Unexpected error unmarshalling response: %s\n", err)
 	}
@@ -769,18 +768,18 @@ NEWFILEUID: NONE
   </SECLIST>
  </SECLISTMSGSRSV1>
 </OFX>`)
-	var expected ofxgo.Response
+	var expected Response
 
-	expected.Version = ofxgo.OfxVersion102
+	expected.Version = OfxVersion102
 	expected.Signon.Status.Code = 0
 	expected.Signon.Status.Severity = "INFO"
-	expected.Signon.DtServer = *ofxgo.NewDateGMT(2017, 4, 3, 12, 0, 0, 0)
+	expected.Signon.DtServer = *NewDateGMT(2017, 4, 3, 12, 0, 0, 0)
 	expected.Signon.Language = "ENG"
 	expected.Signon.Org = "VV"
 	expected.Signon.Fid = "1000"
 	// Ignored <INTU.BID>1000
 
-	var units1, unitprice1, commission1, fees1, total1, units2, units3 ofxgo.Amount
+	var units1, unitprice1, commission1, fees1, total1, units2, units3 Amount
 	units1.SetFrac64(-1, 1)
 	unitprice1.SetFrac64(35, 100)
 	commission1.SetFrac64(885, 100)
@@ -789,18 +788,18 @@ NEWFILEUID: NONE
 	units2.SetFrac64(-100, 1)
 	units3.SetFrac64(1, 1)
 
-	invtranlist := ofxgo.InvTranList{
-		DtStart: *ofxgo.NewDateGMT(2016, 12, 6, 12, 0, 0, 0),
-		DtEnd:   *ofxgo.NewDateGMT(2017, 4, 3, 12, 0, 0, 0),
-		InvTransactions: []ofxgo.InvTransaction{
-			ofxgo.SellOpt{
-				InvSell: ofxgo.InvSell{
-					InvTran: ofxgo.InvTran{
+	invtranlist := InvTranList{
+		DtStart: *NewDateGMT(2016, 12, 6, 12, 0, 0, 0),
+		DtEnd:   *NewDateGMT(2017, 4, 3, 12, 0, 0, 0),
+		InvTransactions: []InvTransaction{
+			SellOpt{
+				InvSell: InvSell{
+					InvTran: InvTran{
 						FiTID:    "12341234-20161207-1",
-						DtTrade:  *ofxgo.NewDateGMT(2016, 12, 7, 12, 0, 0, 0),
-						DtSettle: ofxgo.NewDateGMT(2016, 12, 8, 12, 0, 0, 0),
+						DtTrade:  *NewDateGMT(2016, 12, 7, 12, 0, 0, 0),
+						DtSettle: NewDateGMT(2016, 12, 8, 12, 0, 0, 0),
 					},
-					SecID: ofxgo.SecurityID{
+					SecID: SecurityID{
 						UniqueID:     "SPY161216C00226000",
 						UniqueIDType: "CUSIP",
 					},
@@ -809,57 +808,57 @@ NEWFILEUID: NONE
 					Commission:  commission1,
 					Fees:        fees1,
 					Total:       total1,
-					SubAcctSec:  ofxgo.SubAcctTypeCash,
-					SubAcctFund: ofxgo.SubAcctTypeCash,
+					SubAcctSec:  SubAcctTypeCash,
+					SubAcctFund: SubAcctTypeCash,
 				},
-				OptSellType: ofxgo.OptSellTypeSellToOpen,
+				OptSellType: OptSellTypeSellToOpen,
 				ShPerCtrct:  100,
 			},
-			ofxgo.ClosureOpt{
-				InvTran: ofxgo.InvTran{
+			ClosureOpt{
+				InvTran: InvTran{
 					FiTID:    "12341234-20161215-1",
-					DtTrade:  *ofxgo.NewDateGMT(2016, 12, 15, 12, 0, 0, 0),
-					DtSettle: ofxgo.NewDateGMT(2016, 12, 20, 12, 0, 0, 0),
+					DtTrade:  *NewDateGMT(2016, 12, 15, 12, 0, 0, 0),
+					DtSettle: NewDateGMT(2016, 12, 20, 12, 0, 0, 0),
 				},
-				SecID: ofxgo.SecurityID{
+				SecID: SecurityID{
 					UniqueID:     "78462F10",
 					UniqueIDType: "CUSIP",
 				},
-				OptAction:  ofxgo.OptActionAssign,
+				OptAction:  OptActionAssign,
 				Units:      units2,
 				ShPerCtrct: 100,
-				SubAcctSec: ofxgo.SubAcctTypeCash,
+				SubAcctSec: SubAcctTypeCash,
 			},
-			ofxgo.ClosureOpt{
-				InvTran: ofxgo.InvTran{
+			ClosureOpt{
+				InvTran: InvTran{
 					FiTID:    "12341234-20161215-2",
-					DtTrade:  *ofxgo.NewDateGMT(2016, 12, 15, 12, 0, 0, 0),
-					DtSettle: ofxgo.NewDateGMT(2016, 12, 15, 12, 0, 0, 0),
+					DtTrade:  *NewDateGMT(2016, 12, 15, 12, 0, 0, 0),
+					DtSettle: NewDateGMT(2016, 12, 15, 12, 0, 0, 0),
 				},
-				SecID: ofxgo.SecurityID{
+				SecID: SecurityID{
 					UniqueID:     "SPY161216C00226000",
 					UniqueIDType: "CUSIP",
 				},
-				OptAction:  ofxgo.OptActionAssign,
+				OptAction:  OptActionAssign,
 				Units:      units3,
 				ShPerCtrct: 100,
-				SubAcctSec: ofxgo.SubAcctTypeCash,
+				SubAcctSec: SubAcctTypeCash,
 			},
 		},
 	}
 
-	var availcash, marginbalance, shortbalance ofxgo.Amount
+	var availcash, marginbalance, shortbalance Amount
 	availcash.SetFrac64(0, 1)
 	marginbalance.SetFrac64(-0, 1)
 	shortbalance.SetFrac64(0, 1)
 
-	invbalance := ofxgo.InvBalance{
+	invbalance := InvBalance{
 		AvailCash:     availcash,
 		MarginBalance: marginbalance,
 		ShortBalance:  shortbalance,
 	}
 
-	var posunits1, posunitprice1, posmktval1, posunits2, posunitprice2, posmktval2 ofxgo.Amount
+	var posunits1, posunitprice1, posmktval1, posunits2, posunitprice2, posmktval2 Amount
 	posunits1.SetFrac64(100, 1)
 	posunitprice1.SetFrac64(79, 1)
 	posmktval1.SetFrac64(79000, 1)
@@ -867,51 +866,51 @@ NEWFILEUID: NONE
 	posunitprice2.SetFrac64(2987, 100)
 	posmktval2.SetFrac64(2987, 1)
 
-	usd, err := ofxgo.NewCurrSymbol("USD")
+	usd, err := NewCurrSymbol("USD")
 	if err != nil {
 		t.Fatalf("Unexpected error creating CurrSymbol for USD\n")
 	}
 
-	statementResponse := ofxgo.InvStatementResponse{
+	statementResponse := InvStatementResponse{
 		TrnUID: "1283719872",
-		Status: ofxgo.Status{
+		Status: Status{
 			Code:     0,
 			Severity: "INFO",
 		},
-		DtAsOf: *ofxgo.NewDateGMT(2017, 4, 3, 12, 0, 0, 0),
+		DtAsOf: *NewDateGMT(2017, 4, 3, 12, 0, 0, 0),
 		CurDef: *usd,
-		InvAcctFrom: ofxgo.InvAcct{
+		InvAcctFrom: InvAcct{
 			BrokerID: "www.exampletrader.com",
 			AcctID:   "12341234",
 		},
 		InvTranList: &invtranlist,
-		InvPosList: ofxgo.PositionList{
-			ofxgo.StockPosition{
-				InvPos: ofxgo.InvPosition{
-					SecID: ofxgo.SecurityID{
+		InvPosList: PositionList{
+			StockPosition{
+				InvPos: InvPosition{
+					SecID: SecurityID{
 						UniqueID:     "04956010",
 						UniqueIDType: "CUSIP",
 					},
-					HeldInAcct:  ofxgo.SubAcctTypeCash,
-					PosType:     ofxgo.PosTypeLong,
+					HeldInAcct:  SubAcctTypeCash,
+					PosType:     PosTypeLong,
 					Units:       posunits1,
 					UnitPrice:   posunitprice1,
 					MktVal:      posmktval1,
-					DtPriceAsOf: *ofxgo.NewDateGMT(2017, 4, 3, 12, 0, 0, 0),
+					DtPriceAsOf: *NewDateGMT(2017, 4, 3, 12, 0, 0, 0),
 				},
 			},
-			ofxgo.StockPosition{
-				InvPos: ofxgo.InvPosition{
-					SecID: ofxgo.SecurityID{
+			StockPosition{
+				InvPos: InvPosition{
+					SecID: SecurityID{
 						UniqueID:     "36960410",
 						UniqueIDType: "CUSIP",
 					},
-					HeldInAcct:  ofxgo.SubAcctTypeCash,
-					PosType:     ofxgo.PosTypeLong,
+					HeldInAcct:  SubAcctTypeCash,
+					PosType:     PosTypeLong,
 					Units:       posunits2,
 					UnitPrice:   posunitprice2,
 					MktVal:      posmktval2,
-					DtPriceAsOf: *ofxgo.NewDateGMT(2017, 4, 3, 12, 0, 0, 0),
+					DtPriceAsOf: *NewDateGMT(2017, 4, 3, 12, 0, 0, 0),
 				},
 			},
 		},
@@ -919,14 +918,14 @@ NEWFILEUID: NONE
 	}
 	expected.InvStmt = append(expected.InvStmt, &statementResponse)
 
-	var strikeprice ofxgo.Amount
+	var strikeprice Amount
 	strikeprice.SetFrac64(226, 1)
 
-	seclist := ofxgo.SecurityList{
-		Securities: []ofxgo.Security{
-			ofxgo.StockInfo{
-				SecInfo: ofxgo.SecInfo{
-					SecID: ofxgo.SecurityID{
+	seclist := SecurityList{
+		Securities: []Security{
+			StockInfo{
+				SecInfo: SecInfo{
+					SecID: SecurityID{
 						UniqueID:     "78462F10",
 						UniqueIDType: "CUSIP",
 					},
@@ -934,25 +933,25 @@ NEWFILEUID: NONE
 					Ticker:  "SPY",
 				},
 			},
-			ofxgo.OptInfo{
-				SecInfo: ofxgo.SecInfo{
-					SecID: ofxgo.SecurityID{
+			OptInfo{
+				SecInfo: SecInfo{
+					SecID: SecurityID{
 						UniqueID:     "SPY161216C00226000",
 						UniqueIDType: "CUSIP",
 					},
 					SecName: "SPY Dec 16 2016 226.00 Call",
 					Ticker:  "SPY   161216C00226000",
 				},
-				OptType:     ofxgo.OptTypeCall,
+				OptType:     OptTypeCall,
 				StrikePrice: strikeprice,
-				DtExpire:    *ofxgo.NewDateGMT(2016, 12, 16, 12, 0, 0, 0),
+				DtExpire:    *NewDateGMT(2016, 12, 16, 12, 0, 0, 0),
 				ShPerCtrct:  100,
 			},
 		},
 	}
 	expected.SecList = append(expected.SecList, &seclist)
 
-	response, err := ofxgo.ParseResponse(responseReader)
+	response, err := ParseResponse(responseReader)
 	if err != nil {
 		t.Fatalf("Unexpected error unmarshalling response: %s\n", err)
 	}
@@ -1131,7 +1130,7 @@ func TestUnmarshalInvTranList(t *testing.T) {
 	</SELLOTHER>
 </INVTRANLIST>`
 
-	var units1, unitprice1, commission1, fees1, total1, accrdint, total2, oldunits1, newunits1 ofxgo.Amount
+	var units1, unitprice1, commission1, fees1, total1, accrdint, total2, oldunits1, newunits1 Amount
 	units1.SetFrac64(100, 1)
 	unitprice1.SetFrac64(229, 1)
 	commission1.SetFrac64(9, 1)
@@ -1142,18 +1141,18 @@ func TestUnmarshalInvTranList(t *testing.T) {
 	oldunits1.SetFrac64(100, 1)
 	newunits1.SetFrac64(200, 1)
 
-	expected := ofxgo.InvTranList{
-		DtStart: *ofxgo.NewDateGMT(2017, 1, 1, 0, 0, 0, 0),
-		DtEnd:   *ofxgo.NewDateGMT(2017, 3, 31, 0, 0, 0, 0),
-		InvTransactions: []ofxgo.InvTransaction{
-			ofxgo.BuyDebt{
-				InvBuy: ofxgo.InvBuy{
-					InvTran: ofxgo.InvTran{
+	expected := InvTranList{
+		DtStart: *NewDateGMT(2017, 1, 1, 0, 0, 0, 0),
+		DtEnd:   *NewDateGMT(2017, 3, 31, 0, 0, 0, 0),
+		InvTransactions: []InvTransaction{
+			BuyDebt{
+				InvBuy: InvBuy{
+					InvTran: InvTran{
 						FiTID:    "81818",
-						DtTrade:  *ofxgo.NewDateGMT(2017, 2, 3, 0, 0, 0, 0),
-						DtSettle: ofxgo.NewDateGMT(2017, 2, 7, 0, 0, 0, 0),
+						DtTrade:  *NewDateGMT(2017, 2, 3, 0, 0, 0, 0),
+						DtSettle: NewDateGMT(2017, 2, 7, 0, 0, 0, 0),
 					},
-					SecID: ofxgo.SecurityID{
+					SecID: SecurityID{
 						UniqueID:     "78462F103",
 						UniqueIDType: "CUSIP",
 					},
@@ -1162,158 +1161,158 @@ func TestUnmarshalInvTranList(t *testing.T) {
 					Commission:  commission1,
 					Fees:        fees1,
 					Total:       total1,
-					SubAcctSec:  ofxgo.SubAcctTypeCash,
-					SubAcctFund: ofxgo.SubAcctTypeCash,
+					SubAcctSec:  SubAcctTypeCash,
+					SubAcctFund: SubAcctTypeCash,
 				},
 				AccrdInt: accrdint,
 			},
-			ofxgo.BuyOpt{
-				InvBuy: ofxgo.InvBuy{
-					InvTran: ofxgo.InvTran{
+			BuyOpt{
+				InvBuy: InvBuy{
+					InvTran: InvTran{
 						FiTID:   "81818",
-						DtTrade: *ofxgo.NewDateGMT(2017, 2, 3, 0, 0, 0, 0),
+						DtTrade: *NewDateGMT(2017, 2, 3, 0, 0, 0, 0),
 						Memo:    "Something to make a memo about",
 					},
-					SecID: ofxgo.SecurityID{
+					SecID: SecurityID{
 						UniqueID:     "78462F103",
 						UniqueIDType: "CUSIP",
 					},
 					Units:       units1,
 					UnitPrice:   unitprice1,
 					Total:       total1,
-					SubAcctSec:  ofxgo.SubAcctTypeCash,
-					SubAcctFund: ofxgo.SubAcctTypeCash,
+					SubAcctSec:  SubAcctTypeCash,
+					SubAcctFund: SubAcctTypeCash,
 				},
-				OptBuyType: ofxgo.OptBuyTypeBuyToOpen,
+				OptBuyType: OptBuyTypeBuyToOpen,
 				ShPerCtrct: 100,
 			},
-			ofxgo.InvExpense{
-				InvTran: ofxgo.InvTran{
+			InvExpense{
+				InvTran: InvTran{
 					FiTID:   "129837-1111",
-					DtTrade: *ofxgo.NewDateGMT(2017, 2, 3, 0, 0, 0, 0),
+					DtTrade: *NewDateGMT(2017, 2, 3, 0, 0, 0, 0),
 				},
-				SecID: ofxgo.SecurityID{
+				SecID: SecurityID{
 					UniqueID:     "78462F103",
 					UniqueIDType: "CUSIP",
 				},
 				Total:       fees1,
-				SubAcctSec:  ofxgo.SubAcctTypeCash,
-				SubAcctFund: ofxgo.SubAcctTypeCash,
+				SubAcctSec:  SubAcctTypeCash,
+				SubAcctFund: SubAcctTypeCash,
 			},
-			ofxgo.JrnlSec{
-				InvTran: ofxgo.InvTran{
+			JrnlSec{
+				InvTran: InvTran{
 					FiTID:   "129837-1112",
-					DtTrade: *ofxgo.NewDateGMT(2017, 2, 3, 0, 0, 0, 0),
+					DtTrade: *NewDateGMT(2017, 2, 3, 0, 0, 0, 0),
 				},
-				SecID: ofxgo.SecurityID{
+				SecID: SecurityID{
 					UniqueID:     "78462F103",
 					UniqueIDType: "CUSIP",
 				},
 				Units:       total2,
-				SubAcctTo:   ofxgo.SubAcctTypeCash,
-				SubAcctFrom: ofxgo.SubAcctTypeCash,
+				SubAcctTo:   SubAcctTypeCash,
+				SubAcctFrom: SubAcctTypeCash,
 			},
-			ofxgo.JrnlFund{
-				InvTran: ofxgo.InvTran{
+			JrnlFund{
+				InvTran: InvTran{
 					FiTID:   "129837-1112",
-					DtTrade: *ofxgo.NewDateGMT(2017, 2, 3, 0, 0, 0, 0),
+					DtTrade: *NewDateGMT(2017, 2, 3, 0, 0, 0, 0),
 				},
 				Total:       total2,
-				SubAcctTo:   ofxgo.SubAcctTypeCash,
-				SubAcctFrom: ofxgo.SubAcctTypeCash,
+				SubAcctTo:   SubAcctTypeCash,
+				SubAcctFrom: SubAcctTypeCash,
 			},
-			ofxgo.BuyOther{
-				InvBuy: ofxgo.InvBuy{
-					InvTran: ofxgo.InvTran{
+			BuyOther{
+				InvBuy: InvBuy{
+					InvTran: InvTran{
 						FiTID:   "81818",
-						DtTrade: *ofxgo.NewDateGMT(2017, 2, 3, 0, 0, 0, 0),
+						DtTrade: *NewDateGMT(2017, 2, 3, 0, 0, 0, 0),
 					},
-					SecID: ofxgo.SecurityID{
+					SecID: SecurityID{
 						UniqueID:     "78462F103",
 						UniqueIDType: "CUSIP",
 					},
 					Units:       units1,
 					UnitPrice:   unitprice1,
 					Total:       total1,
-					SubAcctSec:  ofxgo.SubAcctTypeCash,
-					SubAcctFund: ofxgo.SubAcctTypeCash,
+					SubAcctSec:  SubAcctTypeCash,
+					SubAcctFund: SubAcctTypeCash,
 				},
 			},
-			ofxgo.MarginInterest{
-				InvTran: ofxgo.InvTran{
+			MarginInterest{
+				InvTran: InvTran{
 					FiTID:   "129837-1112",
-					DtTrade: *ofxgo.NewDateGMT(2017, 2, 3, 0, 0, 0, 0),
+					DtTrade: *NewDateGMT(2017, 2, 3, 0, 0, 0, 0),
 				},
 				Total:       total2,
-				SubAcctFund: ofxgo.SubAcctTypeCash,
+				SubAcctFund: SubAcctTypeCash,
 			},
-			ofxgo.SellDebt{
-				InvSell: ofxgo.InvSell{
-					InvTran: ofxgo.InvTran{
+			SellDebt{
+				InvSell: InvSell{
+					InvTran: InvTran{
 						FiTID:   "129837-1111",
-						DtTrade: *ofxgo.NewDateGMT(2017, 2, 3, 0, 0, 0, 0),
+						DtTrade: *NewDateGMT(2017, 2, 3, 0, 0, 0, 0),
 					},
-					SecID: ofxgo.SecurityID{
+					SecID: SecurityID{
 						UniqueID:     "78462F103",
 						UniqueIDType: "CUSIP",
 					},
 					Units:       units1,
 					UnitPrice:   unitprice1,
 					Total:       total1,
-					SubAcctSec:  ofxgo.SubAcctTypeCash,
-					SubAcctFund: ofxgo.SubAcctTypeCash,
+					SubAcctSec:  SubAcctTypeCash,
+					SubAcctFund: SubAcctTypeCash,
 				},
-				SellReason: ofxgo.SellReasonSell,
+				SellReason: SellReasonSell,
 			},
-			ofxgo.RetOfCap{
-				InvTran: ofxgo.InvTran{
+			RetOfCap{
+				InvTran: InvTran{
 					FiTID:   "129837-1111",
-					DtTrade: *ofxgo.NewDateGMT(2017, 2, 3, 0, 0, 0, 0),
+					DtTrade: *NewDateGMT(2017, 2, 3, 0, 0, 0, 0),
 				},
-				SecID: ofxgo.SecurityID{
+				SecID: SecurityID{
 					UniqueID:     "78462F103",
 					UniqueIDType: "CUSIP",
 				},
 				Total:       total2,
-				SubAcctSec:  ofxgo.SubAcctTypeCash,
-				SubAcctFund: ofxgo.SubAcctTypeCash,
+				SubAcctSec:  SubAcctTypeCash,
+				SubAcctFund: SubAcctTypeCash,
 			},
-			ofxgo.Split{
-				InvTran: ofxgo.InvTran{
+			Split{
+				InvTran: InvTran{
 					FiTID:   "129837-1111",
-					DtTrade: *ofxgo.NewDateGMT(2017, 2, 3, 0, 0, 0, 0),
+					DtTrade: *NewDateGMT(2017, 2, 3, 0, 0, 0, 0),
 				},
-				SecID: ofxgo.SecurityID{
+				SecID: SecurityID{
 					UniqueID:     "78462F103",
 					UniqueIDType: "CUSIP",
 				},
-				SubAcctSec:  ofxgo.SubAcctTypeCash,
+				SubAcctSec:  SubAcctTypeCash,
 				OldUnits:    oldunits1,
 				NewUnits:    newunits1,
 				Numerator:   2,
 				Denominator: 1,
 			},
-			ofxgo.SellOther{
-				InvSell: ofxgo.InvSell{
-					InvTran: ofxgo.InvTran{
+			SellOther{
+				InvSell: InvSell{
+					InvTran: InvTran{
 						FiTID:   "129837-1111",
-						DtTrade: *ofxgo.NewDateGMT(2017, 2, 3, 0, 0, 0, 0),
+						DtTrade: *NewDateGMT(2017, 2, 3, 0, 0, 0, 0),
 					},
-					SecID: ofxgo.SecurityID{
+					SecID: SecurityID{
 						UniqueID:     "78462F103",
 						UniqueIDType: "CUSIP",
 					},
 					Units:       units1,
 					UnitPrice:   unitprice1,
 					Total:       total1,
-					SubAcctSec:  ofxgo.SubAcctTypeCash,
-					SubAcctFund: ofxgo.SubAcctTypeCash,
+					SubAcctSec:  SubAcctTypeCash,
+					SubAcctFund: SubAcctTypeCash,
 				},
 			},
 		},
 	}
 
-	var actual ofxgo.InvTranList
+	var actual InvTranList
 	err := xml.Unmarshal([]byte(input), &actual)
 	if err != nil {
 		t.Fatalf("Unexpected error unmarshalling InvTranList: %s\n", err)
@@ -1400,7 +1399,7 @@ func TestUnmarshalPositionList(t *testing.T) {
 	</POSMF>
 </INVPOSLIST>`
 
-	var posunits1, posunitprice1, posmktval1, posunits2, posunitprice2, posmktval2 ofxgo.Amount
+	var posunits1, posunitprice1, posmktval1, posunits2, posunitprice2, posmktval2 Amount
 	posunits1.SetFrac64(200, 1)
 	posunitprice1.SetFrac64(23574, 100)
 	posmktval1.SetFrac64(47148, 1)
@@ -1408,77 +1407,77 @@ func TestUnmarshalPositionList(t *testing.T) {
 	posunitprice2.SetFrac64(3, 1)
 	posmktval2.SetFrac64(300, 1)
 
-	expected := ofxgo.PositionList{
-		ofxgo.OtherPosition{
-			InvPos: ofxgo.InvPosition{
-				SecID: ofxgo.SecurityID{
+	expected := PositionList{
+		OtherPosition{
+			InvPos: InvPosition{
+				SecID: SecurityID{
 					UniqueID:     "78462F103",
 					UniqueIDType: "CUSIP",
 				},
-				HeldInAcct:  ofxgo.SubAcctTypeCash,
-				PosType:     ofxgo.PosTypeLong,
+				HeldInAcct:  SubAcctTypeCash,
+				PosType:     PosTypeLong,
 				Units:       posunits2,
 				UnitPrice:   posunitprice2,
 				MktVal:      posmktval2,
-				DtPriceAsOf: *ofxgo.NewDateGMT(2017, 3, 31, 16, 0, 0, 0),
+				DtPriceAsOf: *NewDateGMT(2017, 3, 31, 16, 0, 0, 0),
 			},
 		},
-		ofxgo.StockPosition{
-			InvPos: ofxgo.InvPosition{
-				SecID: ofxgo.SecurityID{
+		StockPosition{
+			InvPos: InvPosition{
+				SecID: SecurityID{
 					UniqueID:     "78462F103",
 					UniqueIDType: "CUSIP",
 				},
-				HeldInAcct:  ofxgo.SubAcctTypeCash,
-				PosType:     ofxgo.PosTypeShort,
+				HeldInAcct:  SubAcctTypeCash,
+				PosType:     PosTypeShort,
 				Units:       posunits1,
 				UnitPrice:   posunitprice1,
 				MktVal:      posmktval1,
-				DtPriceAsOf: *ofxgo.NewDateGMT(2017, 3, 31, 16, 0, 0, 0),
+				DtPriceAsOf: *NewDateGMT(2017, 3, 31, 16, 0, 0, 0),
 				Memo:        "Price as of previous close",
 			},
 			ReinvDiv: true,
 		},
-		ofxgo.DebtPosition{
-			InvPos: ofxgo.InvPosition{
-				SecID: ofxgo.SecurityID{
+		DebtPosition{
+			InvPos: InvPosition{
+				SecID: SecurityID{
 					UniqueID:     "129887339",
 					UniqueIDType: "CUSIP",
 				},
-				HeldInAcct:  ofxgo.SubAcctTypeCash,
-				PosType:     ofxgo.PosTypeLong,
+				HeldInAcct:  SubAcctTypeCash,
+				PosType:     PosTypeLong,
 				Units:       posunits2,
 				UnitPrice:   posunitprice2,
 				MktVal:      posmktval2,
-				DtPriceAsOf: *ofxgo.NewDateGMT(2017, 3, 31, 16, 0, 0, 0),
+				DtPriceAsOf: *NewDateGMT(2017, 3, 31, 16, 0, 0, 0),
 			},
 		},
-		ofxgo.OptPosition{
-			InvPos: ofxgo.InvPosition{
-				SecID: ofxgo.SecurityID{
+		OptPosition{
+			InvPos: InvPosition{
+				SecID: SecurityID{
 					UniqueID:     "129887339",
 					UniqueIDType: "CUSIP",
 				},
-				HeldInAcct:  ofxgo.SubAcctTypeCash,
-				PosType:     ofxgo.PosTypeLong,
+				HeldInAcct:  SubAcctTypeCash,
+				PosType:     PosTypeLong,
 				Units:       posunits2,
 				UnitPrice:   posunitprice2,
 				MktVal:      posmktval2,
-				DtPriceAsOf: *ofxgo.NewDateGMT(2017, 3, 31, 16, 0, 0, 0),
+				DtPriceAsOf: *NewDateGMT(2017, 3, 31, 16, 0, 0, 0),
 			},
 		},
-		ofxgo.MFPosition{
-			InvPos: ofxgo.InvPosition{
-				SecID: ofxgo.SecurityID{
+		MFPosition{
+			InvPos: InvPosition{
+				SecID: SecurityID{
 					UniqueID:     "78462F103",
 					UniqueIDType: "CUSIP",
 				},
-				HeldInAcct:  ofxgo.SubAcctTypeCash,
-				PosType:     ofxgo.PosTypeLong,
+				HeldInAcct:  SubAcctTypeCash,
+				PosType:     PosTypeLong,
 				Units:       posunits1,
 				UnitPrice:   posunitprice1,
 				MktVal:      posmktval1,
-				DtPriceAsOf: *ofxgo.NewDateGMT(2017, 3, 31, 16, 0, 0, 0),
+				DtPriceAsOf: *NewDateGMT(2017, 3, 31, 16, 0, 0, 0),
 				Memo:        "Price as of previous close",
 			},
 			ReinvDiv: true,
@@ -1486,7 +1485,7 @@ func TestUnmarshalPositionList(t *testing.T) {
 		},
 	}
 
-	var actual ofxgo.PositionList
+	var actual PositionList
 	err := xml.Unmarshal([]byte(input), &actual)
 	if err != nil {
 		t.Fatalf("Unexpected error unmarshalling PositionList: %s\n", err)
@@ -1675,192 +1674,192 @@ func TestUnmarshalOOList(t *testing.T) {
 	</SWITCHMF>
 </INVOOLIST>`
 
-	var oounits1, oolimitprice1, oounits2, oolimitprice2 ofxgo.Amount
+	var oounits1, oolimitprice1, oounits2, oolimitprice2 Amount
 	oounits1.SetFrac64(10, 1)
 	oolimitprice1.SetFrac64(16850, 100)
 	oounits2.SetFrac64(25, 1)
 	oolimitprice2.SetFrac64(1975, 100)
 
-	expected := ofxgo.OOList{
-		ofxgo.OOBuyDebt{
-			OO: ofxgo.OO{
+	expected := OOList{
+		OOBuyDebt{
+			OO: OO{
 				FiTID: "76464632",
-				SecID: ofxgo.SecurityID{
+				SecID: SecurityID{
 					UniqueID:     "922908645",
 					UniqueIDType: "CUSIP",
 				},
-				DtPlaced:    *ofxgo.NewDateGMT(2017, 3, 10, 12, 44, 45, 0),
+				DtPlaced:    *NewDateGMT(2017, 3, 10, 12, 44, 45, 0),
 				Units:       oounits1,
-				SubAcct:     ofxgo.SubAcctTypeCash,
-				Duration:    ofxgo.DurationDay,
-				Restriction: ofxgo.RestrictionNone,
+				SubAcct:     SubAcctTypeCash,
+				Duration:    DurationDay,
+				Restriction: RestrictionNone,
 			},
 			Auction: true,
 		},
-		ofxgo.OOBuyMF{
-			OO: ofxgo.OO{
+		OOBuyMF{
+			OO: OO{
 				FiTID: "76464632",
-				SecID: ofxgo.SecurityID{
+				SecID: SecurityID{
 					UniqueID:     "922908645",
 					UniqueIDType: "CUSIP",
 				},
-				DtPlaced:    *ofxgo.NewDateGMT(2017, 3, 10, 12, 44, 45, 0),
+				DtPlaced:    *NewDateGMT(2017, 3, 10, 12, 44, 45, 0),
 				Units:       oounits1,
-				SubAcct:     ofxgo.SubAcctTypeCash,
-				Duration:    ofxgo.DurationGoodTilCancel,
-				Restriction: ofxgo.RestrictionNone,
+				SubAcct:     SubAcctTypeCash,
+				Duration:    DurationGoodTilCancel,
+				Restriction: RestrictionNone,
 				LimitPrice:  oolimitprice1,
 			},
-			BuyType:  ofxgo.BuyTypeBuy,
-			UnitType: ofxgo.UnitTypeShares,
+			BuyType:  BuyTypeBuy,
+			UnitType: UnitTypeShares,
 		},
-		ofxgo.OOBuyOpt{
-			OO: ofxgo.OO{
+		OOBuyOpt{
+			OO: OO{
 				FiTID: "999387423",
-				SecID: ofxgo.SecurityID{
+				SecID: SecurityID{
 					UniqueID:     "899422348",
 					UniqueIDType: "CUSIP",
 				},
-				DtPlaced:    *ofxgo.NewDateGMT(2017, 3, 24, 3, 19, 0, 0),
+				DtPlaced:    *NewDateGMT(2017, 3, 24, 3, 19, 0, 0),
 				Units:       oounits2,
-				SubAcct:     ofxgo.SubAcctTypeCash,
-				Duration:    ofxgo.DurationGoodTilCancel,
-				Restriction: ofxgo.RestrictionAllOrNone,
+				SubAcct:     SubAcctTypeCash,
+				Duration:    DurationGoodTilCancel,
+				Restriction: RestrictionAllOrNone,
 				LimitPrice:  oolimitprice2,
 			},
-			OptBuyType: ofxgo.OptBuyTypeBuyToClose,
+			OptBuyType: OptBuyTypeBuyToClose,
 		},
-		ofxgo.OOBuyStock{
-			OO: ofxgo.OO{
+		OOBuyStock{
+			OO: OO{
 				FiTID: "999387423",
-				SecID: ofxgo.SecurityID{
+				SecID: SecurityID{
 					UniqueID:     "899422348",
 					UniqueIDType: "CUSIP",
 				},
-				DtPlaced:    *ofxgo.NewDateGMT(2017, 3, 24, 3, 19, 0, 0),
+				DtPlaced:    *NewDateGMT(2017, 3, 24, 3, 19, 0, 0),
 				Units:       oounits2,
-				SubAcct:     ofxgo.SubAcctTypeCash,
-				Duration:    ofxgo.DurationGoodTilCancel,
-				Restriction: ofxgo.RestrictionAllOrNone,
+				SubAcct:     SubAcctTypeCash,
+				Duration:    DurationGoodTilCancel,
+				Restriction: RestrictionAllOrNone,
 				LimitPrice:  oolimitprice2,
 			},
-			BuyType: ofxgo.BuyTypeBuy,
+			BuyType: BuyTypeBuy,
 		},
-		ofxgo.OOBuyOther{
-			OO: ofxgo.OO{
+		OOBuyOther{
+			OO: OO{
 				FiTID: "999387423",
-				SecID: ofxgo.SecurityID{
+				SecID: SecurityID{
 					UniqueID:     "899422348",
 					UniqueIDType: "CUSIP",
 				},
-				DtPlaced:    *ofxgo.NewDateGMT(2017, 3, 24, 3, 19, 0, 0),
+				DtPlaced:    *NewDateGMT(2017, 3, 24, 3, 19, 0, 0),
 				Units:       oounits2,
-				SubAcct:     ofxgo.SubAcctTypeCash,
-				Duration:    ofxgo.DurationGoodTilCancel,
-				Restriction: ofxgo.RestrictionAllOrNone,
+				SubAcct:     SubAcctTypeCash,
+				Duration:    DurationGoodTilCancel,
+				Restriction: RestrictionAllOrNone,
 				LimitPrice:  oolimitprice2,
 			},
-			UnitType: ofxgo.UnitTypeCurrency,
+			UnitType: UnitTypeCurrency,
 		},
-		ofxgo.OOSellDebt{
-			OO: ofxgo.OO{
+		OOSellDebt{
+			OO: OO{
 				FiTID: "999387423",
-				SecID: ofxgo.SecurityID{
+				SecID: SecurityID{
 					UniqueID:     "899422348",
 					UniqueIDType: "CUSIP",
 				},
-				DtPlaced:    *ofxgo.NewDateGMT(2017, 3, 24, 3, 19, 0, 0),
+				DtPlaced:    *NewDateGMT(2017, 3, 24, 3, 19, 0, 0),
 				Units:       oounits2,
-				SubAcct:     ofxgo.SubAcctTypeCash,
-				Duration:    ofxgo.DurationGoodTilCancel,
-				Restriction: ofxgo.RestrictionAllOrNone,
+				SubAcct:     SubAcctTypeCash,
+				Duration:    DurationGoodTilCancel,
+				Restriction: RestrictionAllOrNone,
 			},
 		},
-		ofxgo.OOSellMF{
-			OO: ofxgo.OO{
+		OOSellMF{
+			OO: OO{
 				FiTID: "999387423",
-				SecID: ofxgo.SecurityID{
+				SecID: SecurityID{
 					UniqueID:     "899422348",
 					UniqueIDType: "CUSIP",
 				},
-				DtPlaced:    *ofxgo.NewDateGMT(2017, 3, 24, 3, 19, 0, 0),
+				DtPlaced:    *NewDateGMT(2017, 3, 24, 3, 19, 0, 0),
 				Units:       oounits2,
-				SubAcct:     ofxgo.SubAcctTypeCash,
-				Duration:    ofxgo.DurationGoodTilCancel,
-				Restriction: ofxgo.RestrictionAllOrNone,
+				SubAcct:     SubAcctTypeCash,
+				Duration:    DurationGoodTilCancel,
+				Restriction: RestrictionAllOrNone,
 			},
-			SellType: ofxgo.SellTypeSellShort,
-			UnitType: ofxgo.UnitTypeShares,
+			SellType: SellTypeSellShort,
+			UnitType: UnitTypeShares,
 			SellAll:  true,
 		},
-		ofxgo.OOSellOpt{
-			OO: ofxgo.OO{
+		OOSellOpt{
+			OO: OO{
 				FiTID: "999387423",
-				SecID: ofxgo.SecurityID{
+				SecID: SecurityID{
 					UniqueID:     "899422348",
 					UniqueIDType: "CUSIP",
 				},
-				DtPlaced:    *ofxgo.NewDateGMT(2017, 3, 24, 3, 19, 0, 0),
+				DtPlaced:    *NewDateGMT(2017, 3, 24, 3, 19, 0, 0),
 				Units:       oounits2,
-				SubAcct:     ofxgo.SubAcctTypeCash,
-				Duration:    ofxgo.DurationGoodTilCancel,
-				Restriction: ofxgo.RestrictionAllOrNone,
+				SubAcct:     SubAcctTypeCash,
+				Duration:    DurationGoodTilCancel,
+				Restriction: RestrictionAllOrNone,
 			},
-			OptSellType: ofxgo.OptSellTypeSellToOpen,
+			OptSellType: OptSellTypeSellToOpen,
 		},
-		ofxgo.OOSellOther{
-			OO: ofxgo.OO{
+		OOSellOther{
+			OO: OO{
 				FiTID: "999387423",
-				SecID: ofxgo.SecurityID{
+				SecID: SecurityID{
 					UniqueID:     "899422348",
 					UniqueIDType: "CUSIP",
 				},
-				DtPlaced:    *ofxgo.NewDateGMT(2017, 3, 24, 3, 19, 0, 0),
+				DtPlaced:    *NewDateGMT(2017, 3, 24, 3, 19, 0, 0),
 				Units:       oounits2,
-				SubAcct:     ofxgo.SubAcctTypeCash,
-				Duration:    ofxgo.DurationGoodTilCancel,
-				Restriction: ofxgo.RestrictionAllOrNone,
+				SubAcct:     SubAcctTypeCash,
+				Duration:    DurationGoodTilCancel,
+				Restriction: RestrictionAllOrNone,
 			},
-			UnitType: ofxgo.UnitTypeShares,
+			UnitType: UnitTypeShares,
 		},
-		ofxgo.OOSellStock{
-			OO: ofxgo.OO{
+		OOSellStock{
+			OO: OO{
 				FiTID: "999387423",
-				SecID: ofxgo.SecurityID{
+				SecID: SecurityID{
 					UniqueID:     "899422348",
 					UniqueIDType: "CUSIP",
 				},
-				DtPlaced:    *ofxgo.NewDateGMT(2017, 3, 24, 3, 19, 0, 0),
+				DtPlaced:    *NewDateGMT(2017, 3, 24, 3, 19, 0, 0),
 				Units:       oounits2,
-				SubAcct:     ofxgo.SubAcctTypeCash,
-				Duration:    ofxgo.DurationGoodTilCancel,
-				Restriction: ofxgo.RestrictionAllOrNone,
+				SubAcct:     SubAcctTypeCash,
+				Duration:    DurationGoodTilCancel,
+				Restriction: RestrictionAllOrNone,
 			},
-			SellType: ofxgo.SellTypeSell,
+			SellType: SellTypeSell,
 		},
-		ofxgo.OOSwitchMF{
-			OO: ofxgo.OO{
+		OOSwitchMF{
+			OO: OO{
 				FiTID: "999387423",
-				SecID: ofxgo.SecurityID{
+				SecID: SecurityID{
 					UniqueID:     "899422348",
 					UniqueIDType: "CUSIP",
 				},
-				DtPlaced:    *ofxgo.NewDateGMT(2017, 3, 24, 3, 19, 0, 0),
+				DtPlaced:    *NewDateGMT(2017, 3, 24, 3, 19, 0, 0),
 				Units:       oounits2,
-				SubAcct:     ofxgo.SubAcctTypeCash,
-				Duration:    ofxgo.DurationGoodTilCancel,
-				Restriction: ofxgo.RestrictionAllOrNone,
+				SubAcct:     SubAcctTypeCash,
+				Duration:    DurationGoodTilCancel,
+				Restriction: RestrictionAllOrNone,
 			},
-			SecID: ofxgo.SecurityID{
+			SecID: SecurityID{
 				UniqueID:     "899422389",
 				UniqueIDType: "CUSIP",
 			},
-			UnitType:  ofxgo.UnitTypeCurrency,
+			UnitType:  UnitTypeCurrency,
 			SwitchAll: false,
 		},
 	}
 
-	var actual ofxgo.OOList
+	var actual OOList
 	err := xml.Unmarshal([]byte(input), &actual)
 	if err != nil {
 		t.Fatalf("Unexpected error unmarshalling OOList: %s\n", err)

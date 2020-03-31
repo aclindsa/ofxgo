@@ -1,12 +1,11 @@
-package ofxgo_test
+package ofxgo
 
 import (
-	"github.com/aclindsa/ofxgo"
 	"testing"
 )
 
 func TestStatusValid(t *testing.T) {
-	s := ofxgo.Status{
+	s := Status{
 		Code:     0,
 		Severity: "INFO",
 		Message:  "Success",
@@ -32,7 +31,7 @@ func TestStatusValid(t *testing.T) {
 }
 
 func TestStatusCodeMeaning(t *testing.T) {
-	s := ofxgo.Status{
+	s := Status{
 		Code:     15500,
 		Severity: "ERROR",
 	}
@@ -51,7 +50,7 @@ func TestStatusCodeMeaning(t *testing.T) {
 }
 
 func TestStatusCodeConditions(t *testing.T) {
-	s := ofxgo.Status{
+	s := Status{
 		Code:     2006,
 		Severity: "ERROR",
 	}

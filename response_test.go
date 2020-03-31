@@ -1,4 +1,4 @@
-package ofxgo_test
+package ofxgo
 
 import (
 	"bytes"
@@ -9,7 +9,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/aclindsa/ofxgo"
 	"github.com/aclindsa/xml"
 )
 
@@ -135,16 +134,16 @@ func checkEqual(t *testing.T, fieldName string, expected, actual reflect.Value) 
 	}
 }
 
-func checkResponsesEqual(t *testing.T, expected, actual *ofxgo.Response) {
+func checkResponsesEqual(t *testing.T, expected, actual *Response) {
 	checkEqual(t, "", reflect.ValueOf(expected), reflect.ValueOf(actual))
 }
 
-func checkResponseRoundTrip(t *testing.T, response *ofxgo.Response) {
+func checkResponseRoundTrip(t *testing.T, response *Response) {
 	b, err := response.Marshal()
 	if err != nil {
 		t.Fatalf("Unexpected error re-marshaling OFX response: %s\n", err)
 	}
-	roundtripped, err := ofxgo.ParseResponse(b)
+	roundtripped, err := ParseResponse(b)
 	if err != nil {
 		t.Fatalf("Unexpected error re-parsing OFX response: %s\n", err)
 	}
@@ -164,7 +163,7 @@ func TestValidSamples(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Unexpected error opening %s: %s\n", path, err)
 		}
-		response, err := ofxgo.ParseResponse(file)
+		response, err := ParseResponse(file)
 		if err != nil {
 			t.Fatalf("Unexpected error parsing OFX response in %s: %s\n", path, err)
 		}
@@ -212,12 +211,12 @@ NEWFILEUID:NONE
 	const expectedErr = "Validation failed: Invalid STATUS>SEVERITY; Invalid STATUS>SEVERITY"
 
 	t.Run("parse response", func(t *testing.T) {
-		resp, err := ofxgo.ParseResponse(bytes.NewReader([]byte(invalidResponse)))
+		resp, err := ParseResponse(bytes.NewReader([]byte(invalidResponse)))
 		expectedErr := "Validation failed: Invalid STATUS>SEVERITY; Invalid STATUS>SEVERITY"
 		if err == nil {
 			t.Fatalf("ParseResponse should fail with %q, found nil", expectedErr)
 		}
-		if _, ok := err.(ofxgo.ErrInvalid); !ok {
+		if _, ok := err.(errInvalid); !ok {
 			t.Errorf("ParseResponse should return an error with type ErrInvalid, found %T", err)
 		}
 		if err.Error() != expectedErr {
@@ -229,7 +228,7 @@ NEWFILEUID:NONE
 	})
 
 	t.Run("parse failed", func(t *testing.T) {
-		resp, err := ofxgo.ParseResponse(bytes.NewReader(nil))
+		resp, err := ParseResponse(bytes.NewReader(nil))
 		if err == nil {
 			t.Error("ParseResponse should fail to decode")
 		}
@@ -239,7 +238,7 @@ NEWFILEUID:NONE
 	})
 
 	t.Run("decode, then validate response", func(t *testing.T) {
-		resp, err := ofxgo.DecodeResponse(bytes.NewReader([]byte(invalidResponse)))
+		resp, err := DecodeResponse(bytes.NewReader([]byte(invalidResponse)))
 		if err != nil {
 			t.Errorf("Unexpected error: %s", err.Error())
 		}
@@ -253,7 +252,7 @@ NEWFILEUID:NONE
 		if err == nil {
 			t.Fatalf("response.Valid() should fail with %q, found nil", expectedErr)
 		}
-		if _, ok := err.(ofxgo.ErrInvalid); !ok {
+		if _, ok := err.(errInvalid); !ok {
 			t.Errorf("response.Valid() should return an error of type ErrInvalid, found: %T", err)
 		}
 		if err.Error() != expectedErr {
@@ -264,7 +263,7 @@ NEWFILEUID:NONE
 
 func TestErrInvalidError(t *testing.T) {
 	expectedErr := `Validation failed: A; B; C`
-	actualErr := ofxgo.ErrInvalid{
+	actualErr := errInvalid{
 		errors.New("A"),
 		errors.New("B"),
 		errors.New("C"),
@@ -276,7 +275,7 @@ func TestErrInvalidError(t *testing.T) {
 
 func TestErrInvalidAddErr(t *testing.T) {
 	t.Run("nil error should be a no-op", func(t *testing.T) {
-		var errs ofxgo.ErrInvalid
+		var errs errInvalid
 		errs.AddErr(nil)
 		if len(errs) != 0 {
 			t.Errorf("Nil err should not be added")
@@ -284,18 +283,18 @@ func TestErrInvalidAddErr(t *testing.T) {
 	})
 
 	t.Run("adds an error normally", func(t *testing.T) {
-		var errs ofxgo.ErrInvalid
+		var errs errInvalid
 		errs.AddErr(errors.New("some error"))
 
 	})
 
 	t.Run("adding the same type should flatten the errors", func(t *testing.T) {
-		var errs ofxgo.ErrInvalid
-		errs.AddErr(ofxgo.ErrInvalid{
+		var errs errInvalid
+		errs.AddErr(errInvalid{
 			errors.New("A"),
 			errors.New("B"),
 		})
-		errs.AddErr(ofxgo.ErrInvalid{
+		errs.AddErr(errInvalid{
 			errors.New("C"),
 		})
 		if len(errs) != 3 {
@@ -305,7 +304,7 @@ func TestErrInvalidAddErr(t *testing.T) {
 }
 
 func TestErrInvalidErrOrNil(t *testing.T) {
-	var errs ofxgo.ErrInvalid
+	var errs errInvalid
 	if err := errs.ErrOrNil(); err != nil {
 		t.Errorf("No added errors should return nil, found: %v", err)
 	}
@@ -315,11 +314,11 @@ func TestErrInvalidErrOrNil(t *testing.T) {
 	if err == nil {
 		t.Fatal("Expected an error, found nil.")
 	}
-	if _, ok := err.(ofxgo.ErrInvalid); !ok {
-		t.Fatalf("Expected err to be of type ErrInvalid, found: %T", err)
+	if _, ok := err.(errInvalid); !ok {
+		t.Fatalf("Expected err to be of type errInvalid, found: %T", err)
 	}
-	errInvalid := err.(ofxgo.ErrInvalid)
-	if len(errInvalid) != 1 || errInvalid[0] != someError {
+	errInv := err.(errInvalid)
+	if len(errInv) != 1 || errInv[0] != someError {
 		t.Errorf("Expected ErrOrNil to return itself, found: %v", err)
 	}
 }

@@ -1,7 +1,6 @@
-package ofxgo_test
+package ofxgo
 
 import (
-	"github.com/aclindsa/ofxgo"
 	"strings"
 	"testing"
 	"time"
@@ -36,13 +35,13 @@ func TestMarshalProfileRequest(t *testing.T) {
 	</PROFMSGSRQV1>
 </OFX>`
 
-	var client = ofxgo.BasicClient{
+	var client = BasicClient{
 		AppID:       "OFXGO",
 		AppVer:      "0001",
-		SpecVersion: ofxgo.OfxVersion203,
+		SpecVersion: OfxVersion203,
 	}
 
-	var request ofxgo.Request
+	var request Request
 	request.Signon.UserID = "anonymous00000000000000000000000"
 	request.Signon.UserPass = "anonymous00000000000000000000000"
 	request.Signon.Org = "BNK"
@@ -50,15 +49,15 @@ func TestMarshalProfileRequest(t *testing.T) {
 
 	EST := time.FixedZone("EST", -5*60*60)
 
-	profileRequest := ofxgo.ProfileRequest{
+	profileRequest := ProfileRequest{
 		TrnUID:   "983373",
-		DtProfUp: *ofxgo.NewDate(2016, 1, 1, 0, 0, 0, 0, EST),
+		DtProfUp: *NewDate(2016, 1, 1, 0, 0, 0, 0, EST),
 	}
 	request.Prof = append(request.Prof, &profileRequest)
 
 	request.SetClientFields(&client)
 	// Overwrite the DtClient value set by SetClientFields to time.Now()
-	request.Signon.DtClient = *ofxgo.NewDate(2016, 6, 14, 7, 34, 0, 0, EST)
+	request.Signon.DtClient = *NewDate(2016, 6, 14, 7, 34, 0, 0, EST)
 
 	marshalCheckRequest(t, &request, expectedString)
 }
@@ -213,89 +212,89 @@ NEWFILEUID:NONE
 </PROFTRNRS>
 </PROFMSGSRSV1>
 </OFX>`)
-	var expected ofxgo.Response
+	var expected Response
 
-	expected.Version = ofxgo.OfxVersion102
+	expected.Version = OfxVersion102
 	expected.Signon.Status.Code = 0
 	expected.Signon.Status.Severity = "INFO"
-	expected.Signon.DtServer = *ofxgo.NewDateGMT(2017, 4, 3, 9, 34, 58, 0)
+	expected.Signon.DtServer = *NewDateGMT(2017, 4, 3, 9, 34, 58, 0)
 	expected.Signon.Language = "ENG"
-	expected.Signon.DtProfUp = ofxgo.NewDateGMT(2002, 11, 19, 14, 0, 0, 0)
+	expected.Signon.DtProfUp = NewDateGMT(2002, 11, 19, 14, 0, 0, 0)
 
-	profileResponse := ofxgo.ProfileResponse{
+	profileResponse := ProfileResponse{
 		TrnUID: "0f94ce83-13b7-7568-e4fc-c02c7b47e7ab",
-		Status: ofxgo.Status{
+		Status: Status{
 			Code:     0,
 			Severity: "INFO",
 		},
-		MessageSetList: ofxgo.MessageSetList{
-			ofxgo.MessageSet{
+		MessageSetList: MessageSetList{
+			MessageSet{
 				Name:        "SIGNONMSGSETV1",
 				Ver:         1,
 				URL:         "https://ofx.example.com/cgi-ofx/exampleofx",
-				OfxSec:      ofxgo.OfxSecNone,
+				OfxSec:      OfxSecNone,
 				TranspSec:   true,
 				SignonRealm: "Example Trade",
-				Language:    []ofxgo.String{"ENG"},
-				SyncMode:    ofxgo.SyncModeLite,
+				Language:    []String{"ENG"},
+				SyncMode:    SyncModeLite,
 				RespFileER:  false,
 				// Ignored: <INTU.TIMEOUT>300
 			},
-			ofxgo.MessageSet{
+			MessageSet{
 				Name:        "SIGNUPMSGSETV1",
 				Ver:         1,
 				URL:         "https://ofx.example.com/cgi-ofx/exampleofx",
-				OfxSec:      ofxgo.OfxSecNone,
+				OfxSec:      OfxSecNone,
 				TranspSec:   true,
 				SignonRealm: "Example Trade",
-				Language:    []ofxgo.String{"ENG"},
-				SyncMode:    ofxgo.SyncModeLite,
+				Language:    []String{"ENG"},
+				SyncMode:    SyncModeLite,
 				RespFileER:  false,
 				// Ignored: <INTU.TIMEOUT>300
 			},
-			ofxgo.MessageSet{
+			MessageSet{
 				Name:        "INVSTMTMSGSETV1",
 				Ver:         1,
 				URL:         "https://ofx.example.com/cgi-ofx/exampleofx",
-				OfxSec:      ofxgo.OfxSecNone,
+				OfxSec:      OfxSecNone,
 				TranspSec:   true,
 				SignonRealm: "Example Trade",
-				Language:    []ofxgo.String{"ENG"},
-				SyncMode:    ofxgo.SyncModeLite,
+				Language:    []String{"ENG"},
+				SyncMode:    SyncModeLite,
 				RespFileER:  false,
 				// Ignored: <INTU.TIMEOUT>300
 			},
-			ofxgo.MessageSet{
+			MessageSet{
 				Name:        "SECLISTMSGSETV1",
 				Ver:         1,
 				URL:         "https://ofx.example.com/cgi-ofx/exampleofx",
-				OfxSec:      ofxgo.OfxSecNone,
+				OfxSec:      OfxSecNone,
 				TranspSec:   true,
 				SignonRealm: "Example Trade",
-				Language:    []ofxgo.String{"ENG"},
-				SyncMode:    ofxgo.SyncModeLite,
+				Language:    []String{"ENG"},
+				SyncMode:    SyncModeLite,
 				RespFileER:  false,
 				// Ignored: <INTU.TIMEOUT>300
 			},
-			ofxgo.MessageSet{
+			MessageSet{
 				Name:        "PROFMSGSETV1",
 				Ver:         1,
 				URL:         "https://ofx.example.com/cgi-ofx/exampleofx",
-				OfxSec:      ofxgo.OfxSecNone,
+				OfxSec:      OfxSecNone,
 				TranspSec:   true,
 				SignonRealm: "Example Trade",
-				Language:    []ofxgo.String{"ENG"},
-				SyncMode:    ofxgo.SyncModeLite,
+				Language:    []String{"ENG"},
+				SyncMode:    SyncModeLite,
 				RespFileER:  false,
 				// Ignored: <INTU.TIMEOUT>300
 			},
 		},
-		SignonInfoList: []ofxgo.SignonInfo{
+		SignonInfoList: []SignonInfo{
 			{
 				SignonRealm: "Example Trade",
 				Min:         1,
 				Max:         32,
-				CharType:    ofxgo.CharTypeAlphaOrNumeric,
+				CharType:    CharTypeAlphaOrNumeric,
 				CaseSen:     false,
 				Special:     true,
 				Spaces:      false,
@@ -303,7 +302,7 @@ NEWFILEUID:NONE
 				ChgPinFirst: false,
 			},
 		},
-		DtProfUp:   *ofxgo.NewDateGMT(2002, 11, 19, 14, 0, 0, 0),
+		DtProfUp:   *NewDateGMT(2002, 11, 19, 14, 0, 0, 0),
 		FiName:     "Example Trade Financial",
 		Addr1:      "5555 Buhunkus Drive",
 		City:       "Someville",
@@ -319,7 +318,7 @@ NEWFILEUID:NONE
 	}
 	expected.Prof = append(expected.Prof, &profileResponse)
 
-	response, err := ofxgo.ParseResponse(responseReader)
+	response, err := ParseResponse(responseReader)
 	if err != nil {
 		t.Fatalf("Unexpected error unmarshalling response: %s\n", err)
 	}
