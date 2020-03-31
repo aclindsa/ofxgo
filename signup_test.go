@@ -1,7 +1,6 @@
-package ofxgo_test
+package ofxgo
 
 import (
-	"github.com/aclindsa/ofxgo"
 	"strings"
 	"testing"
 	"time"
@@ -37,27 +36,27 @@ func TestMarshalAcctInfoRequest(t *testing.T) {
 
 	EST := time.FixedZone("EST", -5*60*60)
 
-	var client = ofxgo.BasicClient{
+	var client = BasicClient{
 		AppID:       "OFXGO",
 		AppVer:      "0001",
-		SpecVersion: ofxgo.OfxVersion203,
+		SpecVersion: OfxVersion203,
 	}
 
-	var request ofxgo.Request
+	var request Request
 	request.Signon.UserID = "myusername"
 	request.Signon.UserPass = "Pa$$word"
 	request.Signon.Org = "BNK"
 	request.Signon.Fid = "1987"
 
-	acctInfoRequest := ofxgo.AcctInfoRequest{
+	acctInfoRequest := AcctInfoRequest{
 		TrnUID:   "e3ad9bda-38fa-4e5b-8099-1bd567ddef7a",
-		DtAcctUp: *ofxgo.NewDate(2015, 12, 21, 18, 29, 45, 0, EST),
+		DtAcctUp: *NewDate(2015, 12, 21, 18, 29, 45, 0, EST),
 	}
 	request.Signup = append(request.Signup, &acctInfoRequest)
 
 	request.SetClientFields(&client)
 	// Overwrite the DtClient value set by SetClientFields to time.Now()
-	request.Signon.DtClient = *ofxgo.NewDate(2016, 1, 15, 11, 23, 0, 0, EST)
+	request.Signon.DtClient = *NewDate(2016, 1, 15, 11, 23, 0, 0, EST)
 
 	marshalCheckRequest(t, &request, expectedString)
 }
@@ -110,38 +109,38 @@ func TestUnmarshalAcctInfoResponse(t *testing.T) {
 		</ACCTINFOTRNRS>
 	</SIGNUPMSGSRSV1>
 </OFX>`)
-	var expected ofxgo.Response
+	var expected Response
 
-	expected.Version = ofxgo.OfxVersion203
+	expected.Version = OfxVersion203
 	expected.Signon.Status.Code = 0
 	expected.Signon.Status.Severity = "INFO"
-	expected.Signon.DtServer = *ofxgo.NewDateGMT(2006, 1, 15, 11, 23, 03, 0)
+	expected.Signon.DtServer = *NewDateGMT(2006, 1, 15, 11, 23, 03, 0)
 	expected.Signon.Language = "ENG"
-	expected.Signon.DtProfUp = ofxgo.NewDateGMT(2005, 2, 21, 9, 13, 0, 0)
-	expected.Signon.DtAcctUp = ofxgo.NewDateGMT(2006, 1, 2, 16, 0, 0, 0)
+	expected.Signon.DtProfUp = NewDateGMT(2005, 2, 21, 9, 13, 0, 0)
+	expected.Signon.DtAcctUp = NewDateGMT(2006, 1, 2, 16, 0, 0, 0)
 	expected.Signon.Org = "BNK"
 	expected.Signon.Fid = "1987"
 
-	bankacctinfo := ofxgo.BankAcctInfo{
-		BankAcctFrom: ofxgo.BankAcct{
+	bankacctinfo := BankAcctInfo{
+		BankAcctFrom: BankAcct{
 			BankID:   "8367556009",
 			AcctID:   "000999847",
-			AcctType: ofxgo.AcctTypeMoneyMrkt,
+			AcctType: AcctTypeMoneyMrkt,
 		},
 		SupTxDl:   true,
 		XferSrc:   true,
 		XferDest:  true,
-		SvcStatus: ofxgo.SvcStatusActive,
+		SvcStatus: SvcStatusActive,
 	}
 
-	acctInfoResponse := ofxgo.AcctInfoResponse{
+	acctInfoResponse := AcctInfoResponse{
 		TrnUID: "10938754",
-		Status: ofxgo.Status{
+		Status: Status{
 			Code:     0,
 			Severity: "INFO",
 		},
-		DtAcctUp: *ofxgo.NewDateGMT(2005, 2, 28, 0, 0, 0, 0),
-		AcctInfo: []ofxgo.AcctInfo{{
+		DtAcctUp: *NewDateGMT(2005, 2, 28, 0, 0, 0, 0),
+		AcctInfo: []AcctInfo{{
 			Desc:         "Personal Checking",
 			Phone:        "888-222-5827",
 			BankAcctInfo: &bankacctinfo,
@@ -149,7 +148,7 @@ func TestUnmarshalAcctInfoResponse(t *testing.T) {
 	}
 	expected.Signup = append(expected.Signup, &acctInfoResponse)
 
-	response, err := ofxgo.ParseResponse(responseReader)
+	response, err := ParseResponse(responseReader)
 	if err != nil {
 		t.Fatalf("Unexpected error unmarshalling response: %s\n", err)
 	}

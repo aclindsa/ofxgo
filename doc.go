@@ -71,33 +71,32 @@ account and print the balance:
 
   import (
     "fmt"
-    "github.com/aclindsa/ofxgo"
     "os"
   )
 
-  var client ofxgo.Client // By not initializing them, we accept all default
+  var client Client // By not initializing them, we accept all default
                           // client values
-  var request ofxgo.Request
+  var request Request
 
   // These are all specific to you and your financial institution
   request.URL = "https://ofx.example.com"
-  request.Signon.UserID = ofxgo.String("john")
-  request.Signon.UserPass = ofxgo.String("hunter2")
-  request.Signon.Org = ofxgo.String("MyBank")
-  request.Signon.Fid = ofxgo.String("0001")
+  request.Signon.UserID = String("john")
+  request.Signon.UserPass = String("hunter2")
+  request.Signon.Org = String("MyBank")
+  request.Signon.Fid = String("0001")
 
-  uid, err := ofxgo.RandomUID()
+  uid, err := RandomUID()
   if err != nil {
     fmt.Println("Error creating uid for transaction:", err)
     os.Exit(1)
   }
 
-  statementRequest := ofxgo.StatementRequest{
+  statementRequest := StatementRequest{
     TrnUID: *uid,
-    BankAcctFrom: ofxgo.BankAcct{
-      BankID:   ofxgo.String("123456789"),
-      AcctID:   ofxgo.String("11111111111"),
-      AcctType: ofxgo.AcctTypeChecking,
+    BankAcctFrom: BankAcct{
+      BankID:   String("123456789"),
+      AcctID:   String("11111111111"),
+      AcctType: AcctTypeChecking,
     },
   }
 
@@ -117,7 +116,7 @@ account and print the balance:
 
   if len(response.Bank) < 1 {
     fmt.Println("No banking messages received")
-  } else if stmt, ok := response.Bank[0].(*ofxgo.StatementResponse); ok {
+  } else if stmt, ok := response.Bank[0].(*StatementResponse); ok {
     fmt.Printf("Balance: %s %s (as of %s)\n", stmt.BalAmt, stmt.CurDef, stmt.DtAsOf)
   }
 

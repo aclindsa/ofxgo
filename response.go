@@ -380,7 +380,7 @@ func DecodeResponse(reader io.Reader) (*Response, error) {
 
 // Valid returns whether the Response is valid according to the OFX spec
 func (or *Response) Valid() (bool, error) {
-	var errs ErrInvalid
+	var errs errInvalid
 	if ok, err := or.Signon.Valid(or.Version); !ok {
 		errs.AddErr(err)
 	}
@@ -477,11 +477,11 @@ func (or *Response) Marshal() (*bytes.Buffer, error) {
 	return &b, nil
 }
 
-// ErrInvalid represents validation failures while parsing an OFX response
+// errInvalid represents validation failures while parsing an OFX response
 // If an institution returns slightly malformed data, ParseResponse will return a best-effort parsed response and a validation error.
-type ErrInvalid []error
+type errInvalid []error
 
-func (e ErrInvalid) Error() string {
+func (e errInvalid) Error() string {
 	var errStrings []string
 	for _, err := range e {
 		errStrings = append(errStrings, err.Error())
@@ -489,9 +489,9 @@ func (e ErrInvalid) Error() string {
 	return fmt.Sprintf("Validation failed: %s", strings.Join(errStrings, "; "))
 }
 
-func (e *ErrInvalid) AddErr(err error) {
+func (e *errInvalid) AddErr(err error) {
 	if err != nil {
-		if errs, ok := err.(ErrInvalid); ok {
+		if errs, ok := err.(errInvalid); ok {
 			*e = append(*e, errs...)
 		} else {
 			*e = append(*e, err)
@@ -499,7 +499,7 @@ func (e *ErrInvalid) AddErr(err error) {
 	}
 }
 
-func (e ErrInvalid) ErrOrNil() error {
+func (e errInvalid) ErrOrNil() error {
 	if len(e) > 0 {
 		return e
 	}

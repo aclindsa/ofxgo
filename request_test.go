@@ -1,7 +1,6 @@
-package ofxgo_test
+package ofxgo
 
 import (
-	"github.com/aclindsa/ofxgo"
 	"regexp"
 	"strings"
 	"testing"
@@ -10,7 +9,7 @@ import (
 // match leading and trailing whitespace on each line
 var ignoreSpacesRe = regexp.MustCompile("(?m)^[ \t]+|[ \t]*$[\r\n]+")
 
-func marshalCheckRequest(t *testing.T, request *ofxgo.Request, expected string) {
+func marshalCheckRequest(t *testing.T, request *Request, expected string) {
 	t.Helper()
 	buf, err := request.Marshal()
 	if err != nil {

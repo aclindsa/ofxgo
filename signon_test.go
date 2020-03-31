@@ -1,18 +1,17 @@
-package ofxgo_test
+package ofxgo
 
 import (
-	"github.com/aclindsa/ofxgo"
 	"testing"
 )
 
 func TestMarshalInvalidSignons(t *testing.T) {
-	var client = ofxgo.BasicClient{
+	var client = BasicClient{
 		AppID:       "OFXGO",
 		AppVer:      "0001",
-		SpecVersion: ofxgo.OfxVersion203,
+		SpecVersion: OfxVersion203,
 	}
 
-	var request ofxgo.Request
+	var request Request
 	request.Signon.UserID = "myusername"
 	request.Signon.UserPass = "Pa$$word"
 	request.Signon.Org = "BNK"

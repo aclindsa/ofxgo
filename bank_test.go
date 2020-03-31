@@ -1,7 +1,6 @@
-package ofxgo_test
+package ofxgo
 
 import (
-	"github.com/aclindsa/ofxgo"
 	"strings"
 	"testing"
 	"time"
@@ -42,24 +41,24 @@ func TestMarshalBankStatementRequest(t *testing.T) {
 	</BANKMSGSRQV1>
 </OFX>`
 
-	var client = ofxgo.BasicClient{
+	var client = BasicClient{
 		AppID:       "OFXGO",
 		AppVer:      "0001",
-		SpecVersion: ofxgo.OfxVersion203,
+		SpecVersion: OfxVersion203,
 	}
 
-	var request ofxgo.Request
+	var request Request
 	request.Signon.UserID = "myusername"
 	request.Signon.UserPass = "Pa$$word"
 	request.Signon.Org = "BNK"
 	request.Signon.Fid = "1987"
 
-	statementRequest := ofxgo.StatementRequest{
+	statementRequest := StatementRequest{
 		TrnUID: "123",
-		BankAcctFrom: ofxgo.BankAcct{
+		BankAcctFrom: BankAcct{
 			BankID:   "318398732",
 			AcctID:   "78346129",
-			AcctType: ofxgo.AcctTypeChecking,
+			AcctType: AcctTypeChecking,
 		},
 		Include: true,
 	}
@@ -68,7 +67,7 @@ func TestMarshalBankStatementRequest(t *testing.T) {
 	request.SetClientFields(&client)
 	// Overwrite the DtClient value set by SetClientFields to time.Now()
 	EST := time.FixedZone("EST", -5*60*60)
-	request.Signon.DtClient = *ofxgo.NewDate(2006, 1, 15, 11, 23, 0, 0, EST)
+	request.Signon.DtClient = *NewDate(2006, 1, 15, 11, 23, 0, 0, EST)
 
 	marshalCheckRequest(t, &request, expectedString)
 }
@@ -116,24 +115,24 @@ NEWFILEUID:NONE
 	</BANKMSGSRQV1>
 </OFX>`
 
-	var client = ofxgo.BasicClient{
+	var client = BasicClient{
 		AppID:       "OFXGO",
 		AppVer:      "0001",
-		SpecVersion: ofxgo.OfxVersion103,
+		SpecVersion: OfxVersion103,
 	}
 
-	var request ofxgo.Request
+	var request Request
 	request.Signon.UserID = "myusername"
 	request.Signon.UserPass = "Pa$$word"
 	request.Signon.Org = "BNK"
 	request.Signon.Fid = "1987"
 
-	statementRequest := ofxgo.StatementRequest{
+	statementRequest := StatementRequest{
 		TrnUID: "123",
-		BankAcctFrom: ofxgo.BankAcct{
+		BankAcctFrom: BankAcct{
 			BankID:   "318398732",
 			AcctID:   "78346129",
-			AcctType: ofxgo.AcctTypeChecking,
+			AcctType: AcctTypeChecking,
 		},
 		Include: true,
 	}
@@ -142,7 +141,7 @@ NEWFILEUID:NONE
 	request.SetClientFields(&client)
 	// Overwrite the DtClient value set by SetClientFields to time.Now()
 	EST := time.FixedZone("EST", -5*60*60)
-	request.Signon.DtClient = *ofxgo.NewDate(2006, 1, 15, 11, 23, 0, 0, EST)
+	request.Signon.DtClient = *NewDate(2006, 1, 15, 11, 23, 0, 0, EST)
 
 	marshalCheckRequest(t, &request, expectedString)
 }
@@ -211,73 +210,73 @@ func TestUnmarshalBankStatementResponse(t *testing.T) {
 		</STMTTRNRS>
 	</BANKMSGSRSV1>
 </OFX>`)
-	var expected ofxgo.Response
+	var expected Response
 
-	expected.Version = ofxgo.OfxVersion203
+	expected.Version = OfxVersion203
 	expected.Signon.Status.Code = 0
 	expected.Signon.Status.Severity = "INFO"
-	expected.Signon.DtServer = *ofxgo.NewDateGMT(2006, 1, 15, 11, 23, 03, 0)
+	expected.Signon.DtServer = *NewDateGMT(2006, 1, 15, 11, 23, 03, 0)
 	expected.Signon.Language = "ENG"
-	expected.Signon.DtProfUp = ofxgo.NewDateGMT(2005, 2, 21, 9, 13, 0, 0)
-	expected.Signon.DtAcctUp = ofxgo.NewDateGMT(2006, 1, 2, 16, 0, 0, 0)
+	expected.Signon.DtProfUp = NewDateGMT(2005, 2, 21, 9, 13, 0, 0)
+	expected.Signon.DtAcctUp = NewDateGMT(2006, 1, 2, 16, 0, 0, 0)
 	expected.Signon.Org = "BNK"
 	expected.Signon.Fid = "1987"
 
-	var trnamt1, trnamt2 ofxgo.Amount
+	var trnamt1, trnamt2 Amount
 	trnamt1.SetFrac64(-20000, 100)
 	trnamt2.SetFrac64(-30000, 100)
 
-	banktranlist := ofxgo.TransactionList{
-		DtStart: *ofxgo.NewDateGMT(2006, 1, 1, 0, 0, 0, 0),
-		DtEnd:   *ofxgo.NewDateGMT(2006, 1, 15, 0, 0, 0, 0),
-		Transactions: []ofxgo.Transaction{
+	banktranlist := TransactionList{
+		DtStart: *NewDateGMT(2006, 1, 1, 0, 0, 0, 0),
+		DtEnd:   *NewDateGMT(2006, 1, 15, 0, 0, 0, 0),
+		Transactions: []Transaction{
 			{
-				TrnType:  ofxgo.TrnTypeCheck,
-				DtPosted: *ofxgo.NewDateGMT(2006, 1, 4, 0, 0, 0, 0),
+				TrnType:  TrnTypeCheck,
+				DtPosted: *NewDateGMT(2006, 1, 4, 0, 0, 0, 0),
 				TrnAmt:   trnamt1,
 				FiTID:    "00592",
 				CheckNum: "2002",
 			},
 			{
-				TrnType:  ofxgo.TrnTypeATM,
-				DtPosted: *ofxgo.NewDateGMT(2006, 1, 12, 0, 0, 0, 0),
-				DtUser:   ofxgo.NewDateGMT(2006, 1, 12, 0, 0, 0, 0),
+				TrnType:  TrnTypeATM,
+				DtPosted: *NewDateGMT(2006, 1, 12, 0, 0, 0, 0),
+				DtUser:   NewDateGMT(2006, 1, 12, 0, 0, 0, 0),
 				TrnAmt:   trnamt2,
 				FiTID:    "00679",
 			},
 		},
 	}
 
-	var balamt, availbalamt ofxgo.Amount
+	var balamt, availbalamt Amount
 	balamt.SetFrac64(20029, 100)
 	availbalamt.SetFrac64(20029, 100)
 
-	usd, err := ofxgo.NewCurrSymbol("USD")
+	usd, err := NewCurrSymbol("USD")
 	if err != nil {
 		t.Fatalf("Unexpected error creating CurrSymbol for USD\n")
 	}
 
-	statementResponse := ofxgo.StatementResponse{
+	statementResponse := StatementResponse{
 		TrnUID: "1001",
-		Status: ofxgo.Status{
+		Status: Status{
 			Code:     0,
 			Severity: "INFO",
 		},
 		CurDef: *usd,
-		BankAcctFrom: ofxgo.BankAcct{
+		BankAcctFrom: BankAcct{
 			BankID:   "318398732",
 			AcctID:   "78346129",
-			AcctType: ofxgo.AcctTypeChecking,
+			AcctType: AcctTypeChecking,
 		},
 		BankTranList: &banktranlist,
 		BalAmt:       balamt,
-		DtAsOf:       *ofxgo.NewDateGMT(2006, 1, 14, 16, 0, 0, 0),
+		DtAsOf:       *NewDateGMT(2006, 1, 14, 16, 0, 0, 0),
 		AvailBalAmt:  &availbalamt,
-		AvailDtAsOf:  ofxgo.NewDateGMT(2006, 1, 14, 16, 0, 0, 0),
+		AvailDtAsOf:  NewDateGMT(2006, 1, 14, 16, 0, 0, 0),
 	}
 	expected.Bank = append(expected.Bank, &statementResponse)
 
-	response, err := ofxgo.ParseResponse(responseReader)
+	response, err := ParseResponse(responseReader)
 	if err != nil {
 		t.Fatalf("Unexpected error unmarshalling response: %s\n", err)
 	}

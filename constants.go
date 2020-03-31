@@ -9,8 +9,9 @@ package ofxgo
 import (
 	"errors"
 	"fmt"
-	"github.com/aclindsa/xml"
 	"strings"
+
+	"github.com/aclindsa/xml"
 )
 
 type ofxVersion uint
