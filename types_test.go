@@ -155,7 +155,7 @@ func TestAmountEqual(t *testing.T) {
 func TestMarshalDate(t *testing.T) {
 	var d *Date
 	UTC := time.FixedZone("UTC", 0)
-	GMT_nodesc := time.FixedZone("", 0)
+	GMTNodesc := time.FixedZone("", 0)
 	EST := time.FixedZone("EST", -5*60*60)
 	NPT := time.FixedZone("NPT", (5*60+45)*60)
 	IST := time.FixedZone("IST", (5*60+30)*60)
@@ -183,7 +183,7 @@ func TestMarshalDate(t *testing.T) {
 	marshalHelper(t, "20170314000026.053[-3.50:NST]", d)
 
 	// Time zone without textual description
-	d = NewDate(2017, 3, 14, 15, 9, 26, 53*1000*1000, GMT_nodesc)
+	d = NewDate(2017, 3, 14, 15, 9, 26, 53*1000*1000, GMTNodesc)
 	marshalHelper(t, "20170314150926.053[0]", d)
 }
 
@@ -195,7 +195,7 @@ func TestUnmarshalDate(t *testing.T) {
 	NPT := time.FixedZone("NPT", (5*60+45)*60)
 	IST := time.FixedZone("IST", (5*60+30)*60)
 	NST := time.FixedZone("NST", -(3*60+30)*60)
-	NST_nodesc := time.FixedZone("", -(3*60+30)*60)
+	NSTNodesc := time.FixedZone("", -(3*60+30)*60)
 
 	eq := func(a, b interface{}) bool {
 		if dateA, ok := a.(*Date); ok {
@@ -245,7 +245,7 @@ func TestUnmarshalDate(t *testing.T) {
 	d = NewDate(2017, 3, 14, 15, 9, 26, 53*1000*1000, GMT)
 	unmarshalHelper2(t, "20170314150926.053[0]", d, &overwritten, eq)
 	// but not for others:
-	d = NewDate(2017, 3, 14, 0, 0, 26, 53*1000*1000, NST_nodesc)
+	d = NewDate(2017, 3, 14, 0, 0, 26, 53*1000*1000, NSTNodesc)
 	unmarshalHelper2(t, "20170314000026.053[-3.50]", d, &overwritten, eq)
 
 	// Make sure we handle poorly-formatted dates (from Vanguard)
