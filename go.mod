@@ -2,10 +2,10 @@ module github.com/aclindsa/ofxgo
 
 require (
 	github.com/aclindsa/xml v0.0.0-20190701095008-453d2c6090c2
-	github.com/howeyc/gopass v0.0.0-20170109162249-bf9dde6d0d2c
-	golang.org/x/crypto v0.0.0-20181001203147-e3636079e1a4 // indirect
-	golang.org/x/sys v0.0.0-20180928133829-e4b3c5e90611 // indirect
-	golang.org/x/text v0.0.0-20180911161511-905a57155faa
+	github.com/howeyc/gopass v0.0.0-20190910152052-7cb4b85ec19c
+	golang.org/x/crypto v0.0.0-20201002170205-7f63de1d35b0 // indirect
+	golang.org/x/sys v0.0.0-20201006155630-ac719f4daadf // indirect
+	golang.org/x/text v0.3.3
 )
 
 go 1.9
