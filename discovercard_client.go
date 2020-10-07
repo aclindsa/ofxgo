@@ -20,7 +20,7 @@ type DiscoverCardClient struct {
 }
 
 // NewDiscoverCardClient returns a Client interface configured to handle
-// Discover Card's brand of idiosyncracy
+// Discover Card's brand of idiosyncrasy
 func NewDiscoverCardClient(bc *BasicClient) Client {
 	return &DiscoverCardClient{bc}
 }
