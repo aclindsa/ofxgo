@@ -3,7 +3,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/aclindsa/ofxgo)](https://goreportcard.com/report/github.com/aclindsa/ofxgo)
 [![Build Status](https://travis-ci.com/aclindsa/ofxgo.svg?branch=master)](https://travis-ci.com/aclindsa/ofxgo)
 [![Coverage Status](https://coveralls.io/repos/github/aclindsa/ofxgo/badge.svg?branch=master)](https://coveralls.io/github/aclindsa/ofxgo?branch=master)
-[![PkgGoDev](https://pkg.go.dev/badge/github.com/aclindsa?ofxgo)](https://pkg.go.dev/github.com/aclindsa?ofxgo)
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/aclindsa?ofxgo)](https://pkg.go.dev/github.com/aclindsa/ofxgo)
 
 **OFXGo** is a library for querying OFX servers and/or parsing the responses. It
 also provides an example command-line client to demonstrate the use of the
