@@ -15,7 +15,7 @@ type VanguardClient struct {
 }
 
 // NewVanguardClient returns a Client interface configured to handle Vanguard's
-// brand of idiosyncracy
+// brand of idiosyncrasy
 func NewVanguardClient(bc *BasicClient) Client {
 	return &VanguardClient{bc}
 }
