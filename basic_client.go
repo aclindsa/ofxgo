@@ -61,6 +61,8 @@ func (c *BasicClient) CarriageReturnNewLines() bool {
 	return c.CarriageReturn
 }
 
+// RawRequest is a convenience wrapper around http.Post. It is exposed only for
+// when you need to read/inspect the raw HTTP response yourself.
 func (c *BasicClient) RawRequest(URL string, r io.Reader) (*http.Response, error) {
 	if !strings.HasPrefix(URL, "https://") {
 		return nil, errors.New("Refusing to send OFX request with possible plain-text password over non-https protocol")
@@ -78,10 +80,14 @@ func (c *BasicClient) RawRequest(URL string, r io.Reader) (*http.Response, error
 	return response, nil
 }
 
+// RequestNoParse marshals a Request to XML, makes an HTTP request, and returns
+// the raw HTTP response
 func (c *BasicClient) RequestNoParse(r *Request) (*http.Response, error) {
 	return clientRequestNoParse(c, r)
 }
 
+// Request marshals a Request to XML, makes an HTTP request, and then
+// unmarshals the response into a Response object.
 func (c *BasicClient) Request(r *Request) (*Response, error) {
 	return clientRequest(c, r)
 }

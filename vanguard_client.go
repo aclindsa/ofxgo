@@ -47,6 +47,8 @@ func rawRequestCookies(URL string, r io.Reader, cookies []*http.Cookie) (*http.R
 	return response, nil
 }
 
+// RequestNoParse marshals a Request to XML, makes an HTTP request, and returns
+// the raw HTTP response
 func (c *VanguardClient) RequestNoParse(r *Request) (*http.Response, error) {
 	r.SetClientFields(c)
 
@@ -74,6 +76,8 @@ func (c *VanguardClient) RequestNoParse(r *Request) (*http.Response, error) {
 	return response, err
 }
 
+// Request marshals a Request to XML, makes an HTTP request, and then
+// unmarshals the response into a Response object.
 func (c *VanguardClient) Request(r *Request) (*Response, error) {
 	return clientRequest(c, r)
 }
