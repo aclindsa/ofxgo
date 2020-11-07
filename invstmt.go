@@ -103,7 +103,7 @@ type InvSell struct {
 	Taxes        Amount      `xml:"TAXES,omitempty"`
 	Fees         Amount      `xml:"FEES,omitempty"`
 	Load         Amount      `xml:"LOAD,omitempty"`
-	Witholding   Amount      `xml:"WITHHOLDING,omitempty"`  // Federal tax witholdings
+	Withholding  Amount      `xml:"WITHHOLDING,omitempty"`  // Federal tax withholdings
 	TaxExempt    Boolean     `xml:"TAXEXEMPT,omitempty"`    // Tax-exempt transaction
 	Total        Amount      `xml:"TOTAL"`                  // Transaction total. Buys, sells, etc.:((quan. * (price +/- markup/markdown)) +/-(commission + fees + load + taxes + penalty + withholding + statewithholding)). Distributions, interest, margin interest, misc. expense, etc.: amount. Return of cap: cost basis
 	Gain         Amount      `xml:"GAIN,omitempty"`         // Total gain
@@ -112,9 +112,9 @@ type InvSell struct {
 	SubAcctSec   subAcctType `xml:"SUBACCTSEC"`             // Sub-account type for this security. One of CASH, MARGIN, SHORT, OTHER
 	SubAcctFund  subAcctType `xml:"SUBACCTFUND"`            // Where did the money for the transaction come from or go to? CASH, MARGIN, SHORT, OTHER
 
-	LoanID          String `xml:"LOANID,omitempty"`           // For 401(k) accounts only. Indicates that the transaction was due to a loan or a loan repayment, and which loan it was
-	StateWitholding Amount `xml:"STATEWITHHOLDING,omitempty"` // State tax witholdings
-	Penalty         Amount `xml:"PENALTY,omitempty"`          // Amount withheld due to penalty
+	LoanID           String `xml:"LOANID,omitempty"`           // For 401(k) accounts only. Indicates that the transaction was due to a loan or a loan repayment, and which loan it was
+	StateWithholding Amount `xml:"STATEWITHHOLDING,omitempty"` // State tax withholdings
+	Penalty          Amount `xml:"PENALTY,omitempty"`          // Amount withheld due to penalty
 
 	Inv401kSource inv401kSource `xml:"INV401KSOURCE,omitempty"` // Source of money for this transaction. One of PRETAX, AFTERTAX, MATCH, PROFITSHARING, ROLLOVER, OTHERVEST, OTHERNONVEST for 401(k) accounts. Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST
 }
@@ -210,7 +210,7 @@ type Income struct {
 	SubAcctSec    subAcctType   `xml:"SUBACCTSEC"`              // Sub-account type for this security. One of CASH, MARGIN, SHORT, OTHER
 	SubAcctFund   subAcctType   `xml:"SUBACCTFUND"`             // Where did the money for the transaction come from or go to? CASH, MARGIN, SHORT, OTHER
 	TaxExempt     Boolean       `xml:"TAXEXEMPT,omitempty"`     // Tax-exempt transaction
-	Witholding    Amount        `xml:"WITHHOLDING,omitempty"`   // Federal tax witholdings
+	Withholding   Amount        `xml:"WITHHOLDING,omitempty"`   // Federal tax withholdings
 	Currency      Currency      `xml:"CURRENCY,omitempty"`      // Represents the currency this transaction is in (instead of CURDEF in INVSTMTRS) if Valid()
 	OrigCurrency  Currency      `xml:"ORIGCURRENCY,omitempty"`  // Represents the currency this transaction was converted to INVSTMTRS' CURDEF from if Valid
 	Inv401kSource inv401kSource `xml:"INV401KSOURCE,omitempty"` // Source of money for this transaction. One of PRETAX, AFTERTAX, MATCH, PROFITSHARING, ROLLOVER, OTHERVEST, OTHERNONVEST for 401(k) accounts. Default if not present is OTHERNONVEST. The following cash source types are subject to vesting: MATCH, PROFITSHARING, and OTHERVEST
