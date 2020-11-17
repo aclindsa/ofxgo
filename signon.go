@@ -9,17 +9,18 @@ import (
 // SignonRequest identifies and authenticates a user to their FI and is
 // provided with every Request
 type SignonRequest struct {
-	XMLName   xml.Name `xml:"SONRQ"`
-	DtClient  Date     `xml:"DTCLIENT"` // Current time on client, overwritten in Client.Request()
-	UserID    String   `xml:"USERID"`
-	UserPass  String   `xml:"USERPASS,omitempty"`
-	UserKey   String   `xml:"USERKEY,omitempty"`
-	Language  String   `xml:"LANGUAGE"` // Defaults to ENG
-	Org       String   `xml:"FI>ORG"`
-	Fid       String   `xml:"FI>FID"`
-	AppID     String   `xml:"APPID"`  // Overwritten in Client.Request()
-	AppVer    String   `xml:"APPVER"` // Overwritten in Client.Request()
-	ClientUID UID      `xml:"CLIENTUID,omitempty"`
+	XMLName    xml.Name `xml:"SONRQ"`
+	DtClient   Date     `xml:"DTCLIENT"` // Current time on client, overwritten in Client.Request()
+	UserID     String   `xml:"USERID"`
+	UserPass   String   `xml:"USERPASS,omitempty"`
+	UserKey    String   `xml:"USERKEY,omitempty"`
+	GenUserKey Boolean  `xml:"GENUSERKEY,omitempty"`
+	Language   String   `xml:"LANGUAGE"` // Defaults to ENG
+	Org        String   `xml:"FI>ORG"`
+	Fid        String   `xml:"FI>FID"`
+	AppID      String   `xml:"APPID"`  // Overwritten in Client.Request()
+	AppVer     String   `xml:"APPVER"` // Overwritten in Client.Request()
+	ClientUID  UID      `xml:"CLIENTUID,omitempty"`
 }
 
 // Name returns the name of the top-level transaction XML/SGML element
