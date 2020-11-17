@@ -14,10 +14,11 @@ func newRequest() (ofxgo.Client, *ofxgo.Request) {
 	}
 	var client = ofxgo.GetClient(serverURL,
 		&ofxgo.BasicClient{
-			AppID:       appID,
-			AppVer:      appVer,
-			SpecVersion: ver,
-			NoIndent:    noIndentRequests,
+			AppID:          appID,
+			AppVer:         appVer,
+			SpecVersion:    ver,
+			NoIndent:       noIndentRequests,
+			CarriageReturn: carriageReturn,
 		})
 
 	var query ofxgo.Request
