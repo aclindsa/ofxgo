@@ -96,7 +96,7 @@ if stmt, ok := response.Bank[0].(*ofxgo.StatementResponse); ok {
 
 ## Requirements
 
-OFXGo requires go >= 1.9
+OFXGo requires go >= 1.12
 
 ## Using the command-line client
 
