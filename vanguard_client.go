@@ -64,7 +64,7 @@ func (c *VanguardClient) RequestNoParse(r *Request) (*http.Response, error) {
 	// Fortunately, the initial response contains the cookie we need, so if we
 	// detect an empty response with cookies set that didn't have any errors,
 	// re-try the request while sending their cookies back to them.
-	if err == nil && response.ContentLength <= 0 && len(response.Cookies()) > 0 {
+	if response != nil && response.ContentLength <= 0 && len(response.Cookies()) > 0 {
 		b, err = r.Marshal()
 		if err != nil {
 			return nil, err

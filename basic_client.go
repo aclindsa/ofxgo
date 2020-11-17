@@ -74,7 +74,7 @@ func (c *BasicClient) RawRequest(URL string, r io.Reader) (*http.Response, error
 	}
 
 	if response.StatusCode != 200 {
-		return nil, errors.New("OFXQuery request status: " + response.Status)
+		return response, errors.New("OFXQuery request status: " + response.Status)
 	}
 
 	return response, nil
