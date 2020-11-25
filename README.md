@@ -1,7 +1,7 @@
 # OFXGo
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/aclindsa/ofxgo)](https://goreportcard.com/report/github.com/aclindsa/ofxgo)
-[![Build Status](https://travis-ci.com/aclindsa/ofxgo.svg?branch=master)](https://travis-ci.com/aclindsa/ofxgo)
+[![Build Status](https://github.com/aclindsa/ofxgo/workflows/ofxgo%20CI%20Test/badge.svg?branch=master)](https://github.com/aclindsa/ofxgo/actions?query=workflow%3A%22ofxgo+CI+Test%22+branch%3Amaster)
 [![Coverage Status](https://coveralls.io/repos/github/aclindsa/ofxgo/badge.svg?branch=master)](https://coveralls.io/github/aclindsa/ofxgo?branch=master)
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/aclindsa?ofxgo)](https://pkg.go.dev/github.com/aclindsa/ofxgo)
 
