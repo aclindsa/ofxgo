@@ -7,6 +7,7 @@ import (
 )
 
 var commands = []command{
+	profileDownloadCommand,
 	getAccountsCommand,
 	downloadCommand,
 	ccDownloadCommand,
