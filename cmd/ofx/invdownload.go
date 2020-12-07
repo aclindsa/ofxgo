@@ -20,7 +20,7 @@ var brokerID string
 
 func init() {
 	defineServerFlags(invDownloadCommand.Flags)
-	invDownloadCommand.Flags.StringVar(&filename, "filename", "./download.ofx", "The file to save to")
+	invDownloadCommand.Flags.StringVar(&filename, "filename", "./response.ofx", "The file to save to")
 	invDownloadCommand.Flags.StringVar(&acctID, "acctid", "", "AcctID (from `get-accounts` subcommand)")
 	invDownloadCommand.Flags.StringVar(&brokerID, "brokerid", "", "BrokerID (from `get-accounts` subcommand)")
 }
