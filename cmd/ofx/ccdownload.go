@@ -18,7 +18,7 @@ var ccDownloadCommand = command{
 
 func init() {
 	defineServerFlags(ccDownloadCommand.Flags)
-	ccDownloadCommand.Flags.StringVar(&filename, "filename", "./download.ofx", "The file to save to")
+	ccDownloadCommand.Flags.StringVar(&filename, "filename", "./response.ofx", "The file to save to")
 	ccDownloadCommand.Flags.StringVar(&acctID, "acctid", "", "AcctID (from `get-accounts` subcommand)")
 }
 

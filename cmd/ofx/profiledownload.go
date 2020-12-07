@@ -18,7 +18,7 @@ var profileDownloadCommand = command{
 
 func init() {
 	defineServerFlags(profileDownloadCommand.Flags)
-	profileDownloadCommand.Flags.StringVar(&filename, "filename", "./profile.ofx", "The file to save to")
+	profileDownloadCommand.Flags.StringVar(&filename, "filename", "./response.ofx", "The file to save to")
 }
 
 func downloadProfileCheckFlags() bool {
