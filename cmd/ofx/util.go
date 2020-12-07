@@ -31,3 +31,14 @@ func newRequest() (ofxgo.Client, *ofxgo.Request) {
 
 	return client, &query
 }
+
+func printRequest(c ofxgo.Client, r *ofxgo.Request) {
+	r.SetClientFields(c)
+
+	b, err := r.Marshal()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(b)
+}

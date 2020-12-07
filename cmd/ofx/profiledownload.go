@@ -54,6 +54,11 @@ func downloadProfile() {
 
 	query.Prof = append(query.Prof, &profileRequest)
 
+	if dryrun {
+		printRequest(client, query)
+		return
+	}
+
 	response, err := client.RequestNoParse(query)
 	if err != nil {
 		fmt.Println("Error requesting FI profile:", err)
