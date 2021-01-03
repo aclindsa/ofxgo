@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"reflect"
+	"regexp"
 	"strings"
 
 	"github.com/aclindsa/xml"
@@ -35,78 +36,75 @@ type Response struct {
 }
 
 func (or *Response) readSGMLHeaders(r *bufio.Reader) error {
-	var seenHeader, seenVersion bool = false, false
-	for {
-		// Some financial institutions do not properly leave an empty line after the last header.
-		// Avoid attempting to read another header in that case.
-		next, err := r.Peek(1)
-		if err != nil {
-			return err
-		}
-		if next[0] == '<' {
-			break
+	b, err := r.ReadSlice('<')
+	if err != nil {
+		return err
+	}
+
+	s := string(b)
+	err = r.UnreadByte()
+	if err != nil {
+		return err
+	}
+
+	// According to the latest OFX SGML spec (1.6), headers should be CRLF-separated
+	// and written as KEY:VALUE. However, some banks include a whitespace after the
+	// colon (KEY: VALUE), while others include no line breaks at all. The spec doesn't
+	// require a line break after the OFX headers, but it is allowed, and will be
+	// optionally captured & discarded by the trailing `\s*`. Valid SGML headers must
+	// always be present in exactly this order, so a regular expression is acceptable.
+	headerExp := regexp.MustCompile(
+		`OFXHEADER:\s*(?P<OFXHEADER>\d+)\s*` +
+			`DATA:\s*(?P<DATA>[A-Z]+)\s*` +
+			`VERSION:\s*(?P<VERSION>\d+)\s*` +
+			`SECURITY:\s*(?P<SECURITY>[\w]+)\s*` +
+			`ENCODING:\s*(?P<ENCODING>[A-Z0-9-]+)\s*` +
+			`CHARSET:\s*(?P<CHARSET>[\w-]+)\s*` +
+			`COMPRESSION:\s*(?P<COMPRESSION>[A-Z]+)\s*` +
+			`OLDFILEUID:\s*(?P<OLDFILEUID>[\w-]+)\s*` +
+			`NEWFILEUID:\s*(?P<NEWFILEUID>[\w-]+)\s*`)
+
+	matches := headerExp.FindStringSubmatch(s)
+	if len(matches) == 0 {
+		return errors.New("OFX headers malformed")
+	}
+
+	for i, name := range headerExp.SubexpNames() {
+		if i == 0 {
+			continue
 		}
 
-		line, err := r.ReadString('\n')
-		if err != nil {
-			return err
-		}
-		// r.ReadString leaves the '\n' on the end...
-		line = strings.TrimSpace(line)
-
-		if len(line) == 0 {
-			if seenHeader {
-				break
-			} else {
-				continue
-			}
-		}
-		header := strings.SplitN(line, ":", 2)
-		if header == nil || len(header) != 2 {
-			return errors.New("OFX headers malformed")
-		}
-
-		// Some OFX servers put a space after the colon
-		headervalue := strings.TrimSpace(header[1])
-
-		switch header[0] {
+		headerValue := matches[i]
+		switch name {
 		case "OFXHEADER":
-			if headervalue != "100" {
+			if headerValue != "100" {
 				return errors.New("OFXHEADER is not 100")
 			}
-			seenHeader = true
 		case "DATA":
-			if headervalue != "OFXSGML" {
+			if headerValue != "OFXSGML" {
 				return errors.New("OFX DATA header does not contain OFXSGML")
 			}
 		case "VERSION":
-			err := or.Version.FromString(headervalue)
+			err := or.Version.FromString(headerValue)
 			if err != nil {
 				return err
 			}
-			seenVersion = true
-
 			if or.Version > OfxVersion160 {
 				return errors.New("OFX VERSION > 160 in SGML header")
 			}
 		case "SECURITY":
-			if headervalue != "NONE" {
+			if headerValue != "NONE" {
 				return errors.New("OFX SECURITY header not NONE")
 			}
 		case "COMPRESSION":
-			if headervalue != "NONE" {
+			if headerValue != "NONE" {
 				return errors.New("OFX COMPRESSION header not NONE")
 			}
 		case "ENCODING", "CHARSET", "OLDFILEUID", "NEWFILEUID":
-			// TODO check/handle these headers?
-		default:
-			return errors.New("Invalid OFX header: " + header[0])
+			// TODO: check/handle these headers?
 		}
 	}
 
-	if !seenVersion {
-		return errors.New("OFX VERSION header missing")
-	}
 	return nil
 }
 
