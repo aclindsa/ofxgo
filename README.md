@@ -13,7 +13,7 @@ library.
 
 The main purpose of this project is to provide a library to make it easier to
 query financial information with OFX from the comfort of Golang, without having
-to marshal/unmarshal to SGML or XML. The library does *not* intend to abstract
+to marshal/unmarshal to SGML or XML. The library does _not_ intend to abstract
 away all of the details of the OFX specification, which would be difficult to do
 well. Instead, it exposes the OFX SGML/XML hierarchy as structs which mostly
 resemble it. Its primary goal is to enable the creation of other personal
@@ -91,6 +91,27 @@ if stmt, ok := response.Bank[0].(*ofxgo.StatementResponse); ok {
 		}
 		fmt.Printf("%s %-15s %-11s %s%s%s\n", tran.DtPosted, tran.TrnAmt.String()+" "+currency.String(), tran.TrnType, tran.Name, tran.Payee.Name, tran.Memo)
 	}
+}
+```
+
+Similarly, if you have an OFX file available locally, you can parse it directly:
+
+```go
+func main() {
+	f, err := os.Open("./transactions.qfx")
+	if err != nil {
+		fmt.Printf("can't open file: %v\n", err)
+		return
+	}
+	defer f.Close()
+
+	resp, err := ofxgo.ParseResponse(f)
+	if err != nil {
+		fmt.Printf("can't parse response: %v\n", err)
+		return
+	}
+
+	// do something with resp (*ofxgo.Response)
 }
 ```
 
