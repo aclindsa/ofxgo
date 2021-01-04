@@ -176,8 +176,7 @@ func TestValidSamples(t *testing.T) {
 
 func TestInvalidResponse(t *testing.T) {
 	// in this example, the severity is invalid due to mixed upper and lower case letters
-	const invalidResponse = `
-OFXHEADER:100
+	const invalidResponse = `OFXHEADER:100
 DATA:OFXSGML
 VERSION:102
 SECURITY:NONE

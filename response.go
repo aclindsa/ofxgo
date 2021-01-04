@@ -54,7 +54,7 @@ func (or *Response) readSGMLHeaders(r *bufio.Reader) error {
 	// optionally captured & discarded by the trailing `\s*`. Valid SGML headers must
 	// always be present in exactly this order, so a regular expression is acceptable.
 	headerExp := regexp.MustCompile(
-		`OFXHEADER:\s*(?P<OFXHEADER>\d+)\s*` +
+		`^OFXHEADER:\s*(?P<OFXHEADER>\d+)\s*` +
 			`DATA:\s*(?P<DATA>[A-Z]+)\s*` +
 			`VERSION:\s*(?P<VERSION>\d+)\s*` +
 			`SECURITY:\s*(?P<SECURITY>[\w]+)\s*` +
@@ -62,7 +62,7 @@ func (or *Response) readSGMLHeaders(r *bufio.Reader) error {
 			`CHARSET:\s*(?P<CHARSET>[\w-]+)\s*` +
 			`COMPRESSION:\s*(?P<COMPRESSION>[A-Z]+)\s*` +
 			`OLDFILEUID:\s*(?P<OLDFILEUID>[\w-]+)\s*` +
-			`NEWFILEUID:\s*(?P<NEWFILEUID>[\w-]+)\s*`)
+			`NEWFILEUID:\s*(?P<NEWFILEUID>[\w-]+)\s*<$`)
 
 	matches := headerExp.FindStringSubmatch(s)
 	if len(matches) == 0 {
