@@ -93,8 +93,8 @@ func (or *Response) readSGMLHeaders(r *bufio.Reader) error {
 				return errors.New("OFX VERSION > 160 in SGML header")
 			}
 		case "SECURITY":
-			if headerValue != "NONE" {
-				return errors.New("OFX SECURITY header not NONE")
+			if !(headerValue == "NONE" || headerValue == "TYPE1") {
+				return errors.New("OFX SECURITY header must be NONE or TYPE1")
 			}
 		case "COMPRESSION":
 			if headerValue != "NONE" {
