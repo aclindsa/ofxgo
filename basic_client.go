@@ -21,6 +21,8 @@ type BasicClient struct {
 	NoIndent bool
 	// Use carriage returns on new lines
 	CarriageReturn bool
+	// Set User-Agent header to this string, if not empty
+	UserAgent string
 }
 
 // OfxVersion returns the OFX specification version this BasicClient will marshal
@@ -68,7 +70,15 @@ func (c *BasicClient) RawRequest(URL string, r io.Reader) (*http.Response, error
 		return nil, errors.New("Refusing to send OFX request with possible plain-text password over non-https protocol")
 	}
 
-	response, err := http.Post(URL, "application/x-ofx", r)
+	request, err := http.NewRequest("POST", URL, r)
+	if err != nil {
+		return nil, err
+	}
+	request.Header.Set("Content-Type", "application/x-ofx")
+	if c.UserAgent != "" {
+		request.Header.Set("User-Agent", c.UserAgent)
+	}
+	response, err := http.DefaultClient.Do(request)
 	if err != nil {
 		return nil, err
 	}
