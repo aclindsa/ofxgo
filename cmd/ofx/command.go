@@ -24,6 +24,7 @@ var serverURL, username, password, org, fid, appID, appVer, ofxVersion, clientUI
 var noIndentRequests bool
 var carriageReturn bool
 var dryrun bool
+var userAgent string
 
 func defineServerFlags(f *flag.FlagSet) {
 	f.StringVar(&serverURL, "url", "", "Financial institution's OFX Server URL (see ofxhome.com if you don't know it)")
@@ -37,6 +38,7 @@ func defineServerFlags(f *flag.FlagSet) {
 	f.StringVar(&clientUID, "clientuid", "", "Client UID (only required by a few FIs, like Chase)")
 	f.BoolVar(&noIndentRequests, "noindent", false, "Don't indent OFX requests")
 	f.BoolVar(&carriageReturn, "carriagereturn", false, "Use carriage return as line separator")
+	f.StringVar(&userAgent, "useragent", "", "Use string as User-Agent header when sending request")
 	f.BoolVar(&dryrun, "dryrun", false, "Don't send request - print content of request instead")
 }
 

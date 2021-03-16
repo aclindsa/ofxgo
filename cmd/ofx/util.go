@@ -19,6 +19,7 @@ func newRequest() (ofxgo.Client, *ofxgo.Request) {
 			SpecVersion:    ver,
 			NoIndent:       noIndentRequests,
 			CarriageReturn: carriageReturn,
+			UserAgent:      userAgent,
 		})
 
 	var query ofxgo.Request
