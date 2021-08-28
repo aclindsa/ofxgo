@@ -75,6 +75,7 @@ func (c *BasicClient) RawRequest(URL string, r io.Reader) (*http.Response, error
 		return nil, err
 	}
 	request.Header.Set("Content-Type", "application/x-ofx")
+	request.Header.Add("Accept", "*/*, application/x-ofx")
 	if c.UserAgent != "" {
 		request.Header.Set("User-Agent", c.UserAgent)
 	}
