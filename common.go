@@ -362,7 +362,11 @@ type Currency struct {
 }
 
 // Valid returns whether the Currency is valid according to the OFX spec
-func (c Currency) Valid() (bool, error) {
+func (c *Currency) Valid() (bool, error) {
+	if c == nil {
+		return false, errors.New("Currency is nil")
+	}
+
 	if c.CurRate.IsInt() && c.CurRate.Num().Int64() == 0 {
 		return false, errors.New("CurRate may not be zero")
 	} else if ok, err := c.CurSym.Valid(); !ok {
