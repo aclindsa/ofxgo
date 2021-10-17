@@ -60,7 +60,7 @@ func ccTransactions() {
 		fmt.Println("Transactions:")
 		for _, tran := range stmt.BankTranList.Transactions {
 			currency := stmt.CurDef
-			if ok, _ := tran.Currency.Valid(); ok {
+			if tran.Currency != nil {
 				currency = tran.Currency.CurSym
 			}
 
