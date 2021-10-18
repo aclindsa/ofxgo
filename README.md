@@ -26,7 +26,8 @@ created a sample command-line client which uses the library to do simple tasks
 (currently it does little more than list accounts and query for balances and
 transactions). My hope is that by studying its code, new users will be able to
 figure out how to use the library much faster than staring at the OFX
-specification (or this library's API documentation). The command-line client
+specification (or this library's [API
+documentation](https://pkg.go.dev/github.com/aclindsa/ofxgo)). The command-line client
 also serves as an easy way for me to test/debug the library with actual
 financial institutions, which frequently have 'quirks' in their implementations.
 The command-line client can be found in the [cmd/ofx
