@@ -3,7 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/howeyc/gopass"
+	"golang.org/x/term"
+	"os"
 )
 
 type command struct {
@@ -55,7 +56,7 @@ func checkServerFlags() bool {
 
 	if ret && len(password) == 0 {
 		fmt.Printf("Password for %s: ", username)
-		pass, err := gopass.GetPasswd()
+		pass, err := term.ReadPassword(int(os.Stdin.Fd()))
 		if err != nil {
 			fmt.Printf("Error reading password: %s\n", err)
 			ret = false
