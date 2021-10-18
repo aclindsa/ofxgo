@@ -316,6 +316,13 @@ func TestUnmarshalString(t *testing.T) {
 	unmarshalHelper(t, "Some Name\n  ", &s, &overwritten)
 }
 
+func TestStringString(t *testing.T) {
+	var s String = "foobar"
+	if s.String() != "foobar" {
+		t.Fatalf("Unexpected result when returning String.String(): %s\n", s.String())
+	}
+}
+
 func TestMarshalBoolean(t *testing.T) {
 	var b Boolean = true
 	marshalHelper(t, "Y", &b)
@@ -331,6 +338,17 @@ func TestUnmarshalBoolean(t *testing.T) {
 	// Make sure stray newlines are handled properly
 	unmarshalHelper(t, "N\n", &b, &overwritten)
 	unmarshalHelper(t, "N\n \t", &b, &overwritten)
+}
+
+func TestStringBoolean(t *testing.T) {
+	var b Boolean = true
+	if b.String() != "true" {
+		t.Fatalf("Unexpected string for Boolean.String() for true: %s\n", b.String())
+	}
+	b = false
+	if b.String() != "false" {
+		t.Fatalf("Unexpected string for Boolean.String() for false: %s\n", b.String())
+	}
 }
 
 func TestMarshalUID(t *testing.T) {
