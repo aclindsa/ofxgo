@@ -284,3 +284,100 @@ func TestUnmarshalBankStatementResponse(t *testing.T) {
 	checkResponsesEqual(t, &expected, response)
 	checkResponseRoundTrip(t, response)
 }
+
+func TestPayeeValid(t *testing.T) {
+	p := Payee{
+		Name:       "Jane",
+		Addr1:      "Sesame Street",
+		City:       "Mytown",
+		State:      "AA",
+		PostalCode: "12345",
+		Phone:      "12345678901",
+	}
+	valid, err := p.Valid()
+	if !valid {
+		t.Fatalf("Unexpected error from calling Valid: %s\n", err)
+	}
+
+	// Ensure some empty fields trigger invalid response
+	badp := p
+	badp.Name = ""
+	valid, err = badp.Valid()
+	if valid || err == nil {
+		t.Fatalf("Expected error from calling Valid with empty name\n")
+	}
+
+	badp = p
+	badp.Addr1 = ""
+	valid, err = badp.Valid()
+	if valid || err == nil {
+		t.Fatalf("Expected error from calling Valid with empty address\n")
+	}
+
+	badp = p
+	badp.City = ""
+	valid, err = badp.Valid()
+	if valid || err == nil {
+		t.Fatalf("Expected error from calling Valid with empty city\n")
+	}
+
+	badp = p
+	badp.State = ""
+	valid, err = badp.Valid()
+	if valid || err == nil {
+		t.Fatalf("Expected error from calling Valid with empty state\n")
+	}
+
+	badp = p
+	badp.PostalCode = ""
+	valid, err = badp.Valid()
+	if valid || err == nil {
+		t.Fatalf("Expected error from calling Valid with empty postal code\n")
+	}
+
+	badp = p
+	badp.Phone = ""
+	valid, err = badp.Valid()
+	if valid || err == nil {
+		t.Fatalf("Expected error from calling Valid with empty phone\n")
+	}
+}
+
+func TestBalanceValid(t *testing.T) {
+	var a Amount
+	a.SetFrac64(8, 1)
+	b := Balance{
+		Name:    "Checking",
+		Desc:    "Jane's Personal Checking",
+		BalType: BalTypeDollar,
+		Value:   a,
+	}
+	valid, err := b.Valid()
+	if !valid {
+		t.Fatalf("Unexpected error from calling Valid: %s\n", err)
+	}
+
+	badb := b
+	badb.Name = ""
+	valid, err = badb.Valid()
+	if valid || err == nil {
+		t.Fatalf("Expected error from calling Valid with empty name\n")
+	}
+
+	badb = b
+	badb.Desc = ""
+	valid, err = badb.Valid()
+	if valid || err == nil {
+		t.Fatalf("Expected error from calling Valid with empty description\n")
+	}
+
+	badb = Balance{
+		Name:  "Checking",
+		Desc:  "Jane's Personal Checking",
+		Value: a,
+	}
+	valid, err = badb.Valid()
+	if valid || err == nil {
+		t.Fatalf("Expected error from calling Valid with unspecified balance type\n")
+	}
+}
