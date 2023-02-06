@@ -51,6 +51,11 @@ func ccDownload() {
 	}
 	query.CreditCard = append(query.CreditCard, &statementRequest)
 
+	if dryrun {
+		printRequest(client, query)
+		return
+	}
+
 	response, err := client.RequestNoParse(query)
 
 	if err != nil {

@@ -38,6 +38,11 @@ func ccTransactions() {
 	}
 	query.CreditCard = append(query.CreditCard, &statementRequest)
 
+	if dryrun {
+		printRequest(client, query)
+		return
+	}
+
 	response, err := client.Request(query)
 	if err != nil {
 		fmt.Println("Error requesting account statement:", err)
