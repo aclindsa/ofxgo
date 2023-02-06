@@ -35,6 +35,11 @@ func getAccounts() {
 	}
 	query.Signup = append(query.Signup, &acctInfo)
 
+	if dryrun {
+		printRequest(client, query)
+		return
+	}
+
 	response, err := client.Request(query)
 	if err != nil {
 		fmt.Println("Error requesting account information:", err)

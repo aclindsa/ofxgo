@@ -45,6 +45,11 @@ func invTransactions() {
 	}
 	query.InvStmt = append(query.InvStmt, &statementRequest)
 
+	if dryrun {
+		printRequest(client, query)
+		return
+	}
+
 	response, err := client.Request(query)
 	if err != nil {
 		os.Exit(1)

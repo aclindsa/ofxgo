@@ -60,6 +60,11 @@ func invDownload() {
 	}
 	query.InvStmt = append(query.InvStmt, &statementRequest)
 
+	if dryrun {
+		printRequest(client, query)
+		return
+	}
+
 	response, err := client.RequestNoParse(query)
 
 	if err != nil {

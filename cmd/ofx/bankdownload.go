@@ -64,6 +64,11 @@ func download() {
 
 	query.Bank = append(query.Bank, &statementRequest)
 
+	if dryrun {
+		printRequest(client, query)
+		return
+	}
+
 	response, err := client.RequestNoParse(query)
 	if err != nil {
 		fmt.Println("Error requesting account statement:", err)
