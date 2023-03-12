@@ -94,6 +94,7 @@ func (r *SecListResponse) Type() messageType {
 // securities for SecurityList
 type Security interface {
 	SecurityType() string
+	SecurityInfo() SecInfo
 }
 
 // SecInfo represents the generic information about a security. It is included
@@ -136,6 +137,11 @@ func (i DebtInfo) SecurityType() string {
 	return "DEBTINFO"
 }
 
+// SecurityInfo returns SecInfo
+func (i DebtInfo) SecurityInfo() SecInfo {
+	return i.SecInfo
+}
+
 // AssetPortion represents the percentage of a mutual fund with the given asset
 // classification
 type AssetPortion struct {
@@ -169,6 +175,11 @@ func (i MFInfo) SecurityType() string {
 	return "MFINFO"
 }
 
+// SecurityInfo returns SecInfo
+func (i MFInfo) SecurityInfo() SecInfo {
+	return i.SecInfo
+}
+
 // OptInfo provides information about an option
 type OptInfo struct {
 	XMLName      xml.Name    `xml:"OPTINFO"`
@@ -187,6 +198,11 @@ func (i OptInfo) SecurityType() string {
 	return "OPTINFO"
 }
 
+// SecurityInfo returns SecInfo
+func (i OptInfo) SecurityInfo() SecInfo {
+	return i.SecInfo
+}
+
 // OtherInfo provides information about a security type not covered by the
 // other *Info elements
 type OtherInfo struct {
@@ -200,6 +216,11 @@ type OtherInfo struct {
 // SecurityType returns a string representation of this security's type
 func (i OtherInfo) SecurityType() string {
 	return "OTHERINFO"
+}
+
+// SecurityInfo returns SecInfo
+func (i OtherInfo) SecurityInfo() SecInfo {
+	return i.SecInfo
 }
 
 // StockInfo provides information about a security type
@@ -216,6 +237,11 @@ type StockInfo struct {
 // SecurityType returns a string representation of this security's type
 func (i StockInfo) SecurityType() string {
 	return "STOCKINFO"
+}
+
+// SecurityInfo returns SecInfo
+func (i StockInfo) SecurityInfo() SecInfo {
+	return i.SecInfo
 }
 
 // SecurityList is a container for Security objects containaing information
