@@ -764,6 +764,7 @@ type InvPosition struct {
 // Position is an interface satisfied by all the other *Position types
 type Position interface {
 	PositionType() string
+	InvPosition() InvPosition
 }
 
 // DebtPosition represents a position held in a debt security
@@ -775,6 +776,11 @@ type DebtPosition struct {
 // PositionType returns a string representation of this position's type
 func (p DebtPosition) PositionType() string {
 	return "POSDEBT"
+}
+
+// InvPosition returns InvPos
+func (p DebtPosition) InvPosition() InvPosition {
+	return p.InvPos
 }
 
 // MFPosition represents a position held in a mutual fund
@@ -792,6 +798,11 @@ func (p MFPosition) PositionType() string {
 	return "POSMF"
 }
 
+// InvPosition returns InvPos
+func (p MFPosition) InvPosition() InvPosition {
+	return p.InvPos
+}
+
 // OptPosition represents a position held in an option
 type OptPosition struct {
 	XMLName xml.Name    `xml:"POSOPT"`
@@ -802,6 +813,11 @@ type OptPosition struct {
 // PositionType returns a string representation of this position's type
 func (p OptPosition) PositionType() string {
 	return "POSOPT"
+}
+
+// InvPosition returns InvPos
+func (p OptPosition) InvPosition() InvPosition {
+	return p.InvPos
 }
 
 // OtherPosition represents a position held in a security type not covered by
@@ -816,6 +832,11 @@ func (p OtherPosition) PositionType() string {
 	return "POSOTHER"
 }
 
+// InvPosition returns InvPos
+func (p OtherPosition) InvPosition() InvPosition {
+	return p.InvPos
+}
+
 // StockPosition represents a position held in a stock
 type StockPosition struct {
 	XMLName     xml.Name    `xml:"POSSTOCK"`
@@ -828,6 +849,11 @@ type StockPosition struct {
 // PositionType returns a string representation of this position's type
 func (p StockPosition) PositionType() string {
 	return "POSSTOCK"
+}
+
+// InvPosition returns InvPos
+func (p StockPosition) InvPosition() InvPosition {
+	return p.InvPos
 }
 
 // PositionList represents a list of positions held in securities in an
