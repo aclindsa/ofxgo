@@ -1866,3 +1866,47 @@ func TestUnmarshalOOList(t *testing.T) {
 	}
 	checkEqual(t, "OOList", reflect.ValueOf(&expected), reflect.ValueOf(&actual))
 }
+
+func TestSecurityInfo(t *testing.T) {
+	secInfo := SecInfo{
+		Ticker: "ABC",
+	}
+	tests := []Security{
+		DebtInfo{SecInfo: secInfo},
+		MFInfo{SecInfo: secInfo},
+		OptInfo{SecInfo: secInfo},
+		OtherInfo{SecInfo: secInfo},
+		StockInfo{SecInfo: secInfo},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.SecurityType(), func(t *testing.T) {
+			info := tc.SecurityInfo()
+			if info.Ticker != secInfo.Ticker {
+				t.Errorf("got %v, want %v", info, secInfo)
+			}
+		})
+	}
+}
+
+func TestInvPosition(t *testing.T) {
+	invPos := InvPosition{
+		Memo: "stuff",
+	}
+	tests := []Position{
+		DebtPosition{InvPos: invPos},
+		MFPosition{InvPos: invPos},
+		OptPosition{InvPos: invPos},
+		OtherPosition{InvPos: invPos},
+		StockPosition{InvPos: invPos},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.PositionType(), func(t *testing.T) {
+			pos := tc.InvPosition()
+			if pos.Memo != invPos.Memo {
+				t.Errorf("got %v, want %v", pos, invPos)
+			}
+		})
+	}
+}
