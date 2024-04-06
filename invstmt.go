@@ -911,12 +911,12 @@ func (p *PositionList) UnmarshalXML(d *xml.Decoder, start xml.StartElement) erro
 }
 
 // MarshalXML handles marshalling a PositionList to an XML string
-func (p *PositionList) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+func (p PositionList) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	invPosListElement := xml.StartElement{Name: xml.Name{Local: "INVPOSLIST"}}
 	if err := e.EncodeToken(invPosListElement); err != nil {
 		return err
 	}
-	for _, position := range *p {
+	for _, position := range p {
 		start := xml.StartElement{Name: xml.Name{Local: position.PositionType()}}
 		switch pos := position.(type) {
 		case DebtPosition:
@@ -1216,12 +1216,12 @@ func (o *OOList) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 }
 
 // MarshalXML handles marshalling an OOList to an XML string
-func (o *OOList) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+func (o OOList) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	ooListElement := xml.StartElement{Name: xml.Name{Local: "INVOOLIST"}}
 	if err := e.EncodeToken(ooListElement); err != nil {
 		return err
 	}
-	for _, openorder := range *o {
+	for _, openorder := range o {
 		start := xml.StartElement{Name: xml.Name{Local: openorder.OrderType()}}
 		switch oo := openorder.(type) {
 		case OOBuyDebt:

@@ -91,6 +91,13 @@ func TestMarshalAmount(t *testing.T) {
 	marshalHelper(t, "-768276587425", &a)
 	a.SetFrac64(1, 12)
 	marshalHelper(t, "0.0833333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333", &a)
+
+	type AmountStruct struct {
+		A Amount
+	}
+	var as AmountStruct
+	as.A.SetFrac64(1, 8)
+	marshalHelper(t, "<A>0.125</A>", as)
 }
 
 func TestUnmarshalAmount(t *testing.T) {
@@ -185,6 +192,13 @@ func TestMarshalDate(t *testing.T) {
 	// Time zone without textual description
 	d = NewDate(2017, 3, 14, 15, 9, 26, 53*1000*1000, GMTNodesc)
 	marshalHelper(t, "20170314150926.053[0]", d)
+
+	type DateStruct struct {
+		D Date
+	}
+	d = NewDateGMT(2017, 3, 14, 15, 9, 26, 53*1000*1000)
+	ds := DateStruct{D: *d}
+	marshalHelper(t, "<D>20170314150926.053[0:GMT]</D>", ds)
 }
 
 func TestUnmarshalDate(t *testing.T) {
@@ -328,6 +342,12 @@ func TestMarshalBoolean(t *testing.T) {
 	marshalHelper(t, "Y", &b)
 	b = false
 	marshalHelper(t, "N", &b)
+
+	type BooleanStruct struct {
+		B Boolean
+	}
+	bs := BooleanStruct{B: true}
+	marshalHelper(t, "<B>Y</B>", bs)
 }
 
 func TestUnmarshalBoolean(t *testing.T) {
@@ -412,6 +432,12 @@ func TestRandomUID(t *testing.T) {
 func TestMarshalCurrSymbol(t *testing.T) {
 	c, _ := NewCurrSymbol("USD")
 	marshalHelper(t, "USD", &c)
+
+	type CurrSymbolStruct struct {
+		CS CurrSymbol
+	}
+	css := CurrSymbolStruct{CS: *c}
+	marshalHelper(t, "<CS>USD</CS>", css)
 }
 
 func TestUnmarshalCurrSymbol(t *testing.T) {

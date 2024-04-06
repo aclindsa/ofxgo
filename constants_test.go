@@ -56,6 +56,18 @@ func TestOfxVersion(t *testing.T) {
 	if err == nil {
 		t.Fatalf("Expected error unmarshalling garbage value\n")
 	}
+
+	type SC struct {
+		E ofxVersion
+	}
+	sc := SC{E: e}
+	b, err = xml.Marshal(sc)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(struct OfxVersion): %s\n", err)
+	}
+	if string(b) != "<SC><E>220</E></SC>" {
+		t.Fatalf("Expected '%s', got '%s'\n", "<SC><E>220</E></SC>", string(b))
+	}
 }
 
 func TestAcctType(t *testing.T) {
@@ -100,6 +112,18 @@ func TestAcctType(t *testing.T) {
 	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
 	if err == nil {
 		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
+
+	type SC struct {
+		E acctType
+	}
+	sc := SC{E: e}
+	b, err = xml.Marshal(sc)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(struct AcctType): %s\n", err)
+	}
+	if string(b) != "<SC><E>CD</E></SC>" {
+		t.Fatalf("Expected '%s', got '%s'\n", "<SC><E>CD</E></SC>", string(b))
 	}
 }
 
@@ -146,6 +170,18 @@ func TestTrnType(t *testing.T) {
 	if err == nil {
 		t.Fatalf("Expected error unmarshalling garbage value\n")
 	}
+
+	type SC struct {
+		E trnType
+	}
+	sc := SC{E: e}
+	b, err = xml.Marshal(sc)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(struct TrnType): %s\n", err)
+	}
+	if string(b) != "<SC><E>OTHER</E></SC>" {
+		t.Fatalf("Expected '%s', got '%s'\n", "<SC><E>OTHER</E></SC>", string(b))
+	}
 }
 
 func TestImageType(t *testing.T) {
@@ -190,6 +226,18 @@ func TestImageType(t *testing.T) {
 	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
 	if err == nil {
 		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
+
+	type SC struct {
+		E imageType
+	}
+	sc := SC{E: e}
+	b, err = xml.Marshal(sc)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(struct ImageType): %s\n", err)
+	}
+	if string(b) != "<SC><E>TAX</E></SC>" {
+		t.Fatalf("Expected '%s', got '%s'\n", "<SC><E>TAX</E></SC>", string(b))
 	}
 }
 
@@ -236,6 +284,18 @@ func TestImageRefType(t *testing.T) {
 	if err == nil {
 		t.Fatalf("Expected error unmarshalling garbage value\n")
 	}
+
+	type SC struct {
+		E imageRefType
+	}
+	sc := SC{E: e}
+	b, err = xml.Marshal(sc)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(struct ImageRefType): %s\n", err)
+	}
+	if string(b) != "<SC><E>FORMURL</E></SC>" {
+		t.Fatalf("Expected '%s', got '%s'\n", "<SC><E>FORMURL</E></SC>", string(b))
+	}
 }
 
 func TestCheckSup(t *testing.T) {
@@ -280,6 +340,18 @@ func TestCheckSup(t *testing.T) {
 	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
 	if err == nil {
 		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
+
+	type SC struct {
+		E checkSup
+	}
+	sc := SC{E: e}
+	b, err = xml.Marshal(sc)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(struct CheckSup): %s\n", err)
+	}
+	if string(b) != "<SC><E>FRONTANDBACK</E></SC>" {
+		t.Fatalf("Expected '%s', got '%s'\n", "<SC><E>FRONTANDBACK</E></SC>", string(b))
 	}
 }
 
@@ -326,6 +398,18 @@ func TestCorrectAction(t *testing.T) {
 	if err == nil {
 		t.Fatalf("Expected error unmarshalling garbage value\n")
 	}
+
+	type SC struct {
+		E correctAction
+	}
+	sc := SC{E: e}
+	b, err = xml.Marshal(sc)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(struct CorrectAction): %s\n", err)
+	}
+	if string(b) != "<SC><E>REPLACE</E></SC>" {
+		t.Fatalf("Expected '%s', got '%s'\n", "<SC><E>REPLACE</E></SC>", string(b))
+	}
 }
 
 func TestBalType(t *testing.T) {
@@ -370,6 +454,18 @@ func TestBalType(t *testing.T) {
 	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
 	if err == nil {
 		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
+
+	type SC struct {
+		E balType
+	}
+	sc := SC{E: e}
+	b, err = xml.Marshal(sc)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(struct BalType): %s\n", err)
+	}
+	if string(b) != "<SC><E>NUMBER</E></SC>" {
+		t.Fatalf("Expected '%s', got '%s'\n", "<SC><E>NUMBER</E></SC>", string(b))
 	}
 }
 
@@ -416,6 +512,18 @@ func TestInv401kSource(t *testing.T) {
 	if err == nil {
 		t.Fatalf("Expected error unmarshalling garbage value\n")
 	}
+
+	type SC struct {
+		E inv401kSource
+	}
+	sc := SC{E: e}
+	b, err = xml.Marshal(sc)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(struct Inv401kSource): %s\n", err)
+	}
+	if string(b) != "<SC><E>OTHERNONVEST</E></SC>" {
+		t.Fatalf("Expected '%s', got '%s'\n", "<SC><E>OTHERNONVEST</E></SC>", string(b))
+	}
 }
 
 func TestSubAcctType(t *testing.T) {
@@ -460,6 +568,18 @@ func TestSubAcctType(t *testing.T) {
 	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
 	if err == nil {
 		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
+
+	type SC struct {
+		E subAcctType
+	}
+	sc := SC{E: e}
+	b, err = xml.Marshal(sc)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(struct SubAcctType): %s\n", err)
+	}
+	if string(b) != "<SC><E>OTHER</E></SC>" {
+		t.Fatalf("Expected '%s', got '%s'\n", "<SC><E>OTHER</E></SC>", string(b))
 	}
 }
 
@@ -506,6 +626,18 @@ func TestBuyType(t *testing.T) {
 	if err == nil {
 		t.Fatalf("Expected error unmarshalling garbage value\n")
 	}
+
+	type SC struct {
+		E buyType
+	}
+	sc := SC{E: e}
+	b, err = xml.Marshal(sc)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(struct BuyType): %s\n", err)
+	}
+	if string(b) != "<SC><E>BUYTOCOVER</E></SC>" {
+		t.Fatalf("Expected '%s', got '%s'\n", "<SC><E>BUYTOCOVER</E></SC>", string(b))
+	}
 }
 
 func TestOptAction(t *testing.T) {
@@ -550,6 +682,18 @@ func TestOptAction(t *testing.T) {
 	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
 	if err == nil {
 		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
+
+	type SC struct {
+		E optAction
+	}
+	sc := SC{E: e}
+	b, err = xml.Marshal(sc)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(struct OptAction): %s\n", err)
+	}
+	if string(b) != "<SC><E>EXPIRE</E></SC>" {
+		t.Fatalf("Expected '%s', got '%s'\n", "<SC><E>EXPIRE</E></SC>", string(b))
 	}
 }
 
@@ -596,6 +740,18 @@ func TestTferAction(t *testing.T) {
 	if err == nil {
 		t.Fatalf("Expected error unmarshalling garbage value\n")
 	}
+
+	type SC struct {
+		E tferAction
+	}
+	sc := SC{E: e}
+	b, err = xml.Marshal(sc)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(struct TferAction): %s\n", err)
+	}
+	if string(b) != "<SC><E>OUT</E></SC>" {
+		t.Fatalf("Expected '%s', got '%s'\n", "<SC><E>OUT</E></SC>", string(b))
+	}
 }
 
 func TestPosType(t *testing.T) {
@@ -640,6 +796,18 @@ func TestPosType(t *testing.T) {
 	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
 	if err == nil {
 		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
+
+	type SC struct {
+		E posType
+	}
+	sc := SC{E: e}
+	b, err = xml.Marshal(sc)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(struct PosType): %s\n", err)
+	}
+	if string(b) != "<SC><E>SHORT</E></SC>" {
+		t.Fatalf("Expected '%s', got '%s'\n", "<SC><E>SHORT</E></SC>", string(b))
 	}
 }
 
@@ -686,6 +854,18 @@ func TestSecured(t *testing.T) {
 	if err == nil {
 		t.Fatalf("Expected error unmarshalling garbage value\n")
 	}
+
+	type SC struct {
+		E secured
+	}
+	sc := SC{E: e}
+	b, err = xml.Marshal(sc)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(struct Secured): %s\n", err)
+	}
+	if string(b) != "<SC><E>COVERED</E></SC>" {
+		t.Fatalf("Expected '%s', got '%s'\n", "<SC><E>COVERED</E></SC>", string(b))
+	}
 }
 
 func TestDuration(t *testing.T) {
@@ -730,6 +910,18 @@ func TestDuration(t *testing.T) {
 	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
 	if err == nil {
 		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
+
+	type SC struct {
+		E duration
+	}
+	sc := SC{E: e}
+	b, err = xml.Marshal(sc)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(struct Duration): %s\n", err)
+	}
+	if string(b) != "<SC><E>IMMEDIATE</E></SC>" {
+		t.Fatalf("Expected '%s', got '%s'\n", "<SC><E>IMMEDIATE</E></SC>", string(b))
 	}
 }
 
@@ -776,6 +968,18 @@ func TestRestriction(t *testing.T) {
 	if err == nil {
 		t.Fatalf("Expected error unmarshalling garbage value\n")
 	}
+
+	type SC struct {
+		E restriction
+	}
+	sc := SC{E: e}
+	b, err = xml.Marshal(sc)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(struct Restriction): %s\n", err)
+	}
+	if string(b) != "<SC><E>NONE</E></SC>" {
+		t.Fatalf("Expected '%s', got '%s'\n", "<SC><E>NONE</E></SC>", string(b))
+	}
 }
 
 func TestUnitType(t *testing.T) {
@@ -820,6 +1024,18 @@ func TestUnitType(t *testing.T) {
 	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
 	if err == nil {
 		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
+
+	type SC struct {
+		E unitType
+	}
+	sc := SC{E: e}
+	b, err = xml.Marshal(sc)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(struct UnitType): %s\n", err)
+	}
+	if string(b) != "<SC><E>CURRENCY</E></SC>" {
+		t.Fatalf("Expected '%s', got '%s'\n", "<SC><E>CURRENCY</E></SC>", string(b))
 	}
 }
 
@@ -866,6 +1082,18 @@ func TestOptBuyType(t *testing.T) {
 	if err == nil {
 		t.Fatalf("Expected error unmarshalling garbage value\n")
 	}
+
+	type SC struct {
+		E optBuyType
+	}
+	sc := SC{E: e}
+	b, err = xml.Marshal(sc)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(struct OptBuyType): %s\n", err)
+	}
+	if string(b) != "<SC><E>BUYTOCLOSE</E></SC>" {
+		t.Fatalf("Expected '%s', got '%s'\n", "<SC><E>BUYTOCLOSE</E></SC>", string(b))
+	}
 }
 
 func TestSellType(t *testing.T) {
@@ -910,6 +1138,18 @@ func TestSellType(t *testing.T) {
 	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
 	if err == nil {
 		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
+
+	type SC struct {
+		E sellType
+	}
+	sc := SC{E: e}
+	b, err = xml.Marshal(sc)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(struct SellType): %s\n", err)
+	}
+	if string(b) != "<SC><E>SELLSHORT</E></SC>" {
+		t.Fatalf("Expected '%s', got '%s'\n", "<SC><E>SELLSHORT</E></SC>", string(b))
 	}
 }
 
@@ -956,6 +1196,18 @@ func TestLoanPmtFreq(t *testing.T) {
 	if err == nil {
 		t.Fatalf("Expected error unmarshalling garbage value\n")
 	}
+
+	type SC struct {
+		E loanPmtFreq
+	}
+	sc := SC{E: e}
+	b, err = xml.Marshal(sc)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(struct LoanPmtFreq): %s\n", err)
+	}
+	if string(b) != "<SC><E>OTHER</E></SC>" {
+		t.Fatalf("Expected '%s', got '%s'\n", "<SC><E>OTHER</E></SC>", string(b))
+	}
 }
 
 func TestIncomeType(t *testing.T) {
@@ -1000,6 +1252,18 @@ func TestIncomeType(t *testing.T) {
 	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
 	if err == nil {
 		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
+
+	type SC struct {
+		E incomeType
+	}
+	sc := SC{E: e}
+	b, err = xml.Marshal(sc)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(struct IncomeType): %s\n", err)
+	}
+	if string(b) != "<SC><E>MISC</E></SC>" {
+		t.Fatalf("Expected '%s', got '%s'\n", "<SC><E>MISC</E></SC>", string(b))
 	}
 }
 
@@ -1046,6 +1310,18 @@ func TestSellReason(t *testing.T) {
 	if err == nil {
 		t.Fatalf("Expected error unmarshalling garbage value\n")
 	}
+
+	type SC struct {
+		E sellReason
+	}
+	sc := SC{E: e}
+	b, err = xml.Marshal(sc)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(struct SellReason): %s\n", err)
+	}
+	if string(b) != "<SC><E>MATURITY</E></SC>" {
+		t.Fatalf("Expected '%s', got '%s'\n", "<SC><E>MATURITY</E></SC>", string(b))
+	}
 }
 
 func TestOptSellType(t *testing.T) {
@@ -1090,6 +1366,18 @@ func TestOptSellType(t *testing.T) {
 	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
 	if err == nil {
 		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
+
+	type SC struct {
+		E optSellType
+	}
+	sc := SC{E: e}
+	b, err = xml.Marshal(sc)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(struct OptSellType): %s\n", err)
+	}
+	if string(b) != "<SC><E>SELLTOOPEN</E></SC>" {
+		t.Fatalf("Expected '%s', got '%s'\n", "<SC><E>SELLTOOPEN</E></SC>", string(b))
 	}
 }
 
@@ -1136,6 +1424,18 @@ func TestRelType(t *testing.T) {
 	if err == nil {
 		t.Fatalf("Expected error unmarshalling garbage value\n")
 	}
+
+	type SC struct {
+		E relType
+	}
+	sc := SC{E: e}
+	b, err = xml.Marshal(sc)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(struct RelType): %s\n", err)
+	}
+	if string(b) != "<SC><E>OTHER</E></SC>" {
+		t.Fatalf("Expected '%s', got '%s'\n", "<SC><E>OTHER</E></SC>", string(b))
+	}
 }
 
 func TestCharType(t *testing.T) {
@@ -1180,6 +1480,18 @@ func TestCharType(t *testing.T) {
 	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
 	if err == nil {
 		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
+
+	type SC struct {
+		E charType
+	}
+	sc := SC{E: e}
+	b, err = xml.Marshal(sc)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(struct CharType): %s\n", err)
+	}
+	if string(b) != "<SC><E>ALPHAANDNUMERIC</E></SC>" {
+		t.Fatalf("Expected '%s', got '%s'\n", "<SC><E>ALPHAANDNUMERIC</E></SC>", string(b))
 	}
 }
 
@@ -1226,6 +1538,18 @@ func TestSyncMode(t *testing.T) {
 	if err == nil {
 		t.Fatalf("Expected error unmarshalling garbage value\n")
 	}
+
+	type SC struct {
+		E syncMode
+	}
+	sc := SC{E: e}
+	b, err = xml.Marshal(sc)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(struct SyncMode): %s\n", err)
+	}
+	if string(b) != "<SC><E>LITE</E></SC>" {
+		t.Fatalf("Expected '%s', got '%s'\n", "<SC><E>LITE</E></SC>", string(b))
+	}
 }
 
 func TestOfxSec(t *testing.T) {
@@ -1270,6 +1594,18 @@ func TestOfxSec(t *testing.T) {
 	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
 	if err == nil {
 		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
+
+	type SC struct {
+		E ofxSec
+	}
+	sc := SC{E: e}
+	b, err = xml.Marshal(sc)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(struct OfxSec): %s\n", err)
+	}
+	if string(b) != "<SC><E>TYPE 1</E></SC>" {
+		t.Fatalf("Expected '%s', got '%s'\n", "<SC><E>TYPE 1</E></SC>", string(b))
 	}
 }
 
@@ -1316,6 +1652,18 @@ func TestDebtType(t *testing.T) {
 	if err == nil {
 		t.Fatalf("Expected error unmarshalling garbage value\n")
 	}
+
+	type SC struct {
+		E debtType
+	}
+	sc := SC{E: e}
+	b, err = xml.Marshal(sc)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(struct DebtType): %s\n", err)
+	}
+	if string(b) != "<SC><E>ZERO</E></SC>" {
+		t.Fatalf("Expected '%s', got '%s'\n", "<SC><E>ZERO</E></SC>", string(b))
+	}
 }
 
 func TestDebtClass(t *testing.T) {
@@ -1360,6 +1708,18 @@ func TestDebtClass(t *testing.T) {
 	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
 	if err == nil {
 		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
+
+	type SC struct {
+		E debtClass
+	}
+	sc := SC{E: e}
+	b, err = xml.Marshal(sc)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(struct DebtClass): %s\n", err)
+	}
+	if string(b) != "<SC><E>OTHER</E></SC>" {
+		t.Fatalf("Expected '%s', got '%s'\n", "<SC><E>OTHER</E></SC>", string(b))
 	}
 }
 
@@ -1406,6 +1766,18 @@ func TestCouponFreq(t *testing.T) {
 	if err == nil {
 		t.Fatalf("Expected error unmarshalling garbage value\n")
 	}
+
+	type SC struct {
+		E couponFreq
+	}
+	sc := SC{E: e}
+	b, err = xml.Marshal(sc)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(struct CouponFreq): %s\n", err)
+	}
+	if string(b) != "<SC><E>OTHER</E></SC>" {
+		t.Fatalf("Expected '%s', got '%s'\n", "<SC><E>OTHER</E></SC>", string(b))
+	}
 }
 
 func TestCallType(t *testing.T) {
@@ -1450,6 +1822,18 @@ func TestCallType(t *testing.T) {
 	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
 	if err == nil {
 		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
+
+	type SC struct {
+		E callType
+	}
+	sc := SC{E: e}
+	b, err = xml.Marshal(sc)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(struct CallType): %s\n", err)
+	}
+	if string(b) != "<SC><E>MATURITY</E></SC>" {
+		t.Fatalf("Expected '%s', got '%s'\n", "<SC><E>MATURITY</E></SC>", string(b))
 	}
 }
 
@@ -1496,6 +1880,18 @@ func TestAssetClass(t *testing.T) {
 	if err == nil {
 		t.Fatalf("Expected error unmarshalling garbage value\n")
 	}
+
+	type SC struct {
+		E assetClass
+	}
+	sc := SC{E: e}
+	b, err = xml.Marshal(sc)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(struct AssetClass): %s\n", err)
+	}
+	if string(b) != "<SC><E>OTHER</E></SC>" {
+		t.Fatalf("Expected '%s', got '%s'\n", "<SC><E>OTHER</E></SC>", string(b))
+	}
 }
 
 func TestMfType(t *testing.T) {
@@ -1540,6 +1936,18 @@ func TestMfType(t *testing.T) {
 	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
 	if err == nil {
 		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
+
+	type SC struct {
+		E mfType
+	}
+	sc := SC{E: e}
+	b, err = xml.Marshal(sc)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(struct MfType): %s\n", err)
+	}
+	if string(b) != "<SC><E>OTHER</E></SC>" {
+		t.Fatalf("Expected '%s', got '%s'\n", "<SC><E>OTHER</E></SC>", string(b))
 	}
 }
 
@@ -1586,6 +1994,18 @@ func TestOptType(t *testing.T) {
 	if err == nil {
 		t.Fatalf("Expected error unmarshalling garbage value\n")
 	}
+
+	type SC struct {
+		E optType
+	}
+	sc := SC{E: e}
+	b, err = xml.Marshal(sc)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(struct OptType): %s\n", err)
+	}
+	if string(b) != "<SC><E>CALL</E></SC>" {
+		t.Fatalf("Expected '%s', got '%s'\n", "<SC><E>CALL</E></SC>", string(b))
+	}
 }
 
 func TestStockType(t *testing.T) {
@@ -1630,6 +2050,18 @@ func TestStockType(t *testing.T) {
 	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
 	if err == nil {
 		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
+
+	type SC struct {
+		E stockType
+	}
+	sc := SC{E: e}
+	b, err = xml.Marshal(sc)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(struct StockType): %s\n", err)
+	}
+	if string(b) != "<SC><E>OTHER</E></SC>" {
+		t.Fatalf("Expected '%s', got '%s'\n", "<SC><E>OTHER</E></SC>", string(b))
 	}
 }
 
@@ -1676,6 +2108,18 @@ func TestHolderType(t *testing.T) {
 	if err == nil {
 		t.Fatalf("Expected error unmarshalling garbage value\n")
 	}
+
+	type SC struct {
+		E holderType
+	}
+	sc := SC{E: e}
+	b, err = xml.Marshal(sc)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(struct HolderType): %s\n", err)
+	}
+	if string(b) != "<SC><E>OTHER</E></SC>" {
+		t.Fatalf("Expected '%s', got '%s'\n", "<SC><E>OTHER</E></SC>", string(b))
+	}
 }
 
 func TestAcctClassification(t *testing.T) {
@@ -1720,6 +2164,18 @@ func TestAcctClassification(t *testing.T) {
 	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
 	if err == nil {
 		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
+
+	type SC struct {
+		E acctClassification
+	}
+	sc := SC{E: e}
+	b, err = xml.Marshal(sc)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(struct AcctClassification): %s\n", err)
+	}
+	if string(b) != "<SC><E>OTHER</E></SC>" {
+		t.Fatalf("Expected '%s', got '%s'\n", "<SC><E>OTHER</E></SC>", string(b))
 	}
 }
 
@@ -1766,6 +2222,18 @@ func TestSvcStatus(t *testing.T) {
 	if err == nil {
 		t.Fatalf("Expected error unmarshalling garbage value\n")
 	}
+
+	type SC struct {
+		E svcStatus
+	}
+	sc := SC{E: e}
+	b, err = xml.Marshal(sc)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(struct SvcStatus): %s\n", err)
+	}
+	if string(b) != "<SC><E>ACTIVE</E></SC>" {
+		t.Fatalf("Expected '%s', got '%s'\n", "<SC><E>ACTIVE</E></SC>", string(b))
+	}
 }
 
 func TestUsProductType(t *testing.T) {
@@ -1810,5 +2278,17 @@ func TestUsProductType(t *testing.T) {
 	err = xml.Unmarshal([]byte("<GARBAGE><!LALDK>"), &overwritten)
 	if err == nil {
 		t.Fatalf("Expected error unmarshalling garbage value\n")
+	}
+
+	type SC struct {
+		E usProductType
+	}
+	sc := SC{E: e}
+	b, err = xml.Marshal(sc)
+	if err != nil {
+		t.Fatalf("Unexpected error on xml.Marshal(struct UsProductType): %s\n", err)
+	}
+	if string(b) != "<SC><E>UGMA</E></SC>" {
+		t.Fatalf("Expected '%s', got '%s'\n", "<SC><E>UGMA</E></SC>", string(b))
 	}
 }
