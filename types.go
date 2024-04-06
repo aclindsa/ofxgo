@@ -76,7 +76,7 @@ func (a Amount) String() string {
 }
 
 // MarshalXML marshals an Amount to SGML/XML
-func (a *Amount) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+func (a Amount) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	return e.EncodeElement(a.String(), start)
 }
 
@@ -188,7 +188,7 @@ func (od Date) String() string {
 }
 
 // MarshalXML marshals a Date to XML
-func (od *Date) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+func (od Date) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	return e.EncodeElement(od.String(), start)
 }
 
@@ -260,8 +260,8 @@ func (ob *Boolean) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 }
 
 // MarshalXML marshals a Boolean to XML
-func (ob *Boolean) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
-	if *ob {
+func (ob Boolean) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	if ob {
 		return e.EncodeElement("Y", start)
 	}
 	return e.EncodeElement("N", start)
@@ -358,7 +358,7 @@ func (c *CurrSymbol) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error 
 }
 
 // MarshalXML marshals a CurrSymbol to SGML/XML
-func (c *CurrSymbol) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+func (c CurrSymbol) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	return e.EncodeElement(c.String(), start)
 }
 

@@ -116,11 +116,11 @@ func (e *{enumLower}) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error
 	return e.FromString(value)
 }}
 
-func (e *{enumLower}) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {{
+func (e {enumLower}) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {{
 	if !e.Valid() {{
 		return nil
 	}}
-	enc.EncodeElement({enumLower}s[*e-1], start)
+	enc.EncodeElement({enumLower}s[e-1], start)
 	return nil
 }}
 
@@ -225,6 +225,18 @@ func Test{enum}(t *testing.T) {{
 	if err == nil {{
 		t.Fatalf("Expected error unmarshalling garbage value\\n")
 	}}
+
+	type SC struct {{
+		E {enumLower}
+	}}
+	sc := SC{{E: e}}
+	b, err = xml.Marshal(sc)
+	if err != nil {{
+		t.Fatalf("Unexpected error on xml.Marshal(struct {enum}): %s\\n", err)
+	}}
+	if string(b) != "<SC><E>{lastValueUpper}</E></SC>" {{
+		t.Fatalf("Expected '%s', got '%s'\\n", "<SC><E>{lastValueUpper}</E></SC>", string(b))
+	}}
 }}
 """
 
@@ -232,8 +244,10 @@ with open("constants_test.go", 'w') as f:
     f.write(test_header)
 
     for enum in enums:
+        enumLower = enum[:1].lower() + enum[1:].replace(" ", "")
         firstValueUpper = enums[enum][0][0].upper()
         lastValueUpper = enums[enum][0][-1].upper()
         f.write(test_template.format(enum=enum,
+                              enumLower=enumLower,
                               firstValueUpper=firstValueUpper,
                               lastValueUpper=lastValueUpper))

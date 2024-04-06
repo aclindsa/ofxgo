@@ -69,11 +69,11 @@ func (e *ofxVersion) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error 
 	return e.FromString(value)
 }
 
-func (e *ofxVersion) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+func (e ofxVersion) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	if !e.Valid() {
 		return nil
 	}
-	enc.EncodeElement(ofxVersions[*e-1], start)
+	enc.EncodeElement(ofxVersions[e-1], start)
 	return nil
 }
 
@@ -137,11 +137,11 @@ func (e *acctType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return e.FromString(value)
 }
 
-func (e *acctType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+func (e acctType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	if !e.Valid() {
 		return nil
 	}
-	enc.EncodeElement(acctTypes[*e-1], start)
+	enc.EncodeElement(acctTypes[e-1], start)
 	return nil
 }
 
@@ -218,11 +218,11 @@ func (e *trnType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return e.FromString(value)
 }
 
-func (e *trnType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+func (e trnType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	if !e.Valid() {
 		return nil
 	}
-	enc.EncodeElement(trnTypes[*e-1], start)
+	enc.EncodeElement(trnTypes[e-1], start)
 	return nil
 }
 
@@ -284,11 +284,11 @@ func (e *imageType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return e.FromString(value)
 }
 
-func (e *imageType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+func (e imageType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	if !e.Valid() {
 		return nil
 	}
-	enc.EncodeElement(imageTypes[*e-1], start)
+	enc.EncodeElement(imageTypes[e-1], start)
 	return nil
 }
 
@@ -350,11 +350,11 @@ func (e *imageRefType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) erro
 	return e.FromString(value)
 }
 
-func (e *imageRefType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+func (e imageRefType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	if !e.Valid() {
 		return nil
 	}
-	enc.EncodeElement(imageRefTypes[*e-1], start)
+	enc.EncodeElement(imageRefTypes[e-1], start)
 	return nil
 }
 
@@ -416,11 +416,11 @@ func (e *checkSup) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return e.FromString(value)
 }
 
-func (e *checkSup) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+func (e checkSup) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	if !e.Valid() {
 		return nil
 	}
-	enc.EncodeElement(checkSups[*e-1], start)
+	enc.EncodeElement(checkSups[e-1], start)
 	return nil
 }
 
@@ -481,11 +481,11 @@ func (e *correctAction) UnmarshalXML(d *xml.Decoder, start xml.StartElement) err
 	return e.FromString(value)
 }
 
-func (e *correctAction) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+func (e correctAction) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	if !e.Valid() {
 		return nil
 	}
-	enc.EncodeElement(correctActions[*e-1], start)
+	enc.EncodeElement(correctActions[e-1], start)
 	return nil
 }
 
@@ -547,11 +547,11 @@ func (e *balType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return e.FromString(value)
 }
 
-func (e *balType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+func (e balType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	if !e.Valid() {
 		return nil
 	}
-	enc.EncodeElement(balTypes[*e-1], start)
+	enc.EncodeElement(balTypes[e-1], start)
 	return nil
 }
 
@@ -617,11 +617,11 @@ func (e *inv401kSource) UnmarshalXML(d *xml.Decoder, start xml.StartElement) err
 	return e.FromString(value)
 }
 
-func (e *inv401kSource) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+func (e inv401kSource) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	if !e.Valid() {
 		return nil
 	}
-	enc.EncodeElement(inv401kSources[*e-1], start)
+	enc.EncodeElement(inv401kSources[e-1], start)
 	return nil
 }
 
@@ -684,11 +684,11 @@ func (e *subAcctType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error
 	return e.FromString(value)
 }
 
-func (e *subAcctType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+func (e subAcctType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	if !e.Valid() {
 		return nil
 	}
-	enc.EncodeElement(subAcctTypes[*e-1], start)
+	enc.EncodeElement(subAcctTypes[e-1], start)
 	return nil
 }
 
@@ -749,11 +749,11 @@ func (e *buyType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return e.FromString(value)
 }
 
-func (e *buyType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+func (e buyType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	if !e.Valid() {
 		return nil
 	}
-	enc.EncodeElement(buyTypes[*e-1], start)
+	enc.EncodeElement(buyTypes[e-1], start)
 	return nil
 }
 
@@ -815,11 +815,11 @@ func (e *optAction) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return e.FromString(value)
 }
 
-func (e *optAction) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+func (e optAction) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	if !e.Valid() {
 		return nil
 	}
-	enc.EncodeElement(optActions[*e-1], start)
+	enc.EncodeElement(optActions[e-1], start)
 	return nil
 }
 
@@ -880,11 +880,11 @@ func (e *tferAction) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error 
 	return e.FromString(value)
 }
 
-func (e *tferAction) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+func (e tferAction) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	if !e.Valid() {
 		return nil
 	}
-	enc.EncodeElement(tferActions[*e-1], start)
+	enc.EncodeElement(tferActions[e-1], start)
 	return nil
 }
 
@@ -945,11 +945,11 @@ func (e *posType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return e.FromString(value)
 }
 
-func (e *posType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+func (e posType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	if !e.Valid() {
 		return nil
 	}
-	enc.EncodeElement(posTypes[*e-1], start)
+	enc.EncodeElement(posTypes[e-1], start)
 	return nil
 }
 
@@ -1010,11 +1010,11 @@ func (e *secured) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return e.FromString(value)
 }
 
-func (e *secured) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+func (e secured) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	if !e.Valid() {
 		return nil
 	}
-	enc.EncodeElement(secureds[*e-1], start)
+	enc.EncodeElement(secureds[e-1], start)
 	return nil
 }
 
@@ -1076,11 +1076,11 @@ func (e *duration) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return e.FromString(value)
 }
 
-func (e *duration) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+func (e duration) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	if !e.Valid() {
 		return nil
 	}
-	enc.EncodeElement(durations[*e-1], start)
+	enc.EncodeElement(durations[e-1], start)
 	return nil
 }
 
@@ -1142,11 +1142,11 @@ func (e *restriction) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error
 	return e.FromString(value)
 }
 
-func (e *restriction) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+func (e restriction) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	if !e.Valid() {
 		return nil
 	}
-	enc.EncodeElement(restrictions[*e-1], start)
+	enc.EncodeElement(restrictions[e-1], start)
 	return nil
 }
 
@@ -1207,11 +1207,11 @@ func (e *unitType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return e.FromString(value)
 }
 
-func (e *unitType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+func (e unitType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	if !e.Valid() {
 		return nil
 	}
-	enc.EncodeElement(unitTypes[*e-1], start)
+	enc.EncodeElement(unitTypes[e-1], start)
 	return nil
 }
 
@@ -1272,11 +1272,11 @@ func (e *optBuyType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error 
 	return e.FromString(value)
 }
 
-func (e *optBuyType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+func (e optBuyType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	if !e.Valid() {
 		return nil
 	}
-	enc.EncodeElement(optBuyTypes[*e-1], start)
+	enc.EncodeElement(optBuyTypes[e-1], start)
 	return nil
 }
 
@@ -1337,11 +1337,11 @@ func (e *sellType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return e.FromString(value)
 }
 
-func (e *sellType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+func (e sellType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	if !e.Valid() {
 		return nil
 	}
-	enc.EncodeElement(sellTypes[*e-1], start)
+	enc.EncodeElement(sellTypes[e-1], start)
 	return nil
 }
 
@@ -1410,11 +1410,11 @@ func (e *loanPmtFreq) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error
 	return e.FromString(value)
 }
 
-func (e *loanPmtFreq) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+func (e loanPmtFreq) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	if !e.Valid() {
 		return nil
 	}
-	enc.EncodeElement(loanPmtFreqs[*e-1], start)
+	enc.EncodeElement(loanPmtFreqs[e-1], start)
 	return nil
 }
 
@@ -1478,11 +1478,11 @@ func (e *incomeType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error 
 	return e.FromString(value)
 }
 
-func (e *incomeType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+func (e incomeType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	if !e.Valid() {
 		return nil
 	}
-	enc.EncodeElement(incomeTypes[*e-1], start)
+	enc.EncodeElement(incomeTypes[e-1], start)
 	return nil
 }
 
@@ -1544,11 +1544,11 @@ func (e *sellReason) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error 
 	return e.FromString(value)
 }
 
-func (e *sellReason) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+func (e sellReason) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	if !e.Valid() {
 		return nil
 	}
-	enc.EncodeElement(sellReasons[*e-1], start)
+	enc.EncodeElement(sellReasons[e-1], start)
 	return nil
 }
 
@@ -1609,11 +1609,11 @@ func (e *optSellType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error
 	return e.FromString(value)
 }
 
-func (e *optSellType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+func (e optSellType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	if !e.Valid() {
 		return nil
 	}
-	enc.EncodeElement(optSellTypes[*e-1], start)
+	enc.EncodeElement(optSellTypes[e-1], start)
 	return nil
 }
 
@@ -1676,11 +1676,11 @@ func (e *relType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return e.FromString(value)
 }
 
-func (e *relType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+func (e relType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	if !e.Valid() {
 		return nil
 	}
-	enc.EncodeElement(relTypes[*e-1], start)
+	enc.EncodeElement(relTypes[e-1], start)
 	return nil
 }
 
@@ -1743,11 +1743,11 @@ func (e *charType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return e.FromString(value)
 }
 
-func (e *charType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+func (e charType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	if !e.Valid() {
 		return nil
 	}
-	enc.EncodeElement(charTypes[*e-1], start)
+	enc.EncodeElement(charTypes[e-1], start)
 	return nil
 }
 
@@ -1808,11 +1808,11 @@ func (e *syncMode) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return e.FromString(value)
 }
 
-func (e *syncMode) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+func (e syncMode) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	if !e.Valid() {
 		return nil
 	}
-	enc.EncodeElement(syncModes[*e-1], start)
+	enc.EncodeElement(syncModes[e-1], start)
 	return nil
 }
 
@@ -1873,11 +1873,11 @@ func (e *ofxSec) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return e.FromString(value)
 }
 
-func (e *ofxSec) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+func (e ofxSec) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	if !e.Valid() {
 		return nil
 	}
-	enc.EncodeElement(ofxSecs[*e-1], start)
+	enc.EncodeElement(ofxSecs[e-1], start)
 	return nil
 }
 
@@ -1938,11 +1938,11 @@ func (e *debtType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return e.FromString(value)
 }
 
-func (e *debtType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+func (e debtType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	if !e.Valid() {
 		return nil
 	}
-	enc.EncodeElement(debtTypes[*e-1], start)
+	enc.EncodeElement(debtTypes[e-1], start)
 	return nil
 }
 
@@ -2005,11 +2005,11 @@ func (e *debtClass) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return e.FromString(value)
 }
 
-func (e *debtClass) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+func (e debtClass) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	if !e.Valid() {
 		return nil
 	}
-	enc.EncodeElement(debtClasss[*e-1], start)
+	enc.EncodeElement(debtClasss[e-1], start)
 	return nil
 }
 
@@ -2073,11 +2073,11 @@ func (e *couponFreq) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error 
 	return e.FromString(value)
 }
 
-func (e *couponFreq) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+func (e couponFreq) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	if !e.Valid() {
 		return nil
 	}
-	enc.EncodeElement(couponFreqs[*e-1], start)
+	enc.EncodeElement(couponFreqs[e-1], start)
 	return nil
 }
 
@@ -2140,11 +2140,11 @@ func (e *callType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return e.FromString(value)
 }
 
-func (e *callType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+func (e callType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	if !e.Valid() {
 		return nil
 	}
-	enc.EncodeElement(callTypes[*e-1], start)
+	enc.EncodeElement(callTypes[e-1], start)
 	return nil
 }
 
@@ -2210,11 +2210,11 @@ func (e *assetClass) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error 
 	return e.FromString(value)
 }
 
-func (e *assetClass) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+func (e assetClass) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	if !e.Valid() {
 		return nil
 	}
-	enc.EncodeElement(assetClasss[*e-1], start)
+	enc.EncodeElement(assetClasss[e-1], start)
 	return nil
 }
 
@@ -2276,11 +2276,11 @@ func (e *mfType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return e.FromString(value)
 }
 
-func (e *mfType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+func (e mfType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	if !e.Valid() {
 		return nil
 	}
-	enc.EncodeElement(mfTypes[*e-1], start)
+	enc.EncodeElement(mfTypes[e-1], start)
 	return nil
 }
 
@@ -2341,11 +2341,11 @@ func (e *optType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return e.FromString(value)
 }
 
-func (e *optType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+func (e optType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	if !e.Valid() {
 		return nil
 	}
-	enc.EncodeElement(optTypes[*e-1], start)
+	enc.EncodeElement(optTypes[e-1], start)
 	return nil
 }
 
@@ -2408,11 +2408,11 @@ func (e *stockType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return e.FromString(value)
 }
 
-func (e *stockType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+func (e stockType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	if !e.Valid() {
 		return nil
 	}
-	enc.EncodeElement(stockTypes[*e-1], start)
+	enc.EncodeElement(stockTypes[e-1], start)
 	return nil
 }
 
@@ -2476,11 +2476,11 @@ func (e *holderType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error 
 	return e.FromString(value)
 }
 
-func (e *holderType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+func (e holderType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	if !e.Valid() {
 		return nil
 	}
-	enc.EncodeElement(holderTypes[*e-1], start)
+	enc.EncodeElement(holderTypes[e-1], start)
 	return nil
 }
 
@@ -2543,11 +2543,11 @@ func (e *acctClassification) UnmarshalXML(d *xml.Decoder, start xml.StartElement
 	return e.FromString(value)
 }
 
-func (e *acctClassification) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+func (e acctClassification) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	if !e.Valid() {
 		return nil
 	}
-	enc.EncodeElement(acctClassifications[*e-1], start)
+	enc.EncodeElement(acctClassifications[e-1], start)
 	return nil
 }
 
@@ -2609,11 +2609,11 @@ func (e *svcStatus) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	return e.FromString(value)
 }
 
-func (e *svcStatus) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+func (e svcStatus) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	if !e.Valid() {
 		return nil
 	}
-	enc.EncodeElement(svcStatuss[*e-1], start)
+	enc.EncodeElement(svcStatuss[e-1], start)
 	return nil
 }
 
@@ -2683,11 +2683,11 @@ func (e *usProductType) UnmarshalXML(d *xml.Decoder, start xml.StartElement) err
 	return e.FromString(value)
 }
 
-func (e *usProductType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
+func (e usProductType) MarshalXML(enc *xml.Encoder, start xml.StartElement) error {
 	if !e.Valid() {
 		return nil
 	}
-	enc.EncodeElement(usProductTypes[*e-1], start)
+	enc.EncodeElement(usProductTypes[e-1], start)
 	return nil
 }
 
