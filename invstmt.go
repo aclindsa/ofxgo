@@ -131,6 +131,10 @@ func (t BuyDebt) TransactionType() string {
 	return "BUYDEBT"
 }
 
+func (t BuyDebt) InvTransaction() InvTran {
+	return t.InvBuy.InvTran
+}
+
 // BuyMF represents a transaction purchasing a mutual fund
 type BuyMF struct {
 	XMLName  xml.Name `xml:"BUYMF"`
@@ -142,6 +146,10 @@ type BuyMF struct {
 // TransactionType returns a string representation of this transaction's type
 func (t BuyMF) TransactionType() string {
 	return "BUYMF"
+}
+
+func (t BuyMF) InvTransaction() InvTran {
+	return t.InvBuy.InvTran
 }
 
 // BuyOpt represents a transaction purchasing an option
@@ -157,6 +165,10 @@ func (t BuyOpt) TransactionType() string {
 	return "BUYOPT"
 }
 
+func (t BuyOpt) InvTransaction() InvTran {
+	return t.InvBuy.InvTran
+}
+
 // BuyOther represents a transaction purchasing a type of security not covered
 // by the other Buy* structs
 type BuyOther struct {
@@ -169,6 +181,10 @@ func (t BuyOther) TransactionType() string {
 	return "BUYOTHER"
 }
 
+func (t BuyOther) InvTransaction() InvTran {
+	return t.InvBuy.InvTran
+}
+
 // BuyStock represents a transaction purchasing stock
 type BuyStock struct {
 	XMLName xml.Name `xml:"BUYSTOCK"`
@@ -179,6 +195,10 @@ type BuyStock struct {
 // TransactionType returns a string representation of this transaction's type
 func (t BuyStock) TransactionType() string {
 	return "BUYSTOCK"
+}
+
+func (t BuyStock) InvTransaction() InvTran {
+	return t.InvBuy.InvTran
 }
 
 // ClosureOpt represents a transaction closing a position for an option
@@ -197,6 +217,10 @@ type ClosureOpt struct {
 // TransactionType returns a string representation of this transaction's type
 func (t ClosureOpt) TransactionType() string {
 	return "CLOSUREOPT"
+}
+
+func (t ClosureOpt) InvTransaction() InvTran {
+	return t.InvTran
 }
 
 // Income represents a transaction where investment income is being realized as
@@ -221,6 +245,10 @@ func (t Income) TransactionType() string {
 	return "INCOME"
 }
 
+func (t Income) InvTransaction() InvTran {
+	return t.InvTran
+}
+
 // InvExpense represents a transaction realizing an expense associated with an
 // investment
 type InvExpense struct {
@@ -240,6 +268,10 @@ func (t InvExpense) TransactionType() string {
 	return "INVEXPENSE"
 }
 
+func (t InvExpense) InvTransaction() InvTran {
+	return t.InvTran
+}
+
 // JrnlFund represents a transaction journaling cash holdings between
 // sub-accounts within the same investment account
 type JrnlFund struct {
@@ -253,6 +285,10 @@ type JrnlFund struct {
 // TransactionType returns a string representation of this transaction's type
 func (t JrnlFund) TransactionType() string {
 	return "JRNLFUND"
+}
+
+func (t JrnlFund) InvTransaction() InvTran {
+	return t.InvTran
 }
 
 // JrnlSec represents a transaction journaling security holdings between
@@ -271,6 +307,10 @@ func (t JrnlSec) TransactionType() string {
 	return "JRNLSEC"
 }
 
+func (t JrnlSec) InvTransaction() InvTran {
+	return t.InvTran
+}
+
 // MarginInterest represents a transaction realizing a margin interest expense
 type MarginInterest struct {
 	XMLName      xml.Name    `xml:"MARGININTEREST"`
@@ -284,6 +324,10 @@ type MarginInterest struct {
 // TransactionType returns a string representation of this transaction's type
 func (t MarginInterest) TransactionType() string {
 	return "MARGININTEREST"
+}
+
+func (t MarginInterest) InvTransaction() InvTran {
+	return t.InvTran
 }
 
 // Reinvest is a single transaction that contains both income and an investment
@@ -313,6 +357,10 @@ func (t Reinvest) TransactionType() string {
 	return "REINVEST"
 }
 
+func (t Reinvest) InvTransaction() InvTran {
+	return t.InvTran
+}
+
 // RetOfCap represents a transaction where capital is being returned to the
 // account holder
 type RetOfCap struct {
@@ -332,6 +380,10 @@ func (t RetOfCap) TransactionType() string {
 	return "RETOFCAP"
 }
 
+func (t RetOfCap) InvTransaction() InvTran {
+	return t.InvTran
+}
+
 // SellDebt represents the sale of a debt security. Used when debt is sold,
 // called, or reaches maturity.
 type SellDebt struct {
@@ -346,6 +398,10 @@ func (t SellDebt) TransactionType() string {
 	return "SELLDEBT"
 }
 
+func (t SellDebt) InvTransaction() InvTran {
+	return t.InvSell.InvTran
+}
+
 // SellMF represents a transaction selling a mutual fund
 type SellMF struct {
 	XMLName      xml.Name `xml:"SELLMF"`
@@ -358,6 +414,10 @@ type SellMF struct {
 // TransactionType returns a string representation of this transaction's type
 func (t SellMF) TransactionType() string {
 	return "SELLMF"
+}
+
+func (t SellMF) InvTransaction() InvTran {
+	return t.InvSell.InvTran
 }
 
 // SellOpt represents a transaction selling an option. Depending on the value
@@ -378,6 +438,10 @@ func (t SellOpt) TransactionType() string {
 	return "SELLOPT"
 }
 
+func (t SellOpt) InvTransaction() InvTran {
+	return t.InvSell.InvTran
+}
+
 // SellOther represents a transaction selling a security type not covered by
 // the other Sell* structs
 type SellOther struct {
@@ -390,6 +454,10 @@ func (t SellOther) TransactionType() string {
 	return "SELLOTHER"
 }
 
+func (t SellOther) InvTransaction() InvTran {
+	return t.InvSell.InvTran
+}
+
 // SellStock represents a transaction selling stock
 type SellStock struct {
 	XMLName  xml.Name `xml:"SELLSTOCK"`
@@ -400,6 +468,10 @@ type SellStock struct {
 // TransactionType returns a string representation of this transaction's type
 func (t SellStock) TransactionType() string {
 	return "SELLSTOCK"
+}
+
+func (t SellStock) InvTransaction() InvTran {
+	return t.InvSell.InvTran
 }
 
 // Split represents a stock or mutual fund split
@@ -424,6 +496,10 @@ func (t Split) TransactionType() string {
 	return "SPLIT"
 }
 
+func (t Split) InvTransaction() InvTran {
+	return t.InvTran
+}
+
 // Transfer represents the transfer of securities into or out of an account
 type Transfer struct {
 	XMLName       xml.Name      `xml:"TRANSFER"`
@@ -445,10 +521,15 @@ func (t Transfer) TransactionType() string {
 	return "TRANSFER"
 }
 
+func (t Transfer) InvTransaction() InvTran {
+	return t.InvTran
+}
+
 // InvTransaction is a generic interface met by all investment transactions
 // (Buy*, Sell*, & co.)
 type InvTransaction interface {
 	TransactionType() string
+	InvTransaction() InvTran
 }
 
 // InvBankTransaction is a banking transaction performed in an investment

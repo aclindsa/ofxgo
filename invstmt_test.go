@@ -1,11 +1,12 @@
 package ofxgo
 
 import (
-	"github.com/aclindsa/xml"
 	"reflect"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/aclindsa/xml"
 )
 
 func TestMarshalInvStatementRequest(t *testing.T) {
@@ -1906,6 +1907,43 @@ func TestInvPosition(t *testing.T) {
 			pos := tc.InvPosition()
 			if pos.Memo != invPos.Memo {
 				t.Errorf("got %v, want %v", pos, invPos)
+			}
+		})
+	}
+}
+
+func TestInvTransaction(t *testing.T) {
+	invTran := InvTran{
+		Memo: "stuff",
+	}
+	tests := []InvTransaction{
+		BuyDebt{InvBuy: InvBuy{InvTran: invTran}},
+		BuyMF{InvBuy: InvBuy{InvTran: invTran}},
+		BuyOpt{InvBuy: InvBuy{InvTran: invTran}},
+		BuyOther{InvBuy: InvBuy{InvTran: invTran}},
+		BuyStock{InvBuy: InvBuy{InvTran: invTran}},
+		ClosureOpt{InvTran: invTran},
+		Income{InvTran: invTran},
+		InvExpense{InvTran: invTran},
+		JrnlFund{InvTran: invTran},
+		JrnlSec{InvTran: invTran},
+		MarginInterest{InvTran: invTran},
+		Reinvest{InvTran: invTran},
+		RetOfCap{InvTran: invTran},
+		SellDebt{InvSell: InvSell{InvTran: invTran}},
+		SellMF{InvSell: InvSell{InvTran: invTran}},
+		SellOpt{InvSell: InvSell{InvTran: invTran}},
+		SellOther{InvSell: InvSell{InvTran: invTran}},
+		SellStock{InvSell: InvSell{InvTran: invTran}},
+		Split{InvTran: invTran},
+		Transfer{InvTran: invTran},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.TransactionType(), func(t *testing.T) {
+			tran := tc.InvTransaction()
+			if tran.Memo != invTran.Memo {
+				t.Errorf("got %v, want %v", tran, invTran)
 			}
 		})
 	}
