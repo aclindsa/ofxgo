@@ -1,6 +1,7 @@
 package ofxgo
 
 import (
+	"crypto/tls"
 	"errors"
 	"io"
 	"net/http"
@@ -8,8 +9,9 @@ import (
 )
 
 // VanguardClient provides a Client implementation which handles Vanguard's
-// cookie-passing requirements. VanguardClient uses default, non-zero settings,
-// if its fields are not initialized.
+// cookie-passing requirements and also enables older, disabled-by-default
+// cipher suites. VanguardClient uses default, non-zero settings, if its fields
+// are not initialized.
 type VanguardClient struct {
 	*BasicClient
 }
@@ -20,8 +22,64 @@ func NewVanguardClient(bc *BasicClient) Client {
 	return &VanguardClient{bc}
 }
 
-// rawRequestCookies is RawRequest with the added feature of sending cookies
-func rawRequestCookies(URL string, r io.Reader, cookies []*http.Cookie) (*http.Response, error) {
+// vanguardHttpClient returns an http.Client with the default supported
+// ciphers plus the insecure ciphers Vanguard still uses.
+func vanguardHttpClient() *http.Client {
+	var clientCiphers []uint16
+
+	vanguardCiphers := []uint16{
+		tls.TLS_RSA_WITH_AES_128_CBC_SHA256,
+		tls.TLS_RSA_WITH_AES_128_GCM_SHA256,
+		tls.TLS_RSA_WITH_AES_256_GCM_SHA384,
+	}
+	defaultCiphers := tls.CipherSuites()
+	for _, cipher := range defaultCiphers {
+		clientCiphers = append(clientCiphers, cipher.ID)
+	}
+	clientCiphers = append(clientCiphers, vanguardCiphers...)
+
+	client := &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{
+				CipherSuites: clientCiphers,
+			},
+		},
+	}
+	return client
+}
+
+// RawRequest is a copy of BasicClient RawRequest with a custom http.Client
+// that enables older cipher suites.
+func (c *VanguardClient) RawRequest(URL string, r io.Reader) (*http.Response, error) {
+	if !strings.HasPrefix(URL, "https://") {
+		return nil, errors.New("Refusing to send OFX request with possible plain-text password over non-https protocol")
+	}
+
+	request, err := http.NewRequest("POST", URL, r)
+	if err != nil {
+		return nil, err
+	}
+	request.Header.Set("Content-Type", "application/x-ofx")
+	if c.UserAgent != "" {
+		request.Header.Set("User-Agent", c.UserAgent)
+	}
+	client := vanguardHttpClient()
+	response, err := client.Do(request)
+	if err != nil {
+		return nil, err
+	}
+
+	if response.StatusCode != 200 {
+		return response, errors.New("OFXQuery request status: " + response.Status)
+	}
+
+	return response, nil
+}
+
+// rawRequestCookiesInsecureCiphers is RawRequest with the added features of
+// sending cookies and using a custom http.Client that enables older cipher
+// suites which are disabled by default
+func rawRequestCookiesInsecureCiphers(URL string, r io.Reader, cookies []*http.Cookie) (*http.Response, error) {
 	if !strings.HasPrefix(URL, "https://") {
 		return nil, errors.New("Refusing to send OFX request with possible plain-text password over non-https protocol")
 	}
@@ -35,7 +93,8 @@ func rawRequestCookies(URL string, r io.Reader, cookies []*http.Cookie) (*http.R
 		request.AddCookie(cookie)
 	}
 
-	response, err := http.DefaultClient.Do(request)
+	client := vanguardHttpClient()
+	response, err := client.Do(request)
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +129,7 @@ func (c *VanguardClient) RequestNoParse(r *Request) (*http.Response, error) {
 			return nil, err
 		}
 
-		return rawRequestCookies(r.URL, b, response.Cookies())
+		return rawRequestCookiesInsecureCiphers(r.URL, b, response.Cookies())
 	}
 
 	return response, err
