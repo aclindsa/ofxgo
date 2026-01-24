@@ -1038,7 +1038,7 @@ type InvBalance struct {
 	AvailCash     Amount    `xml:"AVAILCASH"`     // Available cash across all sub-accounts, including sweep funds
 	MarginBalance Amount    `xml:"MARGINBALANCE"` // Negative means customer has borrowed funds
 	ShortBalance  Amount    `xml:"SHORTBALANCE"`  // Always positive, market value of all short positions
-	BuyPower      Amount    `xml:"BUYPOWER, omitempty"`
+	BuyPower      Amount    `xml:"BUYPOWER,omitempty"`
 	BalList       []Balance `xml:"BALLIST>BAL,omitempty"`
 }
 
