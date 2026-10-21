@@ -361,6 +361,17 @@ type Currency struct {
 	CurSym  CurrSymbol `xml:"CURSYM"`  // ISO-4217 3-character currency identifier
 }
 
+// MarshalXML marshals a Currency to SGML/XML. An unset CurrSymbol identifies an
+// unset Currency; omit it because encoding/xml does not treat zero-value structs
+// as empty for the omitempty tag.
+func (c Currency) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	if ok, _ := c.CurSym.Valid(); !ok {
+		return nil
+	}
+	type currency Currency
+	return e.EncodeElement(currency(c), start)
+}
+
 // Valid returns whether the Currency is valid according to the OFX spec
 func (c Currency) Valid() (bool, error) {
 	if c.CurRate.IsInt() && c.CurRate.Num().Int64() == 0 {
