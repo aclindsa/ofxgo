@@ -1948,3 +1948,38 @@ func TestInvTransaction(t *testing.T) {
 		})
 	}
 }
+
+func TestMarshalInvBuyOmitsUnsetCurrencies(t *testing.T) {
+	b, err := xml.Marshal(InvBuy{})
+	if err != nil {
+		t.Fatalf("Unexpected error marshaling InvBuy: %s", err)
+	}
+
+	for _, element := range []string{"<CURRENCY>", "<ORIGCURRENCY>", "<CURSYM>XXX</CURSYM>"} {
+		if strings.Contains(string(b), element) {
+			t.Errorf("unset currency element %q present in %s", element, b)
+		}
+	}
+}
+
+func TestMarshalInvBuyIncludesValidCurrency(t *testing.T) {
+	var rate Amount
+	rate.SetFrac64(1, 1)
+	symbol, err := NewCurrSymbol("USD")
+	if err != nil {
+		t.Fatalf("Unexpected error creating CurrSymbol: %s", err)
+	}
+
+	buy := InvBuy{Currency: Currency{CurRate: rate, CurSym: *symbol}}
+	b, err := xml.Marshal(buy)
+	if err != nil {
+		t.Fatalf("Unexpected error marshaling InvBuy: %s", err)
+	}
+
+	if !strings.Contains(string(b), "<CURRENCY><CURRATE>1</CURRATE><CURSYM>USD</CURSYM></CURRENCY>") {
+		t.Errorf("valid currency missing or malformed in %s", b)
+	}
+	if strings.Contains(string(b), "<ORIGCURRENCY>") {
+		t.Errorf("unset original currency element present in %s", b)
+	}
+}
